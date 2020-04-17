@@ -1,0 +1,6 @@
+name: "Abel"
+author: "Genanik"
+version: "1.1.9"
+main: "io.genanik.plugin.Abel"
+info: "Abel机器人插件"
+depends: []
