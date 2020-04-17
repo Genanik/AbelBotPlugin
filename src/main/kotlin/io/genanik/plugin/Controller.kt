@@ -5,7 +5,6 @@ import net.mamoe.mirai.Bot
 import net.mamoe.mirai.contact.Contact
 import net.mamoe.mirai.contact.ContactList
 import net.mamoe.mirai.contact.Group
-import net.mamoe.mirai.contact.MemberPermission
 import net.mamoe.mirai.message.GroupMessage
 import net.mamoe.mirai.message.data.*
 import net.mamoe.mirai.simpleloader.Util.mirrorImage
@@ -14,34 +13,23 @@ import net.mamoe.mirai.utils.toExternalImage
 import net.mamoe.mirai.utils.upload
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 class MessagesRepeatController {
 
+    private var repeatDisableList = ArrayList<Long>()
     private var lastMessageMap = mutableMapOf<Long, GroupMessage>()
     private var lastRepeatMessageMap = mutableMapOf<Long, MessageChain>()
 
-    fun init(groups: ContactList<Group>) {
-        groups.forEach {
-            lastMessageMap[it.id] = GroupMessage(
-                "null",
-                MemberPermission.ADMINISTRATOR,
-                it.owner,
-                MessageChainBuilder().asMessageChain()
-            )
-            lastRepeatMessageMap[it.id] = MessageChainBuilder().asMessageChain()
-            when (it.id){
-                135023273L -> {
-                    lastMessageMap.remove(135023273L)
-                    lastRepeatMessageMap.remove(135023273L)
-                }
-            }
-        }
-    }
-
     private fun updateMessage(groupID: Long, str: GroupMessage) {
         when (groupID){
-            135023273L -> println("[复读] 跳过记录 135023273")
-            else -> lastMessageMap[groupID] = str
+            135023273L -> println("跳过记录 135023273")
+            else -> {
+                lastMessageMap[groupID] = str
+                if (!lastMessageMap.containsKey(groupID)){
+                    lastRepeatMessageMap[groupID] = MessageChainBuilder().asMessageChain()
+                }
+            }
         }
     }
 
@@ -54,66 +42,66 @@ class MessagesRepeatController {
     }
 
     private fun getLastRepeatMessage(groupID: Long): MessageChain {
-        return lastRepeatMessageMap[groupID]!!
+        if (lastRepeatMessageMap[groupID] != null){
+            return lastRepeatMessageMap[groupID]!!
+        }
+        return MessageChainBuilder().asMessageChain()
     }
 
-    fun updateRepeatOnAndOff(group: Group, state: Boolean) {
+    fun updateRepeatOnAndOff(groupID: Long, state: Boolean) {
         if (state){
-            lastMessageMap[group.id] = GroupMessage(
-                "null",
-                MemberPermission.ADMINISTRATOR,
-                group.owner,
-                MessageChainBuilder().asMessageChain()
-            )
-            lastRepeatMessageMap[group.id] = MessageChainBuilder().asMessageChain()
+            repeatDisableList.remove(groupID)
         }else{
-            lastMessageMap.remove(group.id)
-            lastRepeatMessageMap.remove(group.id)
+            repeatDisableList.add(groupID)
         }
     }
 
     private fun getRepeatOnAndOff(groupID: Long): Boolean {
-        return lastMessageMap.containsKey(groupID)
+        return repeatDisableList.contains(groupID)
     }
 
     //判断是否需要复读
     fun isNowRepeat(newMessage: GroupMessage): Boolean {
         if (getRepeatOnAndOff(newMessage.group.id)) {
             // 这个群已开启复读
-            if (newMessage.message == getLastMessage(newMessage.group.id).message) {
-                // 此消息等于在该群的上一条消息
-//            if (!newMessage.sender.id.equals(getLastMessage(newMessage.group.id).sender.id)) {
-                //  不等于上次复读这句话的人 上一行，已注释
-                if (newMessage.message != getLastRepeatMessage(newMessage.group.id)) {
-                    // 不等于在该群上次复读的内容
-                    updateMessage(newMessage.group.id, newMessage)
-                    updateLastRepeatMessage(newMessage.group.id, newMessage.message)
-                    return true
-                }
-//            }
+            if (!lastMessageMap.containsKey(newMessage.group.id)){
+                // 这个群之前说话没被机器人记录
+                updateMessage(newMessage.group.id, newMessage)
+                return false
             }
+            return if (newMessage.message == getLastMessage(newMessage.group.id).message) {
+                // 此消息等于在该群的上一条消息
+                updateMessage(newMessage.group.id, newMessage)
+                updateLastRepeatMessage(newMessage.group.id, newMessage.message)
+                true
+            }else{
+                // 内容与上一条不符
+                updateMessage(newMessage.group.id, newMessage)
+                false
+            }
+        }else{
+            // 没开启复读
+            return false
         }
-        updateMessage(newMessage.group.id, newMessage)
-        return false
     }
 
     // MessageChain倒序
     suspend fun textBackRepeat(oldMsgChain: MessageChain, contact: Contact): MessageChain {
         var newMsgChain = MessageChainBuilder()
-        oldMsgChain.reversed().forEach {
-            if (it.toString().contains("mirai:")) {
+        oldMsgChain.reversed().forEach { messageClip ->
+            if (messageClip.toString().contains("mirai:")) {
                 // 特殊消息
                 var pic = oldMsgChain.firstIsInstanceOrNull<Image>()
                 if (pic != null){
                     newMsgChain.add(mirrorImage(pic.queryUrl()).toExternalImage().upload(contact))
                 }else{
-                    newMsgChain.add(it)
+                    newMsgChain.add(messageClip)
                 }
 
             } else {
                 //文字消息
                 var tmp = ""
-                it.toString().forEach {
+                messageClip.toString().forEach {
                     tmp = it + tmp
                 }
                 newMsgChain.add(tmp)
@@ -161,58 +149,58 @@ class MessagesRepeatController {
 
 class MessagesTranslateController{
 
-    private var translateMethodMap = mutableMapOf<Long, Boolean>()
-
-    fun init(groups: ContactList<Group>) {
-        groups.forEach {
-            translateMethodMap[it.id] = false
-        }
-    }
-
-    fun updateMethodMap(groupID: Long, useBaidu: Boolean){
-        translateMethodMap[groupID] = useBaidu
-    }
-
-    private fun getTranslateMethod(groupID: Long): Boolean {
-        return translateMethodMap[groupID]!!
-    }
-
-    fun updateTransOnAndOff(group: Group, state: Boolean) {
-        if (state){
-            translateMethodMap[group.id] = false
-        }else{
-            translateMethodMap.remove(group.id)
-        }
-    }
-
-    private fun getTransOnAndOff(groupID: Long): Boolean {
-        return translateMethodMap.containsKey(groupID)
-    }
-
-    fun add(groupID: Long){
-        if (translateMethodMap.containsKey(groupID)){
-            throw Exception("翻译方法表中已存在此群")
-        }
-        translateMethodMap[groupID] = false
-
-    }
-
-    fun getAllMethodGroup(): MutableMap<Long, Boolean> {
-        return translateMethodMap
-    }
+//    private var translateMethodMap = mutableMapOf<Long, Boolean>()
+//
+//    fun init(groups: ContactList<Group>) {
+//        groups.forEach {
+//            translateMethodMap[it.id] = false
+//        }
+//    }
+//
+//    fun updateMethodMap(groupID: Long, useBaidu: Boolean){
+//        translateMethodMap[groupID] = useBaidu
+//    }
+//
+//    private fun getTranslateMethod(groupID: Long): Boolean {
+//        return translateMethodMap[groupID]!!
+//    }
+//
+//    fun updateTransOnAndOff(group: Long, state: Boolean) {
+//        if (state){
+//            translateMethodMap[group] = false
+//        }else{
+//            translateMethodMap.remove(group)
+//        }
+//    }
+//
+//    private fun getTransOnAndOff(groupID: Long): Boolean {
+//        return translateMethodMap.containsKey(groupID)
+//    }
+//
+//    fun add(groupID: Long){
+//        if (translateMethodMap.containsKey(groupID)){
+//            throw Exception("翻译方法表中已存在此群")
+//        }
+//        translateMethodMap[groupID] = false
+//
+//    }
+//
+//    fun getAllMethodGroup(): MutableMap<Long, Boolean> {
+//        return translateMethodMap
+//    }
 
     fun autoTranslate(rawMessage: GroupMessage): MessageChain{
         return translate(rawMessage)
     }
-
-    fun isNeedTranslate(groupID: Long): Boolean{
-        return getTransOnAndOff(groupID)
-    }
+//
+//    fun isNeedTranslate(groupID: Long): Boolean{
+//        return getTransOnAndOff(groupID)
+//    }
 
     private fun translate(rawMessage: GroupMessage): MessageChain{
         // 构造 MessageChain
         val replyMsg = MessageChainBuilder()
-        val useBaiduAPI = getTranslateMethod(rawMessage.group.id)
+        val useBaiduAPI = false
         var arMsg: String
         var isNeedSend = false
         // 写入数据
@@ -251,6 +239,49 @@ class MessagesTranslateController{
             return MessageChainBuilder().asMessageChain() // 没有翻译过 返回空MsgChain
         }
     }
+
+//    private fun translate(rawMessage: GroupMessage): MessageChain{
+//        // 构造 MessageChain
+//        val replyMsg = MessageChainBuilder()
+//        val useBaiduAPI = getTranslateMethod(rawMessage.group.id)
+//        var arMsg: String
+//        var isNeedSend = false
+//        // 写入数据
+//        rawMessage.message.forEach {
+//
+//            if ((it.toString().indexOf("mirai:") != -1 ) or (it.toString().indexOf("@") != -1)) {
+//                // 不启动翻译
+//                replyMsg.add(it)
+//
+//            }else{ // 启动翻译
+//                val text = it.toString()
+//
+//                arMsg = if (useBaiduAPI){
+//                    Method().baiduTranslate(text)  //百度翻译
+//                }else{
+//                    Method().localTranslate(text) //离线翻译
+//                }
+//
+//                if (!arMsg.contains("Error with code")){
+//                    if (text != arMsg){
+//                        replyMsg += arMsg
+//                        isNeedSend = true
+//                    }
+//                }
+//
+//                // debug
+//                if (useBaiduAPI and debug){
+//                    println("return from Baidu: $arMsg")
+//                }
+//            }
+//            // if完了
+//        }
+//        if (isNeedSend and !replyMsg.equals(MessageChainBuilder().asMessageChain())){
+//            return replyMsg.asMessageChain() // 返回被翻译过的MsgChain
+//        }else{
+//            return MessageChainBuilder().asMessageChain() // 没有翻译过 返回空MsgChain
+//        }
+//    }
 }
 
 class TellTheTimeOnTheDotController{
