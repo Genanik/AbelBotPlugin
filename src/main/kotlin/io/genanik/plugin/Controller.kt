@@ -22,8 +22,8 @@ class MessagesRepeatController (message: GroupMessage) {
     // 返回null的时候不要复读
     fun update(newMessage: GroupMessage): Boolean{
         return if (
-            removeMessageSource(lastMessage.message).toString() == removeMessageSource(newMessage.message).toString()
-        ){
+            removeMessageSource(lastMessage.message).toString() ==
+            removeMessageSource(newMessage.message).toString()  ){
             lastMessage = newMessage
             true
         } else {
@@ -39,14 +39,13 @@ class MessagesRepeatController (message: GroupMessage) {
                 tmp.add(it)
             }
         }
-        println("asMesssageChain: ${tmp.asMessageChain()}")
         return tmp.asMessageChain()
     }
 
     // MessageChain倒序 祖传配方，懒得重写了
     suspend fun textBackRepeat(oldMsgChain: MessageChain, contact: Contact): MessageChain {
         var newMsgChain = MessageChainBuilder()
-        oldMsgChain.reversed().forEach { messageClip ->
+        removeMessageSource(oldMsgChain).reversed().forEach { messageClip ->
             if (messageClip.toString().contains("mirai:")) {
                 // 特殊消息
                 var pic = oldMsgChain.firstIsInstanceOrNull<Image>()
@@ -55,7 +54,6 @@ class MessagesRepeatController (message: GroupMessage) {
                 }else{
                     newMsgChain.add(messageClip)
                 }
-
             } else {
                 //文字消息
                 var tmp = ""

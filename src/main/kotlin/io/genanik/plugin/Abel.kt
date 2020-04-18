@@ -55,7 +55,8 @@ object Abel: PluginBase() {
             for (i in argsList.getAllCommands()){
                 result.add( "$i  ${argsList.getHelpInformation()[i]}\n")
             }
-            result.add("咱介绍完了，嘤嘤嘤")
+            result.add("咱介绍完了，嘤嘤嘤\n")
+            result.add("顺便吐槽下Genanik居然嫌麻烦把我的百度API删掉了，现在只能翻译繁体了（")
             return@regCommand result.asMessageChain()
         }
     }
@@ -82,9 +83,8 @@ object Abel: PluginBase() {
             // 复读
             always {
                 if (msgRepeatController.contains(this.group.id)){
-                    var tmp = msgRepeatController[this.group.id]!!.update(this)
-                    println("tmp: $tmp")
-                    if (tmp){
+                    if (msgRepeatController[this.group.id]!!.update(this)){
+
                         reply(msgRepeatController[this.group.id]!!.textBackRepeat(this.message, this.group))
                     }
                 }else{
