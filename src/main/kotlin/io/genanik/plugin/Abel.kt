@@ -5,13 +5,10 @@ import net.mamoe.mirai.event.subscribeGroupMessages
 import net.mamoe.mirai.message.data.MessageChainBuilder
 import io.genanik.plugin.Settings.argList
 import io.genanik.plugin.Settings.debug
-import net.mamoe.mirai.Bot
-import net.mamoe.mirai.console.MiraiConsole
 
+object Abel: PluginBase() {
 
-object Abel : PluginBase() {
-
-    val msgRepeatController = MessagesRepeatController()
+    val msgRepeatController = mutableMapOf<Long, MessagesRepeatController>()
     val msgTranslateController = MessagesTranslateController()
     val msgTrumpController = DonaldTrumpController()
     val timeController = TellTheTimeOnTheDotController()
@@ -23,9 +20,6 @@ object Abel : PluginBase() {
         awa = arrayListOf()
         argsList = argList()
 
-    }
-
-    override fun onReload(): Boolean {
         // 添加awa字符
         awa.add("w(ﾟДﾟ)w")
         awa.add("ヽ(✿ﾟ▽ﾟ)ノ")
@@ -39,78 +33,30 @@ object Abel : PluginBase() {
         awa.add("Orz")
         awa.add("诶嘿，我不叫(≧ω≦)))")
 
-        // 注册指令
-//            argsList.regCommand("切换至百度API") {
-//                msgTranslateController.updateMethodMap(it, true)
-//                var result = MessageChainBuilder()
-//                result.add("不出意外的话......已切换至百度API")
-//                return@regCommand result.asMessageChain()
-//            }
-//            argsList.regCommand("切换至离线API") {
-//                msgTranslateController.updateMethodMap(it, false)
-//                var result = MessageChainBuilder()
-//                result.add("不出意外的话......已切换至离线API")
-//                return@regCommand result.asMessageChain()
-//            }
-        argsList.regCommand("/dumpvars") {
+        // 注册Mirai指令
+        // 暂无
+        // 注册Abel指令
+        logger.info("开始注册Abel指令")
+        argsList.regCommand("/dumpvars", "发送debug变量") {
             var result = MessageChainBuilder()
-//                result.add("翻译表 = " + msgTranslateController.getAllMethodGroup() + "\n")
-//                result.add("msgRepeatControllerMap1 = " + msgRepeatController.getAllMarkedGroup() + "\n")
-//                result.add("msgRepeatControllerMap2 = " + msgRepeatController.getLastRepeatMessageMap() + "\n")
+            // TODO dumpvars
             result.add("debug = $debug")
             return@regCommand result.asMessageChain()
         }
-        argsList.regCommand("报时") {
+        argsList.regCommand("报时", "发送当前时间") {
             var result = MessageChainBuilder()
             result.add(timeController.getNow())
             return@regCommand result.asMessageChain()
         }
-        argsList.regCommand("/help") {
+        argsList.regCommand("/help", "展示帮助界面") {
             var result = MessageChainBuilder()
-            result.add("All Commands: " + argsList.getAllCommands())
+            result.add("嘤嘤嘤嘤嘤嘤嘤嘤嘤")
+            for (i in argsList.getAllCommands()){
+                result.add( "$i  ${argsList.getHelpInformation()[i]}\n")
+            }
+            result.add("咱介绍完了，嘤嘤嘤")
             return@regCommand result.asMessageChain()
         }
-        argsList.regCommand("切换至川普模式"){
-            msgTrumpController.updateTrumpModeOnAndOff(it , true)
-//                msgRepeatController.updateRepeatOnAndOff(miraiBot.getGroup(it),false)
-//                msgTranslateController.updateTransOnAndOff(miraiBot.getGroup(it),false)
-            var result = MessageChainBuilder()
-            result.add("我特朗普要让让复读机再次伟大！（已关闭复读翻译功能")
-            return@regCommand result.asMessageChain()
-        }
-        argsList.regCommand("退出川普模式"){
-            msgTrumpController.updateTrumpModeOnAndOff(it, false)
-//                msgRepeatController.updateRepeatOnAndOff(miraiBot.getGroup(it),true)
-//                msgTranslateController.updateTransOnAndOff(miraiBot.getGroup(it),true)
-            var result = MessageChainBuilder()
-            result.add("已退出特朗普模式并重新开启复读翻译功能")
-            return@regCommand result.asMessageChain()
-        }
-        argsList.regCommand( "关闭复读"){
-            msgRepeatController.updateRepeatOnAndOff(it, false)
-            var result = MessageChainBuilder()
-            result.add("已关闭在此群的复读功能")
-            return@regCommand result.asMessageChain()
-        }
-        argsList.regCommand( "开启复读"){
-            msgRepeatController.updateRepeatOnAndOff(it, true)
-            var result = MessageChainBuilder()
-            result.add("已重新开启在此群的复读功能")
-            return@regCommand result.asMessageChain()
-        }
-        argsList.regCommand( "关闭翻译"){
-//                msgTranslateController.updateTransOnAndOff(miraiBot.getGroup(it), false)
-            var result = MessageChainBuilder()
-            result.add("已关闭在此群的翻译功能")
-            return@regCommand result.asMessageChain()
-        }
-        argsList.regCommand( "开启翻译"){
-//                msgTranslateController.updateTransOnAndOff(miraiBot.getGroup(it), true)
-            var result = MessageChainBuilder()
-            result.add("已重新开启在此群的翻译功能")
-            return@regCommand result.asMessageChain()
-        }
-        return true
     }
 
     override fun onEnable() {
@@ -121,12 +67,6 @@ object Abel : PluginBase() {
         subscribeGroupMessages {
             // 繁体/多语言翻译
             always{
-//                if (msgTranslateController.isNeedTranslate(group.id)){
-//                    var tmp = msgTranslateController.autoTranslate(this)
-//                    if ((tmp.toString() != "") and (this.sender.id != 2704749081L)){
-//                        reply(tmp)
-//                    }
-//                }
                 var tmp = msgTranslateController.autoTranslate(this)
                 if ((tmp.toString() != "") and (this.sender.id != 2704749081L)){
                     reply(tmp)
@@ -140,15 +80,22 @@ object Abel : PluginBase() {
 
             // 复读
             always {
-                if (msgRepeatController.isNowRepeat(this)){
-                    reply(msgRepeatController.textBackRepeat(message, group))
+                if (msgRepeatController.contains(this.group.id)){
+                    var tmp = msgRepeatController[this.group.id]?.update(this)
+                    if (tmp != null){
+                        reply(tmp)
+                    }
+                }else{
+                    msgRepeatController[this.group.id] = MessagesRepeatController(this)
                 }
+
+
             }
 
             // 川普模式
             always {
                 if (msgTrumpController.isAtBot(this.message, this.bot)){
-                    reply(msgTrumpController.TrumpTextWithoutNPL(message.toString()))
+                    reply(msgTrumpController.TrumpTextWithoutNPL(message.contentToString()))
                 }
             }
         }
