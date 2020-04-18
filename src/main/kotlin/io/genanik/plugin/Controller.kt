@@ -18,23 +18,33 @@ import java.util.*
 class MessagesRepeatController (message: GroupMessage) {
 
     private var lastMessage: GroupMessage = message
-    private var times: Int = 0
 
     // 返回null的时候不要复读
-    suspend fun update(newMessage: GroupMessage): MessageChain? {
-        if (lastMessage.message == newMessage.message){
-            // 与群内上一条内容相符
-            times++
-            return textBackRepeat(newMessage.message, newMessage.group)
+    fun update(newMessage: GroupMessage): Boolean{
+        return if (
+            removeMessageSource(lastMessage.message).toString() == removeMessageSource(newMessage.message).toString()
+        ){
+            lastMessage = newMessage
+            true
         } else {
             lastMessage = newMessage
-            times = 0
-            return null
+            false
         }
     }
 
+    fun removeMessageSource(message: MessageChain): MessageChain{
+        var tmp = MessageChainBuilder()
+        message.forEach {
+            if (!it.toString().contains("[mirai:source:")){
+                tmp.add(it)
+            }
+        }
+        println("asMesssageChain: ${tmp.asMessageChain()}")
+        return tmp.asMessageChain()
+    }
+
     // MessageChain倒序 祖传配方，懒得重写了
-    private suspend fun textBackRepeat(oldMsgChain: MessageChain, contact: Contact): MessageChain {
+    suspend fun textBackRepeat(oldMsgChain: MessageChain, contact: Contact): MessageChain {
         var newMsgChain = MessageChainBuilder()
         oldMsgChain.reversed().forEach { messageClip ->
             if (messageClip.toString().contains("mirai:")) {

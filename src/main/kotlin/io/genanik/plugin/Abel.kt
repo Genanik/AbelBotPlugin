@@ -5,6 +5,7 @@ import net.mamoe.mirai.event.subscribeGroupMessages
 import net.mamoe.mirai.message.data.MessageChainBuilder
 import io.genanik.plugin.Settings.argList
 import io.genanik.plugin.Settings.debug
+import net.mamoe.mirai.message.data.PlainText
 
 object Abel: PluginBase() {
 
@@ -37,7 +38,7 @@ object Abel: PluginBase() {
         // 暂无
         // 注册Abel指令
         logger.info("开始注册Abel指令")
-        argsList.regCommand("/dumpvars", "发送debug变量") {
+        argsList.regCommand("dumpvars", "发送debug变量") {
             var result = MessageChainBuilder()
             // TODO dumpvars
             result.add("debug = $debug")
@@ -50,7 +51,7 @@ object Abel: PluginBase() {
         }
         argsList.regCommand("/help", "展示帮助界面") {
             var result = MessageChainBuilder()
-            result.add("嘤嘤嘤嘤嘤嘤嘤嘤嘤")
+            result.add("嘤嘤嘤嘤嘤嘤嘤嘤嘤\n")
             for (i in argsList.getAllCommands()){
                 result.add( "$i  ${argsList.getHelpInformation()[i]}\n")
             }
@@ -81,21 +82,24 @@ object Abel: PluginBase() {
             // 复读
             always {
                 if (msgRepeatController.contains(this.group.id)){
-                    var tmp = msgRepeatController[this.group.id]?.update(this)
-                    if (tmp != null){
-                        reply(tmp)
+                    var tmp = msgRepeatController[this.group.id]!!.update(this)
+                    println("tmp: $tmp")
+                    if (tmp){
+                        reply(msgRepeatController[this.group.id]!!.textBackRepeat(this.message, this.group))
                     }
                 }else{
                     msgRepeatController[this.group.id] = MessagesRepeatController(this)
                 }
-
-
             }
 
             // 川普模式
             always {
                 if (msgTrumpController.isAtBot(this.message, this.bot)){
-                    reply(msgTrumpController.TrumpTextWithoutNPL(message.contentToString()))
+                    var tmp = message.getOrNull(PlainText)
+                    if (tmp != null){
+                        reply(msgTrumpController.TrumpTextWithoutNPL(
+                            tmp.stringValue.replace(" ", "")))
+                    }
                 }
             }
         }
