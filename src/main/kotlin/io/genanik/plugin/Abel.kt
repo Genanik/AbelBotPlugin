@@ -1,5 +1,6 @@
 package io.genanik.plugin
 
+import io.genanik.plugin.Settings.abelBotVersion
 import net.mamoe.mirai.console.plugins.PluginBase
 import net.mamoe.mirai.event.subscribeGroupMessages
 import net.mamoe.mirai.message.data.MessageChainBuilder
@@ -51,6 +52,7 @@ object Abel: PluginBase() {
         }
         argsList.regCommand("/help", "展示帮助界面") {
             var result = MessageChainBuilder()
+            result.add("Abel机器人版本: $abelBotVersion\n")
             result.add("嘤嘤嘤嘤嘤嘤嘤嘤嘤\n")
             for (i in argsList.getAllCommands()){
                 result.add( "$i  ${argsList.getHelpInformation()[i]}\n")
