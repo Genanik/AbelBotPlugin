@@ -18,13 +18,16 @@ import java.util.*
 class MessagesRepeatController (message: GroupMessage) {
 
     private var lastMessage: GroupMessage = message
+    private var repeatTimes = 0
 
     // 返回null的时候不要复读
     fun update(newMessage: GroupMessage): Boolean{
         return if (
-            removeMessageSource(lastMessage.message).toString() ==
-            removeMessageSource(newMessage.message).toString()  ){
+            (removeMessageSource(lastMessage.message).toString() ==
+                    removeMessageSource(newMessage.message).toString())
+            and (repeatTimes == 0)){
             lastMessage = newMessage
+            repeatTimes++
             true
         } else {
             lastMessage = newMessage
@@ -32,7 +35,7 @@ class MessagesRepeatController (message: GroupMessage) {
         }
     }
 
-    fun removeMessageSource(message: MessageChain): MessageChain{
+    private fun removeMessageSource(message: MessageChain): MessageChain{
         var tmp = MessageChainBuilder()
         message.forEach {
             if (!it.toString().contains("[mirai:source:")){

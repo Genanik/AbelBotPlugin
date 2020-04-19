@@ -2,4 +2,4 @@ package io.genanik.plugin.Settings
 
 var debug = false
 
-val abelBotVersion = "2.0.11"
+val abelBotVersion = "2.0.12"
