@@ -13,14 +13,15 @@ import javax.imageio.ImageIO
 
 
 fun isGif(url: String):Boolean{
-    // 设置新的pic
-    var gd = GifDecoder()
-    //要处理的图片
-    var status = gd.read(url)
-    if (status != GifDecoder.STATUS_OK) {
-        return false
-    }
-    return true
+//     设置新的pic
+//    var gd = GifDecoder()
+//    要处理的图片
+//    var status = gd.read(url)
+//    if (status != GifDecoder.STATUS_OK) {
+//        return false
+//    }
+//    return true
+    return false
 }
 
 // 镜像BufferedImage的图

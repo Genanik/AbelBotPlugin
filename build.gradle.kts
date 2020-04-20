@@ -1,3 +1,5 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     kotlin("jvm") version "1.4-M1"
     java
@@ -5,7 +7,7 @@ plugins {
 }
 
 group = "io.genanik"
-version = "2.0.13"
+version = "2.0.14"
 
 repositories {
     maven(url =  "https://dl.bintray.com/him188moe/mirai")
@@ -40,6 +42,13 @@ dependencies {
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+tasks.withType<ShadowJar> {
+    // 将 build.gradle 打入到 jar 中, 方便查看依赖包版本
+    from("./"){
+        include("build.gradle.kts")
+    }
 }
 
 tasks {
