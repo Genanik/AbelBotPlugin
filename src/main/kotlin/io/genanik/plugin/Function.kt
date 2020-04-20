@@ -15,7 +15,7 @@ import java.util.*
  * 判断出现两条相同内容后 将内容镜像并返回镜像的MessageChain
  * 构造时需要传入一条GroupMessage
  */
-class MessagesRepeatController (message: GroupMessage) {
+class MessagesRepeatFunction (message: GroupMessage) {
 
     private var lastMessage: GroupMessage = message
     private var repeatTimes = 0
@@ -75,7 +75,7 @@ class MessagesRepeatController (message: GroupMessage) {
 /**
  * 返回翻译的繁体内容
  */
-class MessagesTranslateController{
+class MessagesTranslateFunction {
 
     fun autoTranslate(rawMessage: GroupMessage): MessageChain{
         return translate(rawMessage)
@@ -117,7 +117,7 @@ class MessagesTranslateController{
 /**
  * 返回当前时间
  */
-class TellTheTimeOnTheDotController{
+class TellTheTimeFunction {
     fun getNow(): String {
         return SimpleDateFormat("HH:mm").format(Date())
     }
@@ -126,7 +126,7 @@ class TellTheTimeOnTheDotController{
 /**
  * 输入关键字，返回一条名人名言（伪
  */
-class DonaldTrumpController{
+class DonaldTrumpFunction {
 
     private fun textStruct(singleWord:String): String{
         var sentence = arrayListOf<String>()
