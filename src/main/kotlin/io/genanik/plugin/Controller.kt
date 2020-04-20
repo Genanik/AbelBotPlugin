@@ -31,6 +31,7 @@ class MessagesRepeatController (message: GroupMessage) {
             true
         } else {
             lastMessage = newMessage
+            repeatTimes = 0
             false
         }
     }

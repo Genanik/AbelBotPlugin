@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "io.genanik"
-version = "2.0.11"
+version = "2.0.13"
 
 repositories {
     maven(url =  "https://dl.bintray.com/him188moe/mirai")
