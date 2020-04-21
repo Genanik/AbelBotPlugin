@@ -1,8 +1,7 @@
-package net.mamoe.mirai.simpleloader.Util
+package io.genanik.plugin.Util
 
 import com.madgag.gif.fmsware.AnimatedGifEncoder
 import com.madgag.gif.fmsware.GifDecoder
-import net.mamoe.mirai.message.data.queryUrl
 import java.awt.Color
 import java.awt.Graphics
 import java.awt.Image
@@ -49,14 +48,14 @@ fun mirror(pic: BufferedImage): BufferedImage{
 // 镜像gif
 fun mirrorGif(inputURL: String, outputFileName: String): File {
     // 设置新的pic
-    var gd = GifDecoder()
+    val gd = GifDecoder()
     //要处理的图片
-    var status = gd.read(inputURL)
+    val status = gd.read(inputURL)
     if (status != GifDecoder.STATUS_OK) {
         throw IOException("read image first.gif error!")
     }
 
-    var ge =  AnimatedGifEncoder()
+    val ge =  AnimatedGifEncoder()
 
     ge.start(outputFileName)
     ge.setRepeat(gd.loopCount)

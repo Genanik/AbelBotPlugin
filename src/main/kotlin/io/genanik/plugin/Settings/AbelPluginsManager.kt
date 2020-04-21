@@ -1,9 +1,11 @@
 package io.genanik.plugin.Settings
 
+import net.mamoe.mirai.console.MiraiConsole
 import net.mamoe.mirai.message.data.MessageChain
-import sun.security.ec.point.ProjectivePoint
+import net.mamoe.mirai.message.data.MessageChainBuilder
+import net.mamoe.mirai.utils.MiraiLogger
 
-class AbelPluginsManager {
+class AbelPluginsManager(newLogger: MiraiLogger) {
 
     /**
      * AbelPluginsManager有两个控制器
@@ -13,6 +15,7 @@ class AbelPluginsManager {
      * - Function一个是Function控制器现阶段仅可保存开关状态与功能描述 TODO 未来考虑构建DSL
      */
 
+    private var logger: MiraiLogger = newLogger
 
     private var argsMap = mutableMapOf<String, (Long) -> MessageChain >()
     private var commandHelpInf = mutableMapOf<String, String>()
@@ -28,6 +31,7 @@ class AbelPluginsManager {
     fun regCommand(argStr: String, description: String, function:(Long) -> MessageChain){
         argsMap[argStr] = function
         commandHelpInf[argStr] = description
+        logger.info("注册指令: $argStr")
     }
 
     /**
@@ -71,7 +75,7 @@ class AbelPluginsManager {
      */
     fun regFunction(name: String, description: String){
         // newFuncSwitchList 储存已关闭该功能的群号
-        var newFuncSwitchList = mutableListOf<Long>()
+        val newFuncSwitchList = mutableListOf<Long>()
         functionMap[name] = newFuncSwitchList
         functionHelpInf[name] = description
     }
@@ -87,7 +91,7 @@ class AbelPluginsManager {
      * 关闭function
      */
     fun disableFunc(name: String, groupID: Long){
-        var newFuncSwitchList = functionMap[name]!!
+        val newFuncSwitchList = functionMap[name]!!
         newFuncSwitchList.add(groupID)
         functionMap[name] = newFuncSwitchList
     }
@@ -96,9 +100,23 @@ class AbelPluginsManager {
      * 开启function
      */
     fun enableFunc(name: String, groupID: Long){
-        var newFuncSwitchList = functionMap[name]!!
+        val newFuncSwitchList = functionMap[name]!!
         newFuncSwitchList.remove(groupID)
         functionMap[name] = newFuncSwitchList
+    }
+
+    /**
+     * 获得所有function的name
+     */
+    fun getAllFunctions(): MutableSet<String> {
+        return functionMap.keys
+    }
+
+    /**
+     * 获取Map 指令名->指令介绍
+     */
+    fun getFunctionDescription(): Map<String, String>{
+        return functionHelpInf
     }
 
 }

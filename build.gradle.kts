@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "io.genanik"
-version = "2.0.14"
+version = "2.0.15"
 
 repositories {
     maven(url =  "https://dl.bintray.com/him188moe/mirai")
@@ -22,12 +22,13 @@ val miraiConsoleVersion = "0.4.9"
 
 dependencies {
     compileOnly("com.madgag", "animated-gif-lib","1.4")
-    compileOnly("com.github.houbb", "opencc4j", "1.4.0")
-    compileOnly( "org.json", "json", "20190722")
-
     testImplementation("com.madgag", "animated-gif-lib","1.4")
+    compileOnly("com.github.houbb", "opencc4j", "1.4.0")
     testImplementation("com.github.houbb", "opencc4j", "1.4.0")
+
+    compileOnly( "org.json", "json", "20190722")
     testImplementation( "org.json", "json", "20190722")
+
 
 
     compileOnly(kotlin("stdlib-jdk8"))
@@ -42,13 +43,6 @@ dependencies {
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
-}
-
-tasks.withType<ShadowJar> {
-    // 将 build.gradle 打入到 jar 中, 方便查看依赖包版本
-    from("./"){
-        include("build.gradle.kts")
-    }
 }
 
 tasks {

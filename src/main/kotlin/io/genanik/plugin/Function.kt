@@ -4,7 +4,7 @@ import net.mamoe.mirai.Bot
 import net.mamoe.mirai.contact.Contact
 import net.mamoe.mirai.message.GroupMessage
 import net.mamoe.mirai.message.data.*
-import net.mamoe.mirai.simpleloader.Util.mirrorImage
+import io.genanik.plugin.Util.mirrorImage
 import io.genanik.plugin.Util.translate.Method
 import net.mamoe.mirai.utils.toExternalImage
 import net.mamoe.mirai.utils.upload
@@ -18,26 +18,25 @@ import java.util.*
 class MessagesRepeatFunction (message: GroupMessage) {
 
     private var lastMessage: GroupMessage = message
-    private var repeatTimes = 0
+    private var repeatMsg: MessageChain = MessageChainBuilder().asMessageChain()
 
     // 返回null的时候不要复读
     fun update(newMessage: GroupMessage): Boolean{
         return if (
             (removeMessageSource(lastMessage.message).toString() ==
                     removeMessageSource(newMessage.message).toString())
-            and (repeatTimes == 0)){
+            and (repeatMsg != removeMessageSource(newMessage.message))){
             lastMessage = newMessage
-            repeatTimes++
+            repeatMsg = removeMessageSource(newMessage.message)
             true
         } else {
             lastMessage = newMessage
-            repeatTimes = 0
             false
         }
     }
 
     private fun removeMessageSource(message: MessageChain): MessageChain{
-        var tmp = MessageChainBuilder()
+        val tmp = MessageChainBuilder()
         message.forEach {
             if (!it.toString().contains("[mirai:source:")){
                 tmp.add(it)
@@ -48,11 +47,11 @@ class MessagesRepeatFunction (message: GroupMessage) {
 
     // MessageChain倒序 祖传配方，懒得重写了
     suspend fun textBackRepeat(oldMsgChain: MessageChain, contact: Contact): MessageChain {
-        var newMsgChain = MessageChainBuilder()
+        val newMsgChain = MessageChainBuilder()
         removeMessageSource(oldMsgChain).reversed().forEach { messageClip ->
             if (messageClip.toString().contains("mirai:")) {
                 // 特殊消息
-                var pic = oldMsgChain.firstIsInstanceOrNull<Image>()
+                val pic = oldMsgChain.firstIsInstanceOrNull<Image>()
                 if (pic != null){
                     newMsgChain.add(mirrorImage(pic.queryUrl()).toExternalImage().upload(contact))
                 }else{
@@ -129,7 +128,7 @@ class TellTheTimeFunction {
 class DonaldTrumpFunction {
 
     private fun textStruct(singleWord:String): String{
-        var sentence = arrayListOf<String>()
+        val sentence = arrayListOf<String>()
         sentence.add("我们有全球最好的$singleWord" + "专家\n——特朗普")
         sentence.add("对于$singleWord，没什么需要恐慌的\n——特朗普")
         sentence.add("有些人会说我非常 非常非常有才，特别是$singleWord"+"方面\n——特朗普")
@@ -138,7 +137,7 @@ class DonaldTrumpFunction {
     }
 
     fun isAtBot(msg: MessageChain, miraiBot: Bot):Boolean {
-        var at:At? = msg.firstIsInstanceOrNull()
+        val at:At? = msg.firstIsInstanceOrNull()
         if (at != null){
             if (at.target == miraiBot.id){
                 return true

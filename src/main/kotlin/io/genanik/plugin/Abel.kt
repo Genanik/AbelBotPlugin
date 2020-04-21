@@ -17,7 +17,7 @@ object Abel: PluginBase() {
     val timeController = TellTheTimeFunction()
 
     lateinit var awa: ArrayList<String>
-    var abelPluginController: AbelPluginsManager = AbelPluginsManager()
+    var abelPluginController: AbelPluginsManager = AbelPluginsManager(logger)
 
     override fun onLoad() {
         awa = arrayListOf()
@@ -39,76 +39,83 @@ object Abel: PluginBase() {
         // 暂无
         // 注册Abel指令
         logger.info("开始注册Abel指令")
+        abelPluginController.regCommand("/help", "展示帮助界面") {
+            val result = MessageChainBuilder()
+            result.add("嘤嘤嘤嘤嘤嘤嘤嘤嘤\n\n")
+            for (i in abelPluginController.getAllCommands()){
+                result.add( "* $i  ${abelPluginController.getCommandDescription()[i]}\n")
+            }
+            result.add("\n咱介绍完指令了，嘤嘤嘤，该介绍功能了\n\n")
+            for (i in abelPluginController.getAllFunctions()){
+                result.add( "* $i  ${abelPluginController.getFunctionDescription()[i]}\n")
+            }
+            result.add("\nAbel版本: $abelBotVersion\n")
+            result.add("Mirai-Core版本: ${MiraiConsole.version}")
+            return@regCommand result.asMessageChain()
+        }
         abelPluginController.regCommand("dumpvars", "发送debug变量") {
-            var result = MessageChainBuilder()
+            val result = MessageChainBuilder()
             result.add("msgRepeatController: ${msgRepeatController.keys}")
             result.add("debug = $debug")
             return@regCommand result.asMessageChain()
         }
         abelPluginController.regCommand("报时", "发送当前时间") {
-            var result = MessageChainBuilder()
+            val result = MessageChainBuilder()
             result.add(timeController.getNow())
             return@regCommand result.asMessageChain()
         }
-        abelPluginController.regCommand("/help", "展示帮助界面") {
-            var result = MessageChainBuilder()
-            result.add("嘤嘤嘤嘤嘤嘤嘤嘤嘤\n")
-            for (i in abelPluginController.getAllCommands()){
-                result.add( "* $i  ${abelPluginController.getCommandDescription()[i]}\n")
-            }
-            result.add("咱介绍完指令了，嘤嘤嘤\n\n")
-            result.add("翻译功能介绍：髪现到群内出现繁体字自动翻译整句消息（\n")
-            result.add("复读功能介绍：同一条内容出现两次后自动镜像内容并发送\n")
-//            result.add("QQ大火基于Gennaik所编写的Abel插件集和mamoe团队编写的mirai协议库\n")
-            result.add("Abel版本: $abelBotVersion\n")
-            result.add("Mirai-Core版本: ${MiraiConsole.version}")
+        abelPluginController.regCommand("喵喵喵喵", "awa"){
+            val result = MessageChainBuilder()
+            result.add(awa[(0..awa.size).shuffled().last()])
             return@regCommand result.asMessageChain()
         }
-    }
 
-    override fun onReload(): Boolean {
-        onLoad()
-        return super.onReload()
+        // 注册Abel功能
+        abelPluginController.regFunction("翻译", "自动翻译包含繁体的消息")
+        abelPluginController.regFunction("复读", "同一条消息出现两次后，Abel机器人自动跟读")
+        abelPluginController.regFunction("川普", "@Abel机器人并加上一个关键词，自动发送名人名言")
     }
 
     override fun onEnable() {
         super.onEnable()
-
         logger.info("Plugin loaded!")
-
+        /**
+         * 订阅Abel功能实现 未来改用DSL内置到Abel插件框架
+         */
         subscribeGroupMessages {
-            // 繁体/多语言翻译
+            // 翻译
             always{
-                var tmp = msgTranslateController.autoTranslate(this)
-                if ((tmp.toString() != "") and (this.sender.id != 2704749081L)){
-                    reply(tmp)
+                if (abelPluginController.getStatus("翻译", this.group.id)){
+                    val tmp = msgTranslateController.autoTranslate(this)
+                    if ((tmp.toString() != "") and (this.sender.id != 2704749081L)){
+                        reply(tmp)
+                    }
                 }
-            }
-
-            // 喵喵喵
-            contains("喵喵喵喵"){
-                reply(awa[(0..awa.size).shuffled().last()])
             }
 
             // 复读
             always {
-                if (msgRepeatController.contains(this.group.id)){
-                    if (msgRepeatController[this.group.id]!!.update(this)){
+                if (abelPluginController.getStatus("复读", this.group.id)){
+                    if (msgRepeatController.contains(this.group.id)){
+                        if (msgRepeatController[this.group.id]!!.update(this)){
 
-                        reply(msgRepeatController[this.group.id]!!.textBackRepeat(this.message, this.group))
+                            reply(msgRepeatController[this.group.id]!!.textBackRepeat(this.message, this.group))
+                        }
+                    }else{
+                        msgRepeatController[this.group.id] = MessagesRepeatFunction(this)
                     }
-                }else{
-                    msgRepeatController[this.group.id] = MessagesRepeatFunction(this)
                 }
             }
 
-            // 川普模式
+            // 川普
             always {
-                if (msgTrumpController.isAtBot(this.message, this.bot)){
-                    var tmp = message.getOrNull(PlainText)
-                    if (tmp != null){
-                        reply(msgTrumpController.TrumpTextWithoutNPL(
-                            tmp.stringValue.replace(" ", "")))
+                if (abelPluginController.getStatus("川普", this.group.id)){
+                    if (msgTrumpController.isAtBot(this.message, this.bot)){
+                        val tmp = message.getOrNull(PlainText)
+                        if (tmp != null){
+                            reply(msgTrumpController.TrumpTextWithoutNPL(
+                                tmp.stringValue.replace(" ", "")))
+                        }
                     }
                 }
             }
@@ -122,6 +129,18 @@ object Abel: PluginBase() {
                 }
             }
         }
-
+        // Abel功能绑定
+        subscribeGroupMessages {
+            for (i in abelPluginController.getAllFunctions()){
+                case("关闭$i") {
+                    abelPluginController.disableFunc(i, this.group.id)
+                    reply("不出意外的话。。咱已经关掉${i}了")
+                }
+                case("开启$i") {
+                    abelPluginController.enableFunc(i, this.group.id)
+                    reply("不出意外的话。。咱打开${i}了")
+                }
+            }
+        }
     }
 }
