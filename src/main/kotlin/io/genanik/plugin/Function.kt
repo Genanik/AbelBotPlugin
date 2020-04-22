@@ -1,5 +1,6 @@
 package io.genanik.plugin
 
+import io.genanik.plugin.Util.mirror
 import net.mamoe.mirai.Bot
 import net.mamoe.mirai.contact.Contact
 import net.mamoe.mirai.message.GroupMessage
@@ -8,8 +9,10 @@ import io.genanik.plugin.Util.mirrorImage
 import io.genanik.plugin.Util.translate.Method
 import net.mamoe.mirai.utils.toExternalImage
 import net.mamoe.mirai.utils.upload
+import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.imageio.ImageIO
 
 /**
  * 判断出现两条相同内容后 将内容镜像并返回镜像的MessageChain
@@ -53,7 +56,8 @@ class MessagesRepeatFunction (message: GroupMessage) {
                 // 特殊消息
                 val pic = oldMsgChain.firstIsInstanceOrNull<Image>()
                 if (pic != null){
-                    newMsgChain.add(mirrorImage(pic.queryUrl()).toExternalImage().upload(contact))
+                    val img = ImageIO.read(URL(pic.queryUrl()))
+                    newMsgChain.add(mirror(img).toExternalImage().upload(contact))
                 }else{
                     newMsgChain.add(messageClip)
                 }

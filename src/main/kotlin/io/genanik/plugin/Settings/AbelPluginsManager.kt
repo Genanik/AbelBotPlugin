@@ -1,8 +1,6 @@
 package io.genanik.plugin.Settings
 
-import net.mamoe.mirai.console.MiraiConsole
 import net.mamoe.mirai.message.data.MessageChain
-import net.mamoe.mirai.message.data.MessageChainBuilder
 import net.mamoe.mirai.utils.MiraiLogger
 
 class AbelPluginsManager(newLogger: MiraiLogger) {
@@ -29,9 +27,9 @@ class AbelPluginsManager(newLogger: MiraiLogger) {
      * - function <- MessageChain: 触发指令后机器人的回复内容
      */
     fun regCommand(argStr: String, description: String, function:(Long) -> MessageChain){
+        logger.info("开始注册指令: $argStr")
         argsMap[argStr] = function
         commandHelpInf[argStr] = description
-        logger.info("注册指令: $argStr")
     }
 
     /**
@@ -75,6 +73,7 @@ class AbelPluginsManager(newLogger: MiraiLogger) {
      */
     fun regFunction(name: String, description: String){
         // newFuncSwitchList 储存已关闭该功能的群号
+        logger.info("开始注册功能: $name")
         val newFuncSwitchList = mutableListOf<Long>()
         functionMap[name] = newFuncSwitchList
         functionHelpInf[name] = description
