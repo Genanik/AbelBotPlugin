@@ -1,17 +1,24 @@
-package io.genanik.plugin
+package io.genanik.miraiPlugin
 
-import io.genanik.plugin.Settings.abelBotVersion
-import net.mamoe.mirai.console.plugins.PluginBase
-import net.mamoe.mirai.event.subscribeGroupMessages
-import net.mamoe.mirai.message.data.MessageChainBuilder
-import io.genanik.plugin.Settings.AbelPluginsManager
-import io.genanik.plugin.Settings.debug
+import io.genanik.miraiPlugin.Settings.AbelPluginsManager
+import io.genanik.miraiPlugin.Settings.abelBotVersion
+import io.genanik.miraiPlugin.Settings.debug
+import io.genanik.plugin.DonaldTrumpFunction
+import io.genanik.plugin.MessagesRepeatFunction
+import io.genanik.plugin.MessagesTranslateFunction
+import io.genanik.plugin.TellTheTimeFunction
 import net.mamoe.mirai.console.MiraiConsole
+import net.mamoe.mirai.console.plugins.PluginBase
+import net.mamoe.mirai.event.events.MessageRecallEvent
+import net.mamoe.mirai.event.subscribeAlways
+import net.mamoe.mirai.event.subscribeGroupMessages
+import net.mamoe.mirai.event.subscribeMessages
+import net.mamoe.mirai.message.data.MessageChainBuilder
 import net.mamoe.mirai.message.data.PlainText
+import net.mamoe.mirai.utils.info
 
-object Abel: PluginBase() {
+object AbelPluginMain : PluginBase() {
 
-    val msgRepeatController = mutableMapOf<Long, MessagesRepeatFunction>()
     val msgTranslateController = MessagesTranslateFunction()
     val msgTrumpController = DonaldTrumpFunction()
     val timeController = TellTheTimeFunction()
@@ -20,6 +27,8 @@ object Abel: PluginBase() {
     var abelPluginController: AbelPluginsManager = AbelPluginsManager(logger)
 
     override fun onLoad() {
+        super.onLoad()
+
         awa = arrayListOf()
 
         // 添加awa字符
@@ -53,10 +62,12 @@ object Abel: PluginBase() {
             result.add("Mirai-Core版本: ${MiraiConsole.version}")
             return@regCommand result.asMessageChain()
         }
-        abelPluginController.regCommand("dumpvars", "发送debug变量") {
+        abelPluginController.regCommand("dumpvars", "debug使用") {
             val result = MessageChainBuilder()
-            result.add("msgRepeatController: ${msgRepeatController.keys}")
-            result.add("debug = $debug")
+            result.add("AbelPluginController: ${abelPluginController}\n")
+            result.add("Debug: $debug\n")
+            result.add("AbelVersion: $abelBotVersion\n")
+            result.add("MiraiVersion: $${MiraiConsole.version}")
             return@regCommand result.asMessageChain()
         }
         abelPluginController.regCommand("报时", "发送当前时间") {
@@ -78,7 +89,9 @@ object Abel: PluginBase() {
 
     override fun onEnable() {
         super.onEnable()
+
         logger.info("Plugin loaded!")
+
         /**
          * 订阅Abel功能实现 未来改用DSL内置到Abel插件框架
          */
@@ -98,7 +111,6 @@ object Abel: PluginBase() {
                 if (abelPluginController.getStatus("复读", this.group.id)){
                     if (msgRepeatController.contains(this.group.id)){
                         if (msgRepeatController[this.group.id]!!.update(this)){
-
                             reply(msgRepeatController[this.group.id]!!.textBackRepeat(this.message, this.group))
                         }
                     }else{

@@ -1,4 +1,4 @@
-package io.genanik.plugin.Settings
+package io.genanik.miraiPlugin.Settings
 
 import net.mamoe.mirai.message.data.MessageChain
 import net.mamoe.mirai.utils.MiraiLogger
@@ -72,6 +72,14 @@ class AbelPluginsManager(newLogger: MiraiLogger) {
      * 默认开启
      */
     fun regFunction(name: String, description: String){
+        // newFuncSwitchList 储存已关闭该功能的群号
+        logger.info("开始注册功能: $name")
+        val newFuncSwitchList = mutableListOf<Long>()
+        functionMap[name] = newFuncSwitchList
+        functionHelpInf[name] = description
+    }
+
+    fun regFunction(name: String, description: String, function:(Long) -> MessageChain){
         // newFuncSwitchList 储存已关闭该功能的群号
         logger.info("开始注册功能: $name")
         val newFuncSwitchList = mutableListOf<Long>()

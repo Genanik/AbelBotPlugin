@@ -15,5 +15,5 @@ pluginManagement {
     }
 }
 
-rootProject.name = "AbelBot"
+rootProject.name = "miraiPlugin"
 

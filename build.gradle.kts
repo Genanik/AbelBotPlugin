@@ -1,5 +1,3 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-
 plugins {
     kotlin("jvm") version "1.4-M1"
     java
@@ -7,37 +5,33 @@ plugins {
 }
 
 group = "io.genanik"
-version = "2.0.15"
+version = "2.1.0"
 
 repositories {
-    maven(url =  "https://dl.bintray.com/him188moe/mirai")
-    maven(url = "https://dl.bintray.com/kotlin/kotlin-eap")
-    maven(url = "https://mirrors.huaweicloud.com/repository/maven")
-    mavenCentral()
+    maven( url = "https://dl.bintray.com/kotlin/kotlin-eap" )
+    maven( url = "https://maven.aliyun.com/nexus/content/repositories/jcenter" )
+    maven( url = "https://dl.bintray.com/him188moe/mirai" )
+    maven( url = "https://mirrors.huaweicloud.com/repository/maven" )
     jcenter()
+    mavenCentral()
 }
 
-val miraiCoreVersion = "0.37.0"
+val miraiCoreVersion = "0.39.0"
 val miraiConsoleVersion = "0.4.9"
 
 dependencies {
-    compileOnly("com.madgag", "animated-gif-lib","1.4")
-    testImplementation("com.madgag", "animated-gif-lib","1.4")
-    compileOnly("com.github.houbb", "opencc4j", "1.4.0")
-    testImplementation("com.github.houbb", "opencc4j", "1.4.0")
-
-    compileOnly( "org.json", "json", "20190722")
-    testImplementation( "org.json", "json", "20190722")
-
-
-
     compileOnly(kotlin("stdlib-jdk8"))
-    compileOnly("net.mamoe:mirai-core-jvm:$miraiCoreVersion")
+    compileOnly("net.mamoe:mirai-core:$miraiCoreVersion")
     compileOnly("net.mamoe:mirai-console:$miraiConsoleVersion")
+    compileOnly("com.madgag", "animated-gif-lib","1.4")
+    compileOnly("com.github.houbb", "opencc4j", "1.4.0")
+
     testImplementation(kotlin("stdlib-jdk8"))
-    testImplementation("net.mamoe:mirai-core-jvm:$miraiCoreVersion")
-    testImplementation("net.mamoe:mirai-core-qqandroid-jvm:$miraiCoreVersion")
+    testImplementation("net.mamoe:mirai-core:$miraiCoreVersion")
+    testImplementation("net.mamoe:mirai-core-qqandroid:$miraiCoreVersion")
     testImplementation("net.mamoe:mirai-console:$miraiConsoleVersion")
+    testImplementation("com.madgag", "animated-gif-lib","1.4")
+    testImplementation("com.github.houbb", "opencc4j", "1.4.0")
 }
 
 java {

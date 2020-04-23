@@ -1,12 +1,11 @@
 package io.genanik.plugin
 
-import io.genanik.plugin.Util.mirror
+import io.genanik.miraiPlugin.Util.mirror
 import net.mamoe.mirai.Bot
 import net.mamoe.mirai.contact.Contact
 import net.mamoe.mirai.message.GroupMessage
 import net.mamoe.mirai.message.data.*
-import io.genanik.plugin.Util.mirrorImage
-import io.genanik.plugin.Util.translate.Method
+import io.genanik.miraiPlugin.Util.translate.Method
 import net.mamoe.mirai.utils.toExternalImage
 import net.mamoe.mirai.utils.upload
 import java.net.URL
