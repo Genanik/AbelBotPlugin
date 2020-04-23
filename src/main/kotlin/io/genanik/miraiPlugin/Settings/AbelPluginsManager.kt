@@ -15,8 +15,101 @@ class AbelPluginsManager(newLogger: MiraiLogger) {
 
     private var logger: MiraiLogger = newLogger
 
+
     private var argsMap = mutableMapOf<String, (Long) -> MessageChain >()
     private var commandHelpInf = mutableMapOf<String, String>()
+
+    private var admin: MutableList<Long> = mutableListOf(2974918296)
+    private var adminArgsMap = mutableMapOf<String, (Long) -> MessageChain >()
+    private var adminFunctionMap = mutableMapOf<String, MutableList<Long>>() //群号存在这里面就是关闭了
+
+    /**
+     * 注册管理员指令
+     * argStr: 触发指令所用关键字
+     * description: 显示在/help
+     * function: 触发指令时执行的函数
+     * - function -> Long:  触发指令的群号
+     * - function <- MessageChain: 触发指令后机器人的回复内容
+     */
+    fun regAdminCommand(argStr: String, function:(Long) -> MessageChain){
+        logger.info("开始注册管理员指令: $argStr")
+        adminArgsMap[argStr] = function
+    }
+
+    /**
+     * 文本消息翻译为指令
+     */
+    fun adminTransferCommand(argStr:String): ((Long) -> MessageChain) {
+        return adminArgsMap[argStr]!!
+    }
+
+    /**
+     * 当前注册指令中是否包含名为argStr的指令
+     */
+    fun adminContains(argStr: String): Boolean {
+        return adminArgsMap.containsKey(argStr)
+    }
+
+    /**
+     * 返回所有已注册的指令
+     */
+    fun adminGetAllCommands(): MutableSet<String> {
+        return adminArgsMap.keys
+    }
+
+    /**
+     * 注册功能
+     * name: 功能名称
+     * description: 显示在/help
+     * 默认开启
+     */
+    fun adminRegFunction(name: String){
+        // newFuncSwitchList 储存已关闭该功能的群号
+        logger.info("开始注册功能: $name")
+        val newFuncSwitchList = mutableListOf<Long>()
+        adminFunctionMap[name] = newFuncSwitchList
+    }
+
+    /**
+     * 获取function当前是否被存入Map（被关闭）
+     */
+    fun adminGetStatus(name: String, groupID: Long): Boolean {
+        return adminFunctionMap[name]!!.contains(groupID)
+    }
+
+    /**
+     * 关闭function
+     */
+    fun adminDisableFunc(name: String, groupID: Long){
+        val newFuncSwitchList = adminFunctionMap[name]!!
+        newFuncSwitchList.add(groupID)
+        adminFunctionMap[name] = newFuncSwitchList
+    }
+
+    /**
+     * 开启function
+     */
+    fun adminEnableFunc(name: String, groupID: Long){
+        val newFuncSwitchList = adminFunctionMap[name]!!
+        newFuncSwitchList.remove(groupID)
+        adminFunctionMap[name] = newFuncSwitchList
+    }
+
+    /**
+     * 获得所有function的name
+     */
+    fun adminGetAllFunctions(): MutableSet<String> {
+        return adminFunctionMap.keys
+    }
+
+    fun isAdmin(checkID: Long): Boolean {
+        return admin.contains(checkID)
+    }
+
+
+
+
+
 
     /**
      * 注册指令
@@ -59,6 +152,7 @@ class AbelPluginsManager(newLogger: MiraiLogger) {
     fun getCommandDescription(): Map<String, String>{
         return commandHelpInf
     }
+
 
 
 
