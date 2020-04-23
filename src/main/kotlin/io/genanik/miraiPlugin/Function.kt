@@ -24,10 +24,9 @@ class MessagesRepeatFunction (message: GroupMessage) {
 
     // 返回null的时候不要复读
     fun update(newMessage: GroupMessage): Boolean{
-        return if (
-            (removeMessageSource(lastMessage.message).toString() ==
-                    removeMessageSource(newMessage.message).toString())
-            and (repeatMsg != removeMessageSource(newMessage.message))){
+        val tmpMsg = removeMessageSource(newMessage.message)
+        return if ((removeMessageSource(lastMessage.message).toString() == tmpMsg.toString()) and
+            (repeatMsg.toString() != removeMessageSource(newMessage.message).toString())){
             lastMessage = newMessage
             repeatMsg = removeMessageSource(newMessage.message)
             true
@@ -39,10 +38,8 @@ class MessagesRepeatFunction (message: GroupMessage) {
 
     private fun removeMessageSource(message: MessageChain): MessageChain{
         val tmp = MessageChainBuilder()
-        message.forEach {
-            if (!it.toString().contains("[mirai:source:")){
-                tmp.add(it)
-            }
+        message.forEachContent {
+            tmp.add(it)
         }
         return tmp.asMessageChain()
     }
@@ -132,10 +129,16 @@ class DonaldTrumpFunction {
 
     private fun textStruct(singleWord:String): String{
         val sentence = arrayListOf<String>()
-        sentence.add("我们有全球最好的$singleWord" + "专家\n——特朗普")
-        sentence.add("对于$singleWord，没什么需要恐慌的\n——特朗普")
-        sentence.add("有些人会说我非常 非常非常有才，特别是$singleWord"+"方面\n——特朗普")
-        sentence.add("没有人比我特朗普更懂$singleWord")
+        sentence.add("我们有全球最好的${singleWord}专家\n——特朗普")
+        sentence.add("对于${singleWord}，没什么需要恐慌的\n——特朗普")
+        sentence.add("有些人会说我非常 非常非常有才，特别是${singleWord}方面\n——特朗普")
+        sentence.add("没有人比我特朗普更懂${singleWord}")
+        sentence.add("人们并没有真的从无到有创造出什么，而是重新组合创造出更多东西，例如${singleWord}\n——特朗普")
+        sentence.add("特朗普式${singleWord}，欲盖而弥彰！")
+        sentence.add("总统越是否认${singleWord}，民众就越应该关心${singleWord}")
+        sentence.add("我认为${singleWord}是不可怕避免的\n——特朗普")
+        sentence.add("你不握手，怎么能是${singleWord}呢？\n——特朗普")
+        sentence.add("把${singleWord}当作流感就好\n——特朗普")
         return sentence.random()
     }
 

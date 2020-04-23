@@ -19,6 +19,7 @@ import net.mamoe.mirai.utils.info
 
 object AbelPluginMain : PluginBase() {
 
+    val msgRepeatController = mutableMapOf<Long, MessagesRepeatFunction>()
     val msgTranslateController = MessagesTranslateFunction()
     val msgTrumpController = DonaldTrumpFunction()
     val timeController = TellTheTimeFunction()

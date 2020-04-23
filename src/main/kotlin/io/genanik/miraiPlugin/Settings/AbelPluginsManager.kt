@@ -79,14 +79,6 @@ class AbelPluginsManager(newLogger: MiraiLogger) {
         functionHelpInf[name] = description
     }
 
-    fun regFunction(name: String, description: String, function:(Long) -> MessageChain){
-        // newFuncSwitchList 储存已关闭该功能的群号
-        logger.info("开始注册功能: $name")
-        val newFuncSwitchList = mutableListOf<Long>()
-        functionMap[name] = newFuncSwitchList
-        functionHelpInf[name] = description
-    }
-
     /**
      * 获取function当前是否被开启
      */
