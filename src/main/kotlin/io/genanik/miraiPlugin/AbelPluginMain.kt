@@ -6,23 +6,19 @@ import io.genanik.miraiPlugin.Settings.debug
 import io.genanik.plugin.DonaldTrumpFunction
 import io.genanik.plugin.MessagesRepeatFunction
 import io.genanik.plugin.MessagesTranslateFunction
-import io.genanik.plugin.TellTheTimeFunction
+import io.genanik.plugin.TimeFunction
 import net.mamoe.mirai.console.MiraiConsole
 import net.mamoe.mirai.console.plugins.PluginBase
-import net.mamoe.mirai.event.events.MessageRecallEvent
-import net.mamoe.mirai.event.subscribeAlways
 import net.mamoe.mirai.event.subscribeGroupMessages
-import net.mamoe.mirai.event.subscribeMessages
 import net.mamoe.mirai.message.data.MessageChainBuilder
 import net.mamoe.mirai.message.data.PlainText
-import net.mamoe.mirai.utils.info
 
 object AbelPluginMain : PluginBase() {
 
     val msgRepeatController = mutableMapOf<Long, MessagesRepeatFunction>()
     val msgTranslateController = MessagesTranslateFunction()
     val msgTrumpController = DonaldTrumpFunction()
-    val timeController = TellTheTimeFunction()
+    val timeController = TimeFunction()
 
     lateinit var awa: ArrayList<String>
     var abelPluginController: AbelPluginsManager = AbelPluginsManager(logger)
@@ -100,7 +96,7 @@ object AbelPluginMain : PluginBase() {
             // 翻译
             always{
                 if (abelPluginController.getStatus("翻译", this.group.id)){
-                    val tmp = msgTranslateController.autoTranslate(this)
+                    val tmp = msgTranslateController.translate(this)
                     if ((tmp.toString() != "") and (this.sender.id != 2704749081L)){
                         reply(tmp)
                     }

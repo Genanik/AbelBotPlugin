@@ -13,6 +13,14 @@ import java.text.SimpleDateFormat
 import java.util.*
 import javax.imageio.ImageIO
 
+fun removeMessageSource(message: MessageChain): MessageChain{
+    val tmp = MessageChainBuilder()
+    message.forEachContent {
+        tmp.add(it)
+    }
+    return tmp.asMessageChain()
+}
+
 /**
  * 判断出现两条相同内容后 将内容镜像并返回镜像的MessageChain
  * 构造时需要传入一条GroupMessage
@@ -34,14 +42,6 @@ class MessagesRepeatFunction (message: GroupMessage) {
             lastMessage = newMessage
             false
         }
-    }
-
-    private fun removeMessageSource(message: MessageChain): MessageChain{
-        val tmp = MessageChainBuilder()
-        message.forEachContent {
-            tmp.add(it)
-        }
-        return tmp.asMessageChain()
     }
 
     // MessageChain倒序 祖传配方，懒得重写了
@@ -76,17 +76,13 @@ class MessagesRepeatFunction (message: GroupMessage) {
  */
 class MessagesTranslateFunction {
 
-    fun autoTranslate(rawMessage: GroupMessage): MessageChain{
-        return translate(rawMessage)
-    }
-
-    private fun translate(rawMessage: GroupMessage): MessageChain{
+    fun translate(rawMessage: GroupMessage): MessageChain{
         // 构造 MessageChain
         val replyMsg = MessageChainBuilder()
         var arMsg: String
         var isNeedSend = false
         // 写入数据
-        rawMessage.message.forEach {
+        rawMessage.message.forEachContent {
             if ((it.toString().indexOf("mirai:") != -1 ) or (it.toString().indexOf("@") != -1)) {
                 // 不启动翻译
                 replyMsg.add(it)
@@ -104,19 +100,19 @@ class MessagesTranslateFunction {
             }
             // if完了
         }
-        return if (isNeedSend and !replyMsg.equals(MessageChainBuilder().asMessageChain())){
+        return if (isNeedSend and !replyMsg.equals(EmptyMessageChain)){
             replyMsg.asMessageChain() // 返回被翻译过的MsgChain
         }else{
-            MessageChainBuilder().asMessageChain() // 没有翻译过 返回空MsgChain
+            EmptyMessageChain// 没有翻译过 返回空MsgChain
         }
     }
 
 }
 
 /**
- * 返回当前时间
+ * 返回当前时间 TODO 整点报时
  */
-class TellTheTimeFunction {
+class TimeFunction {
     fun getNow(): String {
         return SimpleDateFormat("HH:mm").format(Date())
     }
