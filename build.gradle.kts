@@ -1,3 +1,5 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     kotlin("jvm") version "1.4-M1"
     java
@@ -20,11 +22,12 @@ val miraiCoreVersion = "0.39.1"
 val miraiConsoleVersion = "0.4.9"
 
 dependencies {
+    implementation("com.madgag", "animated-gif-lib","1.4")
+    implementation("com.github.houbb", "opencc4j", "1.4.0")
+
     compileOnly(kotlin("stdlib-jdk8"))
     compileOnly("net.mamoe:mirai-core:$miraiCoreVersion")
     compileOnly("net.mamoe:mirai-console:$miraiConsoleVersion")
-    compileOnly("com.madgag", "animated-gif-lib","1.4")
-    compileOnly("com.github.houbb", "opencc4j", "1.4.0")
 
     testImplementation(kotlin("stdlib-jdk8"))
     testImplementation("net.mamoe:mirai-core:$miraiCoreVersion")
