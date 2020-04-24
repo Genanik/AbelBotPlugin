@@ -58,14 +58,14 @@ class AbelPluginsManager(newLogger: MiraiLogger) {
     }
 
     /**
-     * 注册功能
+     * 注册管理员功能
      * name: 功能名称
      * description: 显示在/help
      * 默认开启
      */
     fun adminRegFunction(name: String){
         // newFuncSwitchList 储存已关闭该功能的群号
-        logger.info("开始注册功能: $name")
+        logger.info("开始注册管理员功能: $name")
         val newFuncSwitchList = mutableListOf<Long>()
         adminFunctionMap[name] = newFuncSwitchList
     }
