@@ -1,11 +1,11 @@
 package io.genanik.plugin
 
-import io.genanik.miraiPlugin.Util.mirror
+import io.genanik.AbelPlugin.Util.mirror
 import net.mamoe.mirai.Bot
 import net.mamoe.mirai.contact.Contact
 import net.mamoe.mirai.message.GroupMessage
 import net.mamoe.mirai.message.data.*
-import io.genanik.miraiPlugin.Util.translate.Method
+import io.genanik.AbelPlugin.Util.translate.Method
 import net.mamoe.mirai.utils.toExternalImage
 import net.mamoe.mirai.utils.upload
 import java.net.URL
@@ -123,7 +123,7 @@ class TimeFunction {
  */
 class DonaldTrumpFunction {
 
-    private fun textStruct(singleWord:String): String{
+    fun textStruct(singleWord:String): String{
         val sentence = arrayListOf<String>()
         sentence.add("我们有全球最好的${singleWord}专家\n——特朗普")
         sentence.add("对于${singleWord}，没什么需要恐慌的\n——特朗普")
@@ -147,9 +147,5 @@ class DonaldTrumpFunction {
             }
         }
         return false
-    }
-
-    fun TrumpTextWithoutNPL(input: String): String {
-        return textStruct(input)
     }
 }

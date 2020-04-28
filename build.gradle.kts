@@ -19,7 +19,7 @@ repositories {
 }
 
 val miraiCoreVersion = "0.39.1"
-val miraiConsoleVersion = "0.4.9"
+val miraiConsoleVersion = "0.4.11"
 
 dependencies {
     implementation("com.madgag", "animated-gif-lib","1.4")
@@ -33,8 +33,6 @@ dependencies {
     testImplementation("net.mamoe:mirai-core:$miraiCoreVersion")
     testImplementation("net.mamoe:mirai-core-qqandroid:$miraiCoreVersion")
     testImplementation("net.mamoe:mirai-console:$miraiConsoleVersion")
-    testImplementation("com.madgag", "animated-gif-lib","1.4")
-    testImplementation("com.github.houbb", "opencc4j", "1.4.0")
 }
 
 java {

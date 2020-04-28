@@ -1,4 +1,4 @@
-package io.genanik.miraiPlugin.Util
+package io.genanik.AbelPlugin.Util
 
 import com.madgag.gif.fmsware.AnimatedGifEncoder
 import com.madgag.gif.fmsware.GifDecoder

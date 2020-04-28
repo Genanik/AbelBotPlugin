@@ -1,8 +1,8 @@
-package io.genanik.miraiPlugin
+package io.genanik.AbelPlugin
 
-import io.genanik.miraiPlugin.Settings.AbelPluginsManager
-import io.genanik.miraiPlugin.Settings.abelBotVersion
-import io.genanik.miraiPlugin.Settings.debug
+import io.genanik.AbelPlugin.Settings.AbelPluginsManager
+import io.genanik.AbelPlugin.Settings.UserPluginManager
+import io.genanik.AbelPlugin.Settings.abelBotVersion
 import io.genanik.plugin.DonaldTrumpFunction
 import io.genanik.plugin.MessagesRepeatFunction
 import io.genanik.plugin.MessagesTranslateFunction
@@ -13,91 +13,30 @@ import net.mamoe.mirai.event.subscribeGroupMessages
 import net.mamoe.mirai.message.data.MessageChainBuilder
 import net.mamoe.mirai.message.data.PlainText
 
-object AbelPluginMain : PluginBase() {
+object abelPluginMain : PluginBase() {
 
     val msgRepeatController = mutableMapOf<Long, MessagesRepeatFunction>()
     val msgTranslateController = MessagesTranslateFunction()
     val msgTrumpController = DonaldTrumpFunction()
-    val timeController = TimeFunction()
 
-    lateinit var awa: ArrayList<String>
-    var abelPluginController: AbelPluginsManager = AbelPluginsManager(logger)
+
+    val userPluginController = UserPluginManager(logger)
+    val adminPluginController = AdminPluginManager(logger)
 
     override fun onLoad() {
         super.onLoad()
 
-        awa = arrayListOf()
-
-        // 添加awa字符
-        awa.add("w(ﾟДﾟ)w")
-        awa.add("ヽ(✿ﾟ▽ﾟ)ノ")
-        awa.add("Σ( ° △ °|||)︴")
-        awa.add("φ(≧ω≦*)♪")
-        awa.add("(°ー°〃)")
-        awa.add("喵喵喵？")
-        awa.add("喵喵！")
-        awa.add("(≧▽≦)喵？")
-        awa.add("\"˚∆˚\"")
-        awa.add("Orz")
-        awa.add("诶嘿，我不叫(≧ω≦)))")
-
         // 注册Mirai指令
         // 暂无
         // 注册Abel管理员指令
-        abelPluginController.regAdminCommand("dumpvars") {
-            val result = MessageChainBuilder()
-            result.add("AbelPluginController: ${abelPluginController}\n")
-            result.add("Debug: $debug\n")
-            result.add("AbelVersion: $abelBotVersion\n")
-            result.add("MiraiVersion: $${MiraiConsole.version}")
-            return@regAdminCommand result.asMessageChain()
-        }
-        abelPluginController.regAdminCommand("/adminHelp"){
-            val result = MessageChainBuilder()
-            result.add("禁用{功能/指令}\n")
-            result.add("启用{功能/指令}\n")
-            result.add(abelPluginController.adminGetAllCommands().toString() + "\n")
-            result.add(abelPluginController.adminGetAllFunctions().toString())
-            return@regAdminCommand result.asMessageChain()
-        }
-        // 注册Abel指令
-        logger.info("开始注册Abel指令")
-        abelPluginController.regCommand("/help", "展示帮助信息") {
-            val result = MessageChainBuilder()
-            result.add("嘤嘤嘤嘤嘤嘤嘤嘤嘤\n\n")
-            for (i in abelPluginController.getAllCommands()){
-                result.add( "* $i  ${abelPluginController.getCommandDescription()[i]}\n")
-            }
-            result.add("\n咱介绍完指令了，嘤嘤嘤，该介绍功能了\n\n")
-            for (i in abelPluginController.getAllFunctions()){
-                result.add( "* $i  ${abelPluginController.getFunctionDescription()[i]}\n")
-            }
-            result.add("\n其他功能：\n* \"功能名称+打开了嘛\" 获取功能运行状态\n")
-            result.add("* /adminHelp 获取管理员帮助信息\n")
-            result.add("\nAbel版本: $abelBotVersion\n")
-            result.add("Mirai-Core版本: ${MiraiConsole.version}")
-            return@regCommand result.asMessageChain()
-        }
-        abelPluginController.regCommand("报时", "发送当前时间") {
-            val result = MessageChainBuilder()
-            result.add(timeController.getNow())
-            return@regCommand result.asMessageChain()
-        }
-        abelPluginController.regCommand("喵喵喵喵", "awa"){
-            val result = MessageChainBuilder()
-            result.add(awa[(0..awa.size).shuffled().last()])
-            return@regCommand result.asMessageChain()
-        }
-
-        // 注册Abel管理员功能
-        abelPluginController.adminRegFunction("翻译")
-        abelPluginController.adminRegFunction("复读")
-        abelPluginController.adminRegFunction("川普")
+        initAbelAdminCommand(logger, adminPluginController)
+        // 注册Abel用户指令
+        initAbelUserCommand(logger, userPluginController)
 
         // 注册Abel功能
-        abelPluginController.regFunction("翻译", "自动翻译包含繁体的消息")
-        abelPluginController.regFunction("复读", "同一条消息出现两次后，Abel机器人自动跟读")
-        abelPluginController.regFunction("川普", "@Abel机器人并加上一个关键词，自动发送名人名言")
+        userPluginController.regFunction("翻译", "自动翻译包含繁体的消息")
+        userPluginController.regFunction("复读", "同一条消息出现两次后，Abel机器人自动跟读")
+        userPluginController.regFunction("川普", "@Abel机器人并加上一个关键词，自动发送名人名言")
     }
 
     override fun onEnable() {
@@ -137,7 +76,7 @@ object AbelPluginMain : PluginBase() {
                     if (msgTrumpController.isAtBot(this.message, this.bot)){
                         val tmp = message.getOrNull(PlainText)
                         if (tmp != null){
-                            reply(msgTrumpController.TrumpTextWithoutNPL(
+                            reply(msgTrumpController.textStruct(
                                 tmp.stringValue.replace(" ", "")))
                         }
                     }
@@ -164,7 +103,7 @@ object AbelPluginMain : PluginBase() {
             for (i in abelPluginController.getAllFunctions()){
                 // 操作
                 case("关闭$i") {
-                    if (!abelPluginController.adminGetStatus(i, this.group.id)){
+                    if (abelPluginController.adminGetStatus(i, this.group.id)){
                         if (abelPluginController.getStatus(i, this.group.id)){
                             abelPluginController.disableFunc(i, this.group.id)
                             reply("不出意外的话。。咱关掉${i}了")
@@ -175,7 +114,7 @@ object AbelPluginMain : PluginBase() {
                     }
                 }
                 case("开启$i") {
-                    if (!abelPluginController.adminGetStatus(i, this.group.id)){
+                    if (abelPluginController.adminGetStatus(i, this.group.id)){
                         if (!abelPluginController.getStatus(i,this.group.id)){
                             abelPluginController.enableFunc(i, this.group.id)
                             reply("不出意外的话。。咱打开${i}了")
