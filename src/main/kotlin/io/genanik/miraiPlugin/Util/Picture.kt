@@ -2,6 +2,11 @@ package io.genanik.miraiPlugin.Util
 
 import com.madgag.gif.fmsware.AnimatedGifEncoder
 import com.madgag.gif.fmsware.GifDecoder
+import net.mamoe.mirai.contact.Contact
+import net.mamoe.mirai.message.data.OfflineImage
+import net.mamoe.mirai.message.data.queryUrl
+import net.mamoe.mirai.utils.toExternalImage
+import net.mamoe.mirai.utils.upload
 import java.awt.Color
 import java.awt.Graphics
 import java.awt.Image
@@ -12,15 +17,14 @@ import javax.imageio.ImageIO
 
 
 fun isGif(url: String):Boolean{
-//     设置新的pic
-//    var gd = GifDecoder()
-//    要处理的图片
-//    var status = gd.read(url)
-//    if (status != GifDecoder.STATUS_OK) {
-//        return false
-//    }
-//    return true
-    return false
+    // 设置新的pic
+    var gd = GifDecoder()
+    // 要处理的图片
+    var status = gd.read(url)
+    if (status != GifDecoder.STATUS_OK) {
+        return false
+    }
+    return true
 }
 
 // 镜像BufferedImage的图
@@ -55,7 +59,7 @@ fun mirrorGif(inputURL: String, outputFileName: String): File {
         throw IOException("read image first.gif error!")
     }
 
-    val ge =  AnimatedGifEncoder()
+    val ge = AnimatedGifEncoder()
 
     ge.start(outputFileName)
     ge.setRepeat(gd.loopCount)
@@ -75,16 +79,16 @@ fun mirrorGif(inputURL: String, outputFileName: String): File {
 }
 
 // 倒放gif
-fun reverseGif(outputFileName: String): File {
+fun reverseGif(url: String): File {
 
     val decoder = GifDecoder()
-    val status = decoder.read("first.gif")
+    val status = decoder.read(url)
     if (status != GifDecoder.STATUS_OK) {
         throw IOException("read image first.gif error!")
     }
     // 拆分一帧一帧的压缩之后合成
     val encoder = AnimatedGifEncoder()
-    encoder.start(outputFileName)
+    encoder.start("tmp.gif")
     encoder.setRepeat(decoder.loopCount)
     for (i in decoder.frameCount - 1 downTo 0) {
         encoder.setDelay(decoder.getDelay(i)) // 设置播放延迟时间
@@ -94,7 +98,7 @@ fun reverseGif(outputFileName: String): File {
         val zoomImage = BufferedImage(width, height, bufferedImage.type)
         val image: Image = bufferedImage.getScaledInstance(width, height, Image.SCALE_SMOOTH)
         val gc: Graphics = zoomImage.graphics
-        gc.setColor(Color.WHITE)
+        gc.color = Color.WHITE
         gc.drawImage(image, 0, 0, null)
         encoder.addFrame(zoomImage)
     }
@@ -102,12 +106,11 @@ fun reverseGif(outputFileName: String): File {
     return File("tmp.gif")
 }
 
-fun mirrorImage(url: String): File{
+suspend fun mirrorImage(url: String, contact: Contact): OfflineImage{
     return if (isGif(url)){
-        mirrorGif(url, "optGif")
-        File("optGif")
+//        mirrorGif(url, "optGif")
+        reverseGif(url).toExternalImage().upload(contact)
     }else{
-        ImageIO.write(mirror(ImageIO.read(URL(url))), "png", File("optImg"))
-        File("optImg")
+        ImageIO.read(URL(url)).toExternalImage().upload(contact)
     }
 }

@@ -1,17 +1,13 @@
-package io.genanik.plugin
+package io.genanik.miraiPlugin
 
-import io.genanik.miraiPlugin.Util.mirror
+import io.genanik.miraiPlugin.Util.mirrorImage
 import net.mamoe.mirai.Bot
 import net.mamoe.mirai.contact.Contact
 import net.mamoe.mirai.message.GroupMessage
 import net.mamoe.mirai.message.data.*
 import io.genanik.miraiPlugin.Util.translate.Method
-import net.mamoe.mirai.utils.toExternalImage
-import net.mamoe.mirai.utils.upload
-import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
-import javax.imageio.ImageIO
 
 fun removeMessageSource(message: MessageChain): MessageChain{
     val tmp = MessageChainBuilder()
@@ -52,8 +48,8 @@ class MessagesRepeatFunction (message: GroupMessage) {
                 // 特殊消息
                 val pic = oldMsgChain.firstIsInstanceOrNull<Image>()
                 if (pic != null){
-                    val img = ImageIO.read(URL(pic.queryUrl()))
-                    newMsgChain.add(mirror(img).toExternalImage().upload(contact))
+                    val newImg = mirrorImage(pic.queryUrl(), contact)
+                    newMsgChain.add(newImg)
                 }else{
                     newMsgChain.add(messageClip)
                 }

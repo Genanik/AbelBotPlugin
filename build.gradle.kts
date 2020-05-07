@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "io.genanik"
-version = "2.1.1"
+version = "2.1.2"
 
 repositories {
     maven( url = "https://dl.bintray.com/kotlin/kotlin-eap" )
@@ -18,8 +18,8 @@ repositories {
     mavenCentral()
 }
 
-val miraiCoreVersion = "0.39.1"
-val miraiConsoleVersion = "0.4.9"
+val miraiCoreVersion = "1.0-RC"
+val miraiConsoleVersion = "0.5.1"
 
 dependencies {
     implementation("com.madgag", "animated-gif-lib","1.4")

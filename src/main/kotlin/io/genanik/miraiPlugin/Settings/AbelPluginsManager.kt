@@ -1,9 +1,11 @@
 package io.genanik.miraiPlugin.Settings
 
+import net.mamoe.mirai.console.plugins.Config
+import net.mamoe.mirai.console.plugins.ConfigSection
 import net.mamoe.mirai.message.data.MessageChain
 import net.mamoe.mirai.utils.MiraiLogger
 
-class AbelPluginsManager(newLogger: MiraiLogger) {
+class AbelPluginsManager(newLogger: MiraiLogger, config: Config) {
 
     /**
      * AbelPluginsManager有两个控制器
@@ -22,6 +24,16 @@ class AbelPluginsManager(newLogger: MiraiLogger) {
     private var admin: MutableList<Long> = mutableListOf(2974918296)
     private var adminArgsMap = mutableMapOf<String, (Long) -> MessageChain >()
     private var adminFunctionMap = mutableMapOf<String, MutableList<Long>>() //群号存在这里面就是关闭了
+
+
+    init {
+        try {
+            config.getConfigSection("argsMap")
+        } catch (e: NoSuchElementException){
+
+        }
+
+    }
 
     /**
      * 注册管理员指令
@@ -90,6 +102,24 @@ class AbelPluginsManager(newLogger: MiraiLogger) {
      * 开启function
      */
     fun adminEnableFunc(name: String, groupID: Long){
+        val newFuncSwitchList = adminFunctionMap[name]!!
+        newFuncSwitchList.remove(groupID)
+        adminFunctionMap[name] = newFuncSwitchList
+    }
+
+    /**
+     * 关闭command
+     */
+    fun adminDisableCmd(name: String, groupID: Long){
+        val newFuncSwitchList = adminFunctionMap[name]!!
+        newFuncSwitchList.add(groupID)
+        adminFunctionMap[name] = newFuncSwitchList
+    }
+
+    /**
+     * 开启command
+     */
+    fun adminEnableCmd(name: String, groupID: Long){
         val newFuncSwitchList = adminFunctionMap[name]!!
         newFuncSwitchList.remove(groupID)
         adminFunctionMap[name] = newFuncSwitchList
@@ -210,6 +240,17 @@ class AbelPluginsManager(newLogger: MiraiLogger) {
      */
     fun getFunctionDescription(): Map<String, String>{
         return functionHelpInf
+    }
+
+
+
+    // 储存当前内容
+    fun save(config: Config){
+        lateinit var argsMap: ConfigSection
+        lateinit var commandHelpInf: ConfigSection
+        lateinit var admin: ConfigSection
+        lateinit var adminArgsMap: ConfigSection
+        lateinit var adminFunctionMap: ConfigSection
     }
 
 }

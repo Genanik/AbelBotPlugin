@@ -3,11 +3,8 @@ package io.genanik.miraiPlugin
 import io.genanik.miraiPlugin.Settings.AbelPluginsManager
 import io.genanik.miraiPlugin.Settings.abelBotVersion
 import io.genanik.miraiPlugin.Settings.debug
-import io.genanik.plugin.DonaldTrumpFunction
-import io.genanik.plugin.MessagesRepeatFunction
-import io.genanik.plugin.MessagesTranslateFunction
-import io.genanik.plugin.TimeFunction
 import net.mamoe.mirai.console.MiraiConsole
+import net.mamoe.mirai.console.plugins.Config
 import net.mamoe.mirai.console.plugins.PluginBase
 import net.mamoe.mirai.event.subscribeGroupMessages
 import net.mamoe.mirai.message.data.MessageChainBuilder
@@ -21,10 +18,14 @@ object AbelPluginMain : PluginBase() {
     val timeController = TimeFunction()
 
     lateinit var awa: ArrayList<String>
-    var abelPluginController: AbelPluginsManager = AbelPluginsManager(logger)
+
+    lateinit var abelPluginController: AbelPluginsManager
+    lateinit var settings: Config
 
     override fun onLoad() {
         super.onLoad()
+        settings = getResourcesConfig("abelPluginController.yml")
+        abelPluginController = AbelPluginsManager(logger, settings)
 
         awa = arrayListOf()
 
@@ -46,7 +47,9 @@ object AbelPluginMain : PluginBase() {
         // 注册Abel管理员指令
         abelPluginController.regAdminCommand("dumpvars") {
             val result = MessageChainBuilder()
-            result.add("AbelPluginController: ${abelPluginController}\n")
+            result.add("AbelPluginController: " +
+                    "${abelPluginController.getAllCommands()}\n" +
+                    "${abelPluginController.getAllFunctions()}\n")
             result.add("Debug: $debug\n")
             result.add("AbelVersion: $abelBotVersion\n")
             result.add("MiraiVersion: $${MiraiConsole.version}")
@@ -54,8 +57,8 @@ object AbelPluginMain : PluginBase() {
         }
         abelPluginController.regAdminCommand("/adminHelp"){
             val result = MessageChainBuilder()
-            result.add("禁用{功能/指令}\n")
-            result.add("启用{功能/指令}\n")
+            result.add("禁用{功能}\n")
+            result.add("启用{功能}\n")
             result.add(abelPluginController.adminGetAllCommands().toString() + "\n")
             result.add(abelPluginController.adminGetAllFunctions().toString())
             return@regAdminCommand result.asMessageChain()
@@ -74,8 +77,8 @@ object AbelPluginMain : PluginBase() {
             }
             result.add("\n其他功能：\n* \"功能名称+打开了嘛\" 获取功能运行状态\n")
             result.add("* /adminHelp 获取管理员帮助信息\n")
-            result.add("\nAbel版本: $abelBotVersion\n")
-            result.add("Mirai-Core版本: ${MiraiConsole.version}")
+//            result.add("\nAbel版本: $abelBotVersion\n")
+//            result.add("Mirai-Core版本: ${MiraiConsole.version}")
             return@regCommand result.asMessageChain()
         }
         abelPluginController.regCommand("报时", "发送当前时间") {
@@ -137,8 +140,10 @@ object AbelPluginMain : PluginBase() {
                     if (msgTrumpController.isAtBot(this.message, this.bot)){
                         val tmp = message.getOrNull(PlainText)
                         if (tmp != null){
-                            reply(msgTrumpController.TrumpTextWithoutNPL(
-                                tmp.stringValue.replace(" ", "")))
+                            val keyWord = tmp.stringValue.replace(" ", "")
+                            if (keyWord != ""){
+                                reply(msgTrumpController.TrumpTextWithoutNPL(keyWord))
+                            }
                         }
                     }
                 }
@@ -197,7 +202,7 @@ object AbelPluginMain : PluginBase() {
             }
 
             // 管理员
-            for (i in abelPluginController.adminGetAllFunctions() ){
+            for (i in abelPluginController.adminGetAllFunctions()){
                 // 操作
                 case("禁用$i") {
                     if (abelPluginController.isAdmin(this.sender.id)){
