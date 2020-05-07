@@ -3,7 +3,7 @@ package io.genanik.miraiPlugin
 import io.genanik.miraiPlugin.Util.mirrorImage
 import net.mamoe.mirai.Bot
 import net.mamoe.mirai.contact.Contact
-import net.mamoe.mirai.message.GroupMessage
+import net.mamoe.mirai.message.GroupMessageEvent
 import net.mamoe.mirai.message.data.*
 import io.genanik.miraiPlugin.Util.translate.Method
 import java.text.SimpleDateFormat
@@ -19,15 +19,15 @@ fun removeMessageSource(message: MessageChain): MessageChain{
 
 /**
  * 判断出现两条相同内容后 将内容镜像并返回镜像的MessageChain
- * 构造时需要传入一条GroupMessage
+ * 构造时需要传入一条GroupMessageEvent
  */
-class MessagesRepeatFunction (message: GroupMessage) {
+class MessagesRepeatFunction (message: GroupMessageEvent) {
 
-    private var lastMessage: GroupMessage = message
+    private var lastMessage: GroupMessageEvent = message
     private var repeatMsg: MessageChain = MessageChainBuilder().asMessageChain()
 
     // 返回null的时候不要复读
-    fun update(newMessage: GroupMessage): Boolean{
+    fun update(newMessage: GroupMessageEvent): Boolean{
         val tmpMsg = removeMessageSource(newMessage.message)
         return if ((removeMessageSource(lastMessage.message).toString() == tmpMsg.toString()) and
             (repeatMsg.toString() != removeMessageSource(newMessage.message).toString())){
@@ -46,18 +46,46 @@ class MessagesRepeatFunction (message: GroupMessage) {
         removeMessageSource(oldMsgChain).reversed().forEach { messageClip ->
             if (messageClip.toString().contains("mirai:")) {
                 // 特殊消息
-                val pic = oldMsgChain.firstIsInstanceOrNull<Image>()
-                if (pic != null){
+                try {
+                    val pic = messageClip as Image
                     val newImg = mirrorImage(pic.queryUrl(), contact)
                     newMsgChain.add(newImg)
-                }else{
+                }catch (e: Exception){
+                    // 不是图片
                     newMsgChain.add(messageClip)
                 }
             } else {
                 //文字消息
                 var tmp = ""
                 messageClip.toString().forEach {
-                    tmp = it + tmp
+                    when (it){
+                        '[' -> tmp = "]$tmp"
+                        ']' -> tmp = "[$tmp"
+                        '(' -> tmp = ")$tmp"
+                        ')' -> tmp = "($tmp"
+                        '）' -> tmp = "（$tmp"
+                        '（' -> tmp = "）$tmp"
+                        '{' -> tmp = "}$tmp"
+                        '}' -> tmp = "{$tmp"
+                        '【' -> tmp = "】$tmp"
+                        '】' -> tmp = "【$tmp"
+                        '「' -> tmp = "」$tmp"
+                        '」' -> tmp = "「$tmp"
+                        '“' -> tmp = "”$tmp"
+                        '”' -> tmp = "“$tmp"
+                        '/' -> tmp = "\\$tmp"
+                        '\\' -> tmp = "/$tmp"
+                        '‘' -> tmp = "’$tmp"
+                        '’' -> tmp = "‘$tmp"
+                        '?' -> tmp = "¿$tmp"
+                        '？' -> tmp = "¿ $tmp"
+                        '¿' -> tmp = "?$tmp"
+                        '<' -> tmp = ">$tmp"
+                        '>' -> tmp = "<$tmp"
+                        '《' -> tmp = "》$tmp"
+                        '》' -> tmp = "《$tmp"
+                        else -> tmp = it + tmp
+                    }
                 }
                 newMsgChain.add(tmp)
             }
@@ -72,7 +100,7 @@ class MessagesRepeatFunction (message: GroupMessage) {
  */
 class MessagesTranslateFunction {
 
-    fun translate(rawMessage: GroupMessage): MessageChain{
+    fun translate(rawMessage: GroupMessageEvent): MessageChain{
         // 构造 MessageChain
         val replyMsg = MessageChainBuilder()
         var arMsg: String
@@ -85,13 +113,10 @@ class MessagesTranslateFunction {
             }else{ // 启动翻译
                 val text = it.toString()
 
-                arMsg = Method().localTranslate(text) //离线翻译
-
-                if (!arMsg.contains("Error with code")){
-                    if (text != arMsg){
-                        replyMsg += arMsg
-                        isNeedSend = true
-                    }
+                arMsg = Method().localTranslate(text) // 离线翻译
+                if (text != arMsg){
+                    replyMsg += arMsg
+                    isNeedSend = true
                 }
             }
             // if完了
@@ -106,7 +131,7 @@ class MessagesTranslateFunction {
 }
 
 /**
- * 返回当前时间 TODO 整点报时
+ * 返回当前时间
  */
 class TimeFunction {
     fun getNow(): String {

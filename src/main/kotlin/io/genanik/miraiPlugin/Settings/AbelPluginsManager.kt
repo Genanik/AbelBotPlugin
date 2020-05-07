@@ -5,7 +5,7 @@ import net.mamoe.mirai.console.plugins.ConfigSection
 import net.mamoe.mirai.message.data.MessageChain
 import net.mamoe.mirai.utils.MiraiLogger
 
-class AbelPluginsManager(newLogger: MiraiLogger, config: Config) {
+class AbelPluginsManager(newLogger: MiraiLogger) {
 
     /**
      * AbelPluginsManager有两个控制器
@@ -24,16 +24,6 @@ class AbelPluginsManager(newLogger: MiraiLogger, config: Config) {
     private var admin: MutableList<Long> = mutableListOf(2974918296)
     private var adminArgsMap = mutableMapOf<String, (Long) -> MessageChain >()
     private var adminFunctionMap = mutableMapOf<String, MutableList<Long>>() //群号存在这里面就是关闭了
-
-
-    init {
-        try {
-            config.getConfigSection("argsMap")
-        } catch (e: NoSuchElementException){
-
-        }
-
-    }
 
     /**
      * 注册管理员指令

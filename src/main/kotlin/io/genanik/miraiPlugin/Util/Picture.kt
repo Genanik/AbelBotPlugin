@@ -3,10 +3,7 @@ package io.genanik.miraiPlugin.Util
 import com.madgag.gif.fmsware.AnimatedGifEncoder
 import com.madgag.gif.fmsware.GifDecoder
 import net.mamoe.mirai.contact.Contact
-import net.mamoe.mirai.message.data.OfflineImage
-import net.mamoe.mirai.message.data.queryUrl
 import net.mamoe.mirai.utils.toExternalImage
-import net.mamoe.mirai.utils.upload
 import java.awt.Color
 import java.awt.Graphics
 import java.awt.Image
@@ -50,18 +47,18 @@ fun mirror(pic: BufferedImage): BufferedImage{
 }
 
 // 镜像gif
-fun mirrorGif(inputURL: String, outputFileName: String): File {
+fun mirrorGif(inputURL: String): File {
     // 设置新的pic
     val gd = GifDecoder()
     //要处理的图片
     val status = gd.read(inputURL)
     if (status != GifDecoder.STATUS_OK) {
-        throw IOException("read image first.gif error!")
+        throw IOException("read gif error!")
     }
 
     val ge = AnimatedGifEncoder()
 
-    ge.start(outputFileName)
+    ge.start("tmp.gif")
     ge.setRepeat(gd.loopCount)
 
     for(i in (0 until gd.frameCount)){
@@ -75,7 +72,7 @@ fun mirrorGif(inputURL: String, outputFileName: String): File {
 
     //输出图片
     ge.finish()
-    return File(outputFileName)
+    return File("tmp.gif")
 }
 
 // 倒放gif
@@ -106,11 +103,12 @@ fun reverseGif(url: String): File {
     return File("tmp.gif")
 }
 
-suspend fun mirrorImage(url: String, contact: Contact): OfflineImage{
+suspend fun mirrorImage(url: String, contact: Contact): net.mamoe.mirai.message.data.Image {
     return if (isGif(url)){
-//        mirrorGif(url, "optGif")
-        reverseGif(url).toExternalImage().upload(contact)
+//        contact.uploadImage(reverseGif(url).toExternalImage())
+        contact.uploadImage(mirrorGif(url).toExternalImage())
     }else{
-        ImageIO.read(URL(url)).toExternalImage().upload(contact)
+        val tmp = ImageIO.read(URL(url))
+        contact.uploadImage(mirror(tmp).toExternalImage())
     }
 }
