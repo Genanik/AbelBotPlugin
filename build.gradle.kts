@@ -18,7 +18,7 @@ repositories {
     mavenCentral()
 }
 
-val miraiCoreVersion = "1.0-RC"
+val miraiCoreVersion = "1.0-RC2-1"
 val miraiConsoleVersion = "0.5.1"
 
 dependencies {

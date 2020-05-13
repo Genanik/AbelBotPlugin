@@ -173,4 +173,5 @@ class DonaldTrumpFunction {
     fun TrumpTextWithoutNPL(input: String): String {
         return textStruct(input)
     }
+
 }

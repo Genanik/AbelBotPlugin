@@ -7,6 +7,7 @@ import net.mamoe.mirai.console.MiraiConsole
 import net.mamoe.mirai.console.plugins.Config
 import net.mamoe.mirai.console.plugins.PluginBase
 import net.mamoe.mirai.event.subscribeGroupMessages
+import net.mamoe.mirai.event.subscribeTempMessages
 import net.mamoe.mirai.message.data.MessageChainBuilder
 import net.mamoe.mirai.message.data.PlainText
 
@@ -221,6 +222,12 @@ object AbelPluginMain : PluginBase() {
                         reply("群: ${this.group.id}\n已启用功能: $i")
                     }
                 }
+            }
+        }
+
+        subscribeTempMessages{
+            this.always {
+                reply("emm抱歉。。暂不支持临时会话，但是可以通过邀请至群使用（加好友自动通过验证）")
             }
         }
     }
