@@ -196,9 +196,9 @@ object AbelPluginMain : PluginBase() {
                 // 查询
                 case("${i}打开了嘛") {
                     if (abelPluginController.getStatus(i,this.group.id)){
-                        reply("没有ヽ(･ω･｡)ﾉ ")
-                    }else{
                         reply("开啦(′▽`〃)")
+                    }else{
+                        reply("没有ヽ(･ω･｡)ﾉ ")
                     }
                 }
             }
