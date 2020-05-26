@@ -102,7 +102,7 @@ object AbelPluginMain : PluginBase() {
         // 注册Abel功能
         abelPluginController.regFunction("翻译", "自动翻译包含繁体的消息")
         abelPluginController.regFunction("复读", "同一条消息出现两次后，Abel机器人自动跟读")
-        abelPluginController.regFunction("川普", "@Abel机器人并加上一个关键词，自动发送\"名人名言\"")
+//        abelPluginController.regFunction("川普", "@Abel机器人并加上一个关键词，自动发送\"名人名言\"")
     }
 
     override fun onEnable() {
@@ -137,6 +137,7 @@ object AbelPluginMain : PluginBase() {
             }
 
             // 川普
+            /*
             always {
                 if (abelPluginController.getStatus("川普", this.group.id)){
                     if (msgTrumpController.isAtBot(this.message, this.bot)){
@@ -150,6 +151,7 @@ object AbelPluginMain : PluginBase() {
                     }
                 }
             }
+             */
         }
 
         // Abel指令绑定
