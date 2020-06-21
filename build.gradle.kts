@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "io.genanik"
-version = "2.1.7"
+version = "2.2.0"
 
 repositories {
     maven( url = "https://dl.bintray.com/kotlin/kotlin-eap" )
