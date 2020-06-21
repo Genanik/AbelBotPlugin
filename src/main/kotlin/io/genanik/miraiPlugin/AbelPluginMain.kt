@@ -4,12 +4,10 @@ import io.genanik.miraiPlugin.Settings.AbelPluginsManager
 import io.genanik.miraiPlugin.Settings.abelBotVersion
 import io.genanik.miraiPlugin.Settings.debug
 import net.mamoe.mirai.console.MiraiConsole
-import net.mamoe.mirai.console.plugins.Config
 import net.mamoe.mirai.console.plugins.PluginBase
 import net.mamoe.mirai.event.*
 import net.mamoe.mirai.event.events.NewFriendRequestEvent
 import net.mamoe.mirai.message.data.*
-import kotlin.math.log
 
 object AbelPluginMain : PluginBase() {
 
@@ -97,12 +95,12 @@ object AbelPluginMain : PluginBase() {
         // 注册Abel管理员功能
 //        abelPluginController.adminRegFunction("翻译")
         abelPluginController.adminRegFunction("复读")
-//        abelPluginController.adminRegFunction("川普")
+        abelPluginController.adminRegFunction("川普")
 
         // 注册Abel功能
 //        abelPluginController.regFunction("翻译", "自动翻译包含繁体的消息")
         abelPluginController.regFunction("复读", "同一条消息出现两次后，Abel机器人自动跟读")
-//        abelPluginController.regFunction("川普", "@Abel机器人并加上一个关键词，自动发送\"名人名言\"")
+        abelPluginController.regFunction("川普", "@Abel机器人并加上一个关键词，自动发送\"名人名言\"")
     }
 
     override fun onEnable() {

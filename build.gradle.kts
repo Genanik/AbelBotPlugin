@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "io.genanik"
-version = "2.1.6"
+version = "2.1.7"
 
 repositories {
     maven( url = "https://dl.bintray.com/kotlin/kotlin-eap" )
@@ -22,8 +22,8 @@ val miraiCoreVersion = "1.0.2"
 val miraiConsoleVersion = "0.5.2"
 
 dependencies {
-    implementation("com.github.houbb", "opencc4j", "1.4.0")
-    implementation("net.java.dev.jna", "jna", "5.5.0")
+    compileOnly("com.github.houbb", "opencc4j", "1.4.0")
+    compileOnly("net.java.dev.jna", "jna", "5.5.0")
 
     compileOnly(kotlin("stdlib-jdk8"))
     compileOnly("net.mamoe:mirai-core:$miraiCoreVersion")
