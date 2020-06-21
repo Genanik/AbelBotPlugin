@@ -232,15 +232,4 @@ class AbelPluginsManager(newLogger: MiraiLogger) {
         return functionHelpInf
     }
 
-
-
-    // 储存当前内容
-    fun save(config: Config){
-        lateinit var argsMap: ConfigSection
-        lateinit var commandHelpInf: ConfigSection
-        lateinit var admin: ConfigSection
-        lateinit var adminArgsMap: ConfigSection
-        lateinit var adminFunctionMap: ConfigSection
-    }
-
 }

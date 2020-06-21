@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "io.genanik"
-version = "2.1.3"
+version = "2.1.6"
 
 repositories {
     maven( url = "https://dl.bintray.com/kotlin/kotlin-eap" )
@@ -18,8 +18,8 @@ repositories {
     mavenCentral()
 }
 
-val miraiCoreVersion = "1.0-RC2-1"
-val miraiConsoleVersion = "0.5.1"
+val miraiCoreVersion = "1.0.2"
+val miraiConsoleVersion = "0.5.2"
 
 dependencies {
     implementation("com.github.houbb", "opencc4j", "1.4.0")

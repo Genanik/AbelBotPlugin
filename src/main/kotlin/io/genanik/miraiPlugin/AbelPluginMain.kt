@@ -6,10 +6,10 @@ import io.genanik.miraiPlugin.Settings.debug
 import net.mamoe.mirai.console.MiraiConsole
 import net.mamoe.mirai.console.plugins.Config
 import net.mamoe.mirai.console.plugins.PluginBase
-import net.mamoe.mirai.event.subscribeGroupMessages
-import net.mamoe.mirai.event.subscribeTempMessages
-import net.mamoe.mirai.message.data.MessageChainBuilder
-import net.mamoe.mirai.message.data.PlainText
+import net.mamoe.mirai.event.*
+import net.mamoe.mirai.event.events.NewFriendRequestEvent
+import net.mamoe.mirai.message.data.*
+import kotlin.math.log
 
 object AbelPluginMain : PluginBase() {
 
@@ -95,12 +95,12 @@ object AbelPluginMain : PluginBase() {
         }
 
         // 注册Abel管理员功能
-        abelPluginController.adminRegFunction("翻译")
+//        abelPluginController.adminRegFunction("翻译")
         abelPluginController.adminRegFunction("复读")
-        abelPluginController.adminRegFunction("川普")
+//        abelPluginController.adminRegFunction("川普")
 
         // 注册Abel功能
-        abelPluginController.regFunction("翻译", "自动翻译包含繁体的消息")
+//        abelPluginController.regFunction("翻译", "自动翻译包含繁体的消息")
         abelPluginController.regFunction("复读", "同一条消息出现两次后，Abel机器人自动跟读")
 //        abelPluginController.regFunction("川普", "@Abel机器人并加上一个关键词，自动发送\"名人名言\"")
     }
@@ -114,6 +114,7 @@ object AbelPluginMain : PluginBase() {
          */
         subscribeGroupMessages {
             // 翻译
+            /*
             always{
                 if (abelPluginController.getStatus("翻译", this.group.id)){
                     val tmp = msgTranslateController.translate(this)
@@ -122,6 +123,7 @@ object AbelPluginMain : PluginBase() {
                     }
                 }
             }
+             */
 
             // 复读
             always {
@@ -137,13 +139,12 @@ object AbelPluginMain : PluginBase() {
             }
 
             // 川普
-            /*
             always {
                 if (abelPluginController.getStatus("川普", this.group.id)){
-                    if (msgTrumpController.isAtBot(this.message, this.bot)){
-                        val tmp = message.getOrNull(PlainText)
+                    if (msgTrumpController.isAtBot(this.message, this.bot) && !isHavePicture(message)){
+                        val tmp = message.firstIsInstanceOrNull<PlainText>()
                         if (tmp != null){
-                            val keyWord = tmp.stringValue.replace(" ", "")
+                            val keyWord = tmp.content.replace(" ", "")
                             if (keyWord != ""){
                                 reply(msgTrumpController.TrumpTextWithoutNPL(keyWord))
                             }
@@ -151,7 +152,6 @@ object AbelPluginMain : PluginBase() {
                     }
                 }
             }
-             */
         }
 
         // Abel指令绑定
@@ -227,10 +227,34 @@ object AbelPluginMain : PluginBase() {
             }
         }
 
+        // 临时消息
         subscribeTempMessages{
-            this.always {
+            always {
                 reply("emm抱歉。。暂不支持临时会话，但是可以通过邀请至群使用（加好友自动通过验证）")
             }
         }
+
+        // 好友消息
+        subscribeFriendMessages{
+            always {
+                reply("emm抱歉。。暂不支持私聊，但是可以通过邀请至群使用（加好友自动通过验证）")
+            }
+        }
+
+        subscribeAlways<NewFriendRequestEvent> {
+            logger.info("成功添加新好友, eventID:$eventId message:$message")
+            accept()
+        }
+
+    }
+    fun isHavePicture(rawMessage: MessageChain): Boolean{
+        var isHaveImg = false
+        rawMessage.forEachContent {
+            if (!isHaveImg){
+                isHaveImg = it.asMessageChain()
+                    .firstIsInstanceOrNull<Image>() != null
+            }
+        }
+        return isHaveImg
     }
 }
