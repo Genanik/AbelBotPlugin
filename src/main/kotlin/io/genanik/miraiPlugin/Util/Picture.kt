@@ -10,7 +10,16 @@ import java.net.URL
 suspend fun mirrorImage(url: String, contact: Contact): net.mamoe.mirai.message.data.Image {
     val raw = File("srcImg")
     raw.writeBytes(URL(url).readBytes())
-    if (libImage.INSTANCE.ConvertPic() != 0){
+    if (libImage.INSTANCE.HorizontalFilpPic() != 0){
+        throw Exception("图片错了。。")
+    }
+    return contact.uploadImage(File("dstImg").toExternalImage())
+}
+
+suspend fun reverseImage(url: String, contact: Contact): net.mamoe.mirai.message.data.Image {
+    val raw = File("srcImg")
+    raw.writeBytes(URL(url).readBytes())
+    if (libImage.INSTANCE.ReverseGif() != 0){
         throw Exception("图片错了。。")
     }
     return contact.uploadImage(File("dstImg").toExternalImage())
@@ -19,7 +28,9 @@ suspend fun mirrorImage(url: String, contact: Contact): net.mamoe.mirai.message.
 // 引用外部动态库 https://github.com/Genanik/Vertical-flip-of-Repeat-picture
 interface libImage : Library {
 
-    fun ConvertPic(): Int
+    fun ReverseGif(): Int
+
+    fun HorizontalFilpPic(): Int
 
     companion object {
         //懒加载的方式

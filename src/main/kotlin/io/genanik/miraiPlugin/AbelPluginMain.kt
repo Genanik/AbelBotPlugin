@@ -3,6 +3,7 @@ package io.genanik.miraiPlugin
 import io.genanik.miraiPlugin.Settings.AbelPluginsManager
 import io.genanik.miraiPlugin.Settings.abelBotVersion
 import io.genanik.miraiPlugin.Settings.debug
+import io.genanik.miraiPlugin.Util.reverseImage
 import net.mamoe.mirai.console.MiraiConsole
 import net.mamoe.mirai.console.plugins.PluginBase
 import net.mamoe.mirai.event.*
@@ -96,11 +97,13 @@ object AbelPluginMain : PluginBase() {
 //        abelPluginController.adminRegFunction("翻译")
         abelPluginController.adminRegFunction("复读")
         abelPluginController.adminRegFunction("川普")
+        abelPluginController.adminRegFunction("倒转GIF")
 
         // 注册Abel功能
 //        abelPluginController.regFunction("翻译", "自动翻译包含繁体的消息")
         abelPluginController.regFunction("复读", "同一条消息出现两次后，Abel机器人自动跟读")
         abelPluginController.regFunction("川普", "@Abel机器人并加上一个关键词，自动发送\"名人名言\"")
+        abelPluginController.regFunction("倒转GIF", "@Abel机器人并加上一个或多个GIF，可以倒叙一个或多个GIF")
     }
 
     override fun onEnable() {
@@ -137,9 +140,9 @@ object AbelPluginMain : PluginBase() {
             }
 
             // 川普
-            always {
+            atBot {
                 if (abelPluginController.getStatus("川普", this.group.id)){
-                    if (msgTrumpController.isAtBot(this.message, this.bot) && !isHavePicture(message)){
+                    if (!isHavePicture(message)){
                         val tmp = message.firstIsInstanceOrNull<PlainText>()
                         if (tmp != null){
                             val keyWord = tmp.content.replace(" ", "")
@@ -147,6 +150,20 @@ object AbelPluginMain : PluginBase() {
                                 reply(msgTrumpController.TrumpTextWithoutNPL(keyWord))
                             }
                         }
+                    }
+                }
+            }
+
+            // 倒转GIF
+            atBot {
+                if (abelPluginController.getStatus("倒转GIF", this.group.id)){
+                    if (isHavePicture(message)){
+                        val newMsg = MessageChainBuilder()
+                        val allPic = getAllPicture(message)
+                        allPic.forEach{ picUrl ->
+                            newMsg.add(reverseImage(picUrl, group))
+                        }
+                        reply(newMsg.asMessageChain())
                     }
                 }
             }
@@ -245,6 +262,7 @@ object AbelPluginMain : PluginBase() {
         }
 
     }
+
     fun isHavePicture(rawMessage: MessageChain): Boolean{
         var isHaveImg = false
         rawMessage.forEachContent {
@@ -254,5 +272,23 @@ object AbelPluginMain : PluginBase() {
             }
         }
         return isHaveImg
+    }
+
+    suspend fun getAllPicture(rawMessage: MessageChain): ArrayList<String>{
+        val result = ArrayList<String>()
+        var tmp = MessageChainBuilder()
+        rawMessage.forEachContent {
+            tmp.add(it)
+            val isImage =
+                tmp.asMessageChain()
+                    .firstIsInstanceOrNull<Image>() != null
+
+            if (isImage){
+                // 添加图片url
+                result.add((it as Image).queryUrl())
+            }
+            tmp = MessageChainBuilder()
+        }
+        return result
     }
 }

@@ -84,6 +84,7 @@ class MessagesRepeatFunction (message: GroupMessageEvent) {
                         '>' -> tmp = "<$tmp"
                         '《' -> tmp = "》$tmp"
                         '》' -> tmp = "《$tmp"
+                        '。' -> tmp = "˚ $tmp"
                         else -> tmp = it + tmp
                     }
                 }
