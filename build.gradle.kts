@@ -14,13 +14,13 @@ repositories {
 }
 
 group = "io.genanik"
-version = "2.4.0"
+version = "2.4.1"
 
 val miraiCoreVersion = "1.0.2"
 val miraiConsoleVersion = "0.5.2"
 
 dependencies {
-    compileOnly("com.github.houbb", "opencc4j", "1.4.0")
+    compileOnly("com.github.houbb", "opencc4j", "1.5.2")
     compileOnly("net.java.dev.jna", "jna", "5.5.0")
 
     compileOnly(kotlin("stdlib-jdk8"))
@@ -31,7 +31,7 @@ dependencies {
     testImplementation("net.mamoe:mirai-core:$miraiCoreVersion")
     testImplementation("net.mamoe:mirai-core-qqandroid:$miraiCoreVersion")
     testImplementation("net.mamoe:mirai-console:$miraiConsoleVersion")
-    testImplementation("com.github.houbb", "opencc4j", "1.4.0")
+    testImplementation("com.github.houbb", "opencc4j", "1.5.2")
 
 
 }
