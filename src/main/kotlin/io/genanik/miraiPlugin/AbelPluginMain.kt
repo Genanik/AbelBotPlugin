@@ -4,11 +4,13 @@ import io.genanik.miraiPlugin.Settings.AbelPluginsManager
 import io.genanik.miraiPlugin.Settings.abelBotVersion
 import io.genanik.miraiPlugin.Settings.debug
 import io.genanik.miraiPlugin.Util.reverseImage
+import net.mamoe.mirai.Bot
 import net.mamoe.mirai.console.MiraiConsole
 import net.mamoe.mirai.console.plugins.PluginBase
 import net.mamoe.mirai.event.*
 import net.mamoe.mirai.event.events.NewFriendRequestEvent
 import net.mamoe.mirai.message.data.*
+import java.io.File
 
 object AbelPluginMain : PluginBase() {
 
@@ -45,22 +47,24 @@ object AbelPluginMain : PluginBase() {
         // 注册Abel管理员指令
         abelPluginController.regAdminCommand("dumpvars") {
             val result = MessageChainBuilder()
-            result.add("AbelPluginController: " +
-                    "${abelPluginController.getAllCommands()}\n" +
-                    "${abelPluginController.getAllFunctions()}\n")
-            result.add("Debug: $debug\n")
-            result.add("AbelVersion: $abelBotVersion\n")
-            result.add("JavaVersion: ${System.getProperty("java.version")}\n")
-            result.add("MiraiVersion: 咱也不知道呢ﾉ(｡･ω･)ヽ\n")
-            result.add("MiraiConsleVersion: ${MiraiConsole.version}")
+            result.add("保留指令")
             return@regAdminCommand result.asMessageChain()
         }
         abelPluginController.regAdminCommand("/adminHelp"){
             val result = MessageChainBuilder()
             result.add("启用{功能}\n")
             result.add("禁用{功能}\n")
+            result.add("切换{功能}\n")
             result.add(abelPluginController.adminGetAllCommands().toString() + "\n")
-            result.add(abelPluginController.adminGetAllFunctions().toString())
+            result.add(abelPluginController.adminGetAllFunctions().toString() + "\n")
+            result.add("AbelPluginController: " +
+                    "${abelPluginController.getAllCommands()}\n" +
+                    "${abelPluginController.getAllFunctions()}\n")
+            result.add("Debug: $debug\n")
+            result.add("AbelVersion: $abelBotVersion\n")
+            result.add("JavaVersion: ${System.getProperty("java.version")}\n")
+            result.add("MiraiCoreVersion: ${File(Bot.javaClass.protectionDomain.codeSource.location.file).name.replace(".jar", "")}\n")
+            result.add("MiraiConsleVersion: ${MiraiConsole.version} - ${MiraiConsole.build}")
             return@regAdminCommand result.asMessageChain()
         }
         // 注册Abel指令
@@ -78,8 +82,6 @@ object AbelPluginMain : PluginBase() {
             result.add("\n其他功能：\n" +
                        "* \"功能名称+打开了嘛\" 获取功能运行状态\n")
             result.add("* /adminHelp 获取管理员帮助信息")
-//            result.add("\nAbel版本: $abelBotVersion\n")
-//            result.add("Mirai-Core版本: ${MiraiConsole.version}")
             return@regCommand result.asMessageChain()
         }
         abelPluginController.regCommand("报时", "发送当前时间") {
@@ -94,13 +96,13 @@ object AbelPluginMain : PluginBase() {
         }
 
         // 注册Abel管理员功能
-//        abelPluginController.adminRegFunction("翻译")
+        abelPluginController.adminRegFunction("翻译")
         abelPluginController.adminRegFunction("复读")
         abelPluginController.adminRegFunction("川普")
         abelPluginController.adminRegFunction("倒转GIF")
 
         // 注册Abel功能
-//        abelPluginController.regFunction("翻译", "自动翻译包含繁体的消息")
+        abelPluginController.regFunction("翻译", "自动翻译包含繁体的消息")
         abelPluginController.regFunction("复读", "同一条消息出现两次后，Abel机器人自动跟读")
         abelPluginController.regFunction("川普", "@Abel机器人并加上一个关键词，自动发送\"名人名言\"")
         abelPluginController.regFunction("倒转GIF", "@Abel机器人并加上一个或多个GIF，可以倒叙一个或多个GIF")
@@ -115,25 +117,25 @@ object AbelPluginMain : PluginBase() {
          */
         subscribeGroupMessages {
             // 翻译
-            /*
             always{
-                if (abelPluginController.getStatus("翻译", this.group.id)){
+                if (!abelPluginController.getStatus("翻译", this.group.id)){ // 默认不开启
                     val tmp = msgTranslateController.translate(this)
-                    if ((tmp.toString() != "") and (this.sender.id != 2704749081L)){
+                    if ((tmp.toString() != "")){
                         reply(tmp)
                     }
                 }
             }
-             */
 
             // 复读
             always {
                 if (abelPluginController.getStatus("复读", this.group.id)){
                     if (msgRepeatController.contains(this.group.id)){
+                        // 更新msgRepeat内容
                         if (msgRepeatController[this.group.id]!!.update(this)){
                             reply(msgRepeatController[this.group.id]!!.textBackRepeat(this.message, this.group))
                         }
                     }else{
+                        // 为本群创建一个msgRepeat
                         msgRepeatController[this.group.id] = MessagesRepeatFunction(this)
                     }
                 }
@@ -210,9 +212,25 @@ object AbelPluginMain : PluginBase() {
                     }
                 }
 
+                case("切换$i") {
+                    if (!abelPluginController.adminGetStatus(i, this.group.id)){
+                        if (!abelPluginController.getStatus(i,this.group.id)){
+                            abelPluginController.enableFunc(i, this.group.id)
+                            reply("不出意外的话。。咱打开${i}了")
+                        }else{
+                            abelPluginController.disableFunc(i, this.group.id)
+                            reply("不出意外的话。。咱关掉${i}了")
+                        }
+                    }
+                }
+
                 // 查询
                 case("${i}打开了嘛") {
-                    if (abelPluginController.getStatus(i,this.group.id)){
+                    var status = abelPluginController.getStatus(i,this.group.id)
+                    if (i == "翻译"){
+                        status = !status
+                    }
+                    if (status){
                         reply("开啦(′▽`〃)")
                     }else{
                         reply("没有ヽ(･ω･｡)ﾉ ")
@@ -245,14 +263,14 @@ object AbelPluginMain : PluginBase() {
         // 临时消息
         subscribeTempMessages{
             always {
-                reply("emm抱歉。。暂不支持临时会话，但是可以通过邀请至群使用（加好友自动通过验证）")
+                reply("emm抱歉。。暂不支持临时会话，但是可以通过邀请至群使用（加好友自动通过验证），群内/help查看帮助")
             }
         }
 
         // 好友消息
         subscribeFriendMessages{
             always {
-                reply("emm抱歉。。暂不支持私聊，但是可以通过邀请至群使用（加好友自动通过验证）")
+                reply("emm抱歉。。暂不支持私聊，但是可以通过邀请至群使用（加好友自动通过验证），群内/help查看帮助")
             }
         }
 

@@ -1,13 +1,8 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-
 plugins {
     kotlin("jvm") version "1.4-M1"
     java
     id("com.github.johnrengelman.shadow") version "5.2.0"
 }
-
-group = "io.genanik"
-version = "2.3.0"
 
 repositories {
     maven( url = "https://dl.bintray.com/kotlin/kotlin-eap" )
@@ -17,6 +12,9 @@ repositories {
     jcenter()
     mavenCentral()
 }
+
+group = "io.genanik"
+version = "2.4.0"
 
 val miraiCoreVersion = "1.0.2"
 val miraiConsoleVersion = "0.5.2"
@@ -33,8 +31,9 @@ dependencies {
     testImplementation("net.mamoe:mirai-core:$miraiCoreVersion")
     testImplementation("net.mamoe:mirai-core-qqandroid:$miraiCoreVersion")
     testImplementation("net.mamoe:mirai-console:$miraiConsoleVersion")
-    testImplementation("com.madgag", "animated-gif-lib","1.4")
     testImplementation("com.github.houbb", "opencc4j", "1.4.0")
+
+
 }
 
 java {

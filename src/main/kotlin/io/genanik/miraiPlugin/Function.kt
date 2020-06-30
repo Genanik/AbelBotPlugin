@@ -1,7 +1,6 @@
 package io.genanik.miraiPlugin
 
 import io.genanik.miraiPlugin.Util.mirrorImage
-import net.mamoe.mirai.Bot
 import net.mamoe.mirai.contact.Contact
 import net.mamoe.mirai.message.GroupMessageEvent
 import net.mamoe.mirai.message.data.*
@@ -23,19 +22,25 @@ fun removeMessageSource(message: MessageChain): MessageChain{
  */
 class MessagesRepeatFunction (message: GroupMessageEvent) {
 
-    private var lastMessage: GroupMessageEvent = message
-    private var repeatMsg: MessageChain = MessageChainBuilder().asMessageChain()
+    private var lastMessage: GroupMessageEvent = message // 不保证没有MessageSource块
+    private var times = 1
 
-    // 返回null的时候不要复读
+    // 更新缓存并返回是否复读
     fun update(newMessage: GroupMessageEvent): Boolean{
-        val tmpMsg = removeMessageSource(newMessage.message)
-        return if ((removeMessageSource(lastMessage.message).toString() == tmpMsg.toString()) and
-            (repeatMsg.toString() != removeMessageSource(newMessage.message).toString())){
+
+        val newMsgWithoutMessageSource = removeMessageSource(newMessage.message)
+
+        if (removeMessageSource(lastMessage.message).toString() == newMsgWithoutMessageSource.toString()){// 当前消息与上一条消息内容相同
+            times++
+        }
+        return if (times == 2){
+            // 确定要复读了
             lastMessage = newMessage
-            repeatMsg = removeMessageSource(newMessage.message)
+            times = 0
             true
         } else {
             lastMessage = newMessage
+            times = 1
             false
         }
     }
@@ -159,16 +164,6 @@ class DonaldTrumpFunction {
         sentence.add("你不握手，怎么能是${singleWord}呢？\n——特朗普")
         sentence.add("把${singleWord}当作流感就好\n——特朗普")
         return sentence.random()
-    }
-
-    fun isAtBot(msg: MessageChain, miraiBot: Bot):Boolean {
-        val at:At? = msg.firstIsInstanceOrNull()
-        if (at != null){
-            if (at.target == miraiBot.id){
-                return true
-            }
-        }
-        return false
     }
 
     fun TrumpTextWithoutNPL(input: String): String {

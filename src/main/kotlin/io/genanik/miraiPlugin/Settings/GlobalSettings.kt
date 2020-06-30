@@ -2,4 +2,4 @@ package io.genanik.miraiPlugin.Settings
 
 var debug = false
 
-val abelBotVersion = "2.3.0"
+val abelBotVersion = Versions.Abel.version
