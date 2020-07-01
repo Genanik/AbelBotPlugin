@@ -62,35 +62,25 @@ class MessagesRepeatFunction (message: GroupMessageEvent) {
             } else {
                 //文字消息
                 var tmp = ""
+                val symbolRaw = arrayOf('[', ']', '(', ')', '（', '）', '{', '}', '【', '】', '「', '」', '“', '”', '/', '\\', '‘', '’', '¿', '?', '？', '<', '>', '《', '》', '.', '。',  '!', '！', '¡')
+                val symbolNew = arrayOf(']', '[', ')', '(', '）', '（', '}', '{', '】', '【', '」', '「', '”', '“', '\\', '/', '’', '‘', '?', '¿', '¿', '>', '<', '》', '《', '·', '˚', '¡', '¡', '!')
+                val stringRaw = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                val stringNew = "ɐqɔpǝɟɓɥıɾʞlɯuodbɹsʇnʌʍxʎz∀ᙠƆᗡƎℲ⅁HIſ⋊˥WNOԀΌᴚS⊥∩ΛMX⅄Z"
                 messageClip.toString().forEach {
-                    when (it){
-                        '[' -> tmp = "]$tmp"
-                        ']' -> tmp = "[$tmp"
-                        '(' -> tmp = ")$tmp"
-                        ')' -> tmp = "($tmp"
-                        '）' -> tmp = "（$tmp"
-                        '（' -> tmp = "）$tmp"
-                        '{' -> tmp = "}$tmp"
-                        '}' -> tmp = "{$tmp"
-                        '【' -> tmp = "】$tmp"
-                        '】' -> tmp = "【$tmp"
-                        '「' -> tmp = "」$tmp"
-                        '」' -> tmp = "「$tmp"
-                        '“' -> tmp = "”$tmp"
-                        '”' -> tmp = "“$tmp"
-                        '/' -> tmp = "\\$tmp"
-                        '\\' -> tmp = "/$tmp"
-                        '‘' -> tmp = "’$tmp"
-                        '’' -> tmp = "‘$tmp"
-                        '?' -> tmp = "¿$tmp"
-                        '？' -> tmp = "¿ $tmp"
-                        '¿' -> tmp = "?$tmp"
-                        '<' -> tmp = ">$tmp"
-                        '>' -> tmp = "<$tmp"
-                        '《' -> tmp = "》$tmp"
-                        '》' -> tmp = "《$tmp"
-                        '。' -> tmp = "˚ $tmp"
-                        else -> tmp = it + tmp
+                    // 字符替换
+                    val symbolInt = symbolRaw.findOrNull(it)
+                    val stringInt = stringRaw.indexOf(it)
+
+                    tmp = when {
+                        symbolInt != null -> {
+                            "" + symbolNew[symbolInt] + tmp
+                        }
+                        stringInt != -1 -> {
+                            "" + stringNew[stringInt] + tmp
+                        }
+                        else -> {
+                            it + tmp
+                        }
                     }
                 }
                 newMsgChain.add(tmp)
@@ -99,7 +89,19 @@ class MessagesRepeatFunction (message: GroupMessageEvent) {
         return newMsgChain.asMessageChain()
     }
 
+    private fun <Char> Array<Char>.findOrNull(targetChar: Char): Int? {
+        for ((index, i) in this.withIndex()){
+            if (i == targetChar){
+                return index
+            }
+
+        }
+        return null
+    }
+
 }
+
+
 
 /**
  * 返回翻译的繁体内容
