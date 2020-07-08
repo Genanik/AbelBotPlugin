@@ -1,6 +1,6 @@
 name: "Abel"
 author: "Genanik"
-version: "2.5.0"
+version: "2.5.1"
 main: "io.genanik.miraiPlugin.AbelPluginMain"
 info: "Abel机器人插件"
 depends: []

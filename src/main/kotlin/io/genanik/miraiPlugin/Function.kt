@@ -64,20 +64,20 @@ class MessagesRepeatFunction (message: GroupMessageEvent) {
                 var tmp = ""
                 val symbolRaw = arrayOf('[', ']', '(', ')', '（', '）', '{', '}', '【', '】', '「', '」', '“', '”', '/', '\\', '‘', '’', '¿', '?', '？', '<', '>', '《', '》', '.', '。',  '!', '！', '¡')
                 val symbolNew = arrayOf(']', '[', ')', '(', '）', '（', '}', '{', '】', '【', '」', '「', '”', '“', '\\', '/', '’', '‘', '?', '¿', '¿', '>', '<', '》', '《', '·', '˚', '¡', '¡', '!')
-                val stringRaw = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-                val stringNew = "ɐqɔpǝɟɓɥıɾʞlɯuodbɹsʇnʌʍxʎz∀ᙠƆᗡƎℲ⅁HIſ⋊˥WNOԀΌᴚS⊥∩ΛMX⅄Z"
+//                val stringRaw = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+//                val stringNew = "ɐqɔpǝɟɓɥıɾʞlɯuodbɹsʇnʌʍxʎz∀ᙠƆᗡƎℲ⅁HIſ⋊˥WNOԀΌᴚS⊥∩ΛMX⅄Z"
                 messageClip.toString().forEach {
                     // 字符替换
                     val symbolInt = symbolRaw.findOrNull(it)
-                    val stringInt = stringRaw.indexOf(it)
+//                    val stringInt = stringRaw.indexOf(it)
 
                     tmp = when {
                         symbolInt != null -> {
                             "" + symbolNew[symbolInt] + tmp
                         }
-                        stringInt != -1 -> {
-                            "" + stringNew[stringInt] + tmp
-                        }
+//                        stringInt != -1 -> {
+//                            "" + stringNew[stringInt] + tmp
+//                        }
                         else -> {
                             it + tmp
                         }
