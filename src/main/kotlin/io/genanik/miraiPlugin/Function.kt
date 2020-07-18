@@ -1,20 +1,13 @@
 package io.genanik.miraiPlugin
 
 import io.genanik.miraiPlugin.Util.mirrorImage
+import io.genanik.miraiPlugin.Util.removeMessageSource
 import net.mamoe.mirai.contact.Contact
 import net.mamoe.mirai.message.GroupMessageEvent
 import net.mamoe.mirai.message.data.*
 import io.genanik.miraiPlugin.Util.translate.Method
 import java.text.SimpleDateFormat
 import java.util.*
-
-fun removeMessageSource(message: MessageChain): MessageChain{
-    val tmp = MessageChainBuilder()
-    message.forEachContent {
-        tmp.add(it)
-    }
-    return tmp.asMessageChain()
-}
 
 /**
  * 判断出现两条相同内容后 将内容镜像并返回镜像的MessageChain
@@ -64,20 +57,14 @@ class MessagesRepeatFunction (message: GroupMessageEvent) {
                 var tmp = ""
                 val symbolRaw = arrayOf('[', ']', '(', ')', '（', '）', '{', '}', '【', '】', '「', '」', '“', '”', '/', '\\', '‘', '’', '¿', '?', '？', '<', '>', '《', '》', '.', '。',  '!', '！', '¡')
                 val symbolNew = arrayOf(']', '[', ')', '(', '）', '（', '}', '{', '】', '【', '」', '「', '”', '“', '\\', '/', '’', '‘', '?', '¿', '¿', '>', '<', '》', '《', '·', '˚', '¡', '¡', '!')
-//                val stringRaw = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-//                val stringNew = "ɐqɔpǝɟɓɥıɾʞlɯuodbɹsʇnʌʍxʎz∀ᙠƆᗡƎℲ⅁HIſ⋊˥WNOԀΌᴚS⊥∩ΛMX⅄Z"
                 messageClip.toString().forEach {
                     // 字符替换
                     val symbolInt = symbolRaw.findOrNull(it)
-//                    val stringInt = stringRaw.indexOf(it)
 
                     tmp = when {
                         symbolInt != null -> {
                             "" + symbolNew[symbolInt] + tmp
                         }
-//                        stringInt != -1 -> {
-//                            "" + stringNew[stringInt] + tmp
-//                        }
                         else -> {
                             it + tmp
                         }

@@ -3,6 +3,8 @@ package io.genanik.miraiPlugin
 import io.genanik.miraiPlugin.Settings.AbelPluginsManager
 import io.genanik.miraiPlugin.Settings.abelBotVersion
 import io.genanik.miraiPlugin.Settings.debug
+import io.genanik.miraiPlugin.Util.getAllPicture
+import io.genanik.miraiPlugin.Util.isHavePicture
 import io.genanik.miraiPlugin.Util.reverseImage
 import net.mamoe.mirai.Bot
 import net.mamoe.mirai.console.MiraiConsole
@@ -50,20 +52,27 @@ object AbelPluginMain : PluginBase() {
             result.add("保留指令")
             return@regAdminCommand result.asMessageChain()
         }
-        abelPluginController.regAdminCommand("/adminHelp"){
+        abelPluginController.regAdminCommand("/adminHelp") {
             val result = MessageChainBuilder()
             result.add("启用{功能}\n")
             result.add("禁用{功能}\n")
             result.add("切换{功能}\n")
             result.add(abelPluginController.adminGetAllCommands().toString() + "\n")
             result.add(abelPluginController.adminGetAllFunctions().toString() + "\n")
-            result.add("AbelPluginController: " +
-                    "${abelPluginController.getAllCommands()}\n" +
-                    "${abelPluginController.getAllFunctions()}\n")
+            result.add(
+                "AbelPluginController: " +
+                        "${abelPluginController.getAllCommands()}\n" +
+                        "${abelPluginController.getAllFunctions()}\n"
+            )
             result.add("Debug: $debug\n")
             result.add("AbelVersion: $abelBotVersion\n")
             result.add("JavaVersion: ${System.getProperty("java.version")}\n")
-            result.add("MiraiCoreVersion: ${File(Bot.javaClass.protectionDomain.codeSource.location.file).name.replace(".jar", "")}\n")
+            result.add(
+                "MiraiCoreVersion: ${File(Bot.javaClass.protectionDomain.codeSource.location.file).name.replace(
+                    ".jar",
+                    ""
+                )}\n"
+            )
             result.add("MiraiConsleVersion: ${MiraiConsole.version} - ${MiraiConsole.build}")
             return@regAdminCommand result.asMessageChain()
         }
@@ -72,15 +81,17 @@ object AbelPluginMain : PluginBase() {
         abelPluginController.regCommand("/help", "展示帮助信息") {
             val result = MessageChainBuilder()
             result.add("嘤嘤嘤嘤嘤嘤嘤嘤嘤\n\n")
-            for (i in abelPluginController.getAllCommands()){
-                result.add( "* $i  ${abelPluginController.getCommandDescription()[i]}\n")
+            for (i in abelPluginController.getAllCommands()) {
+                result.add("* $i  ${abelPluginController.getCommandDescription()[i]}\n")
             }
             result.add("\n咱介绍完指令了，嘤嘤嘤，该介绍功能了\n\n")
-            for (i in abelPluginController.getAllFunctions()){
-                result.add( "* $i  ${abelPluginController.getFunctionDescription()[i]}\n")
+            for (i in abelPluginController.getAllFunctions()) {
+                result.add("* $i  ${abelPluginController.getFunctionDescription()[i]}\n")
             }
-            result.add("\n其他功能：\n" +
-                       "* \"功能名称+打开了嘛\" 获取功能运行状态\n")
+            result.add(
+                "\n其他功能：\n" +
+                        "* \"功能名称+打开了嘛\" 获取功能运行状态\n"
+            )
             result.add("* /adminHelp 获取管理员帮助信息")
             return@regCommand result.asMessageChain()
         }
@@ -89,7 +100,7 @@ object AbelPluginMain : PluginBase() {
             result.add(timeController.getNow())
             return@regCommand result.asMessageChain()
         }
-        abelPluginController.regCommand("喵喵喵喵", "awa"){
+        abelPluginController.regCommand("喵喵喵喵", "awa") {
             val result = MessageChainBuilder()
             result.add(awa[(0..awa.size).shuffled().last()])
             return@regCommand result.asMessageChain()
@@ -117,10 +128,10 @@ object AbelPluginMain : PluginBase() {
          */
         subscribeGroupMessages {
             // 翻译
-            always{
-                if (!abelPluginController.getStatus("翻译", this.group.id)){ // 默认不开启
+            always {
+                if (!abelPluginController.getStatus("翻译", this.group.id)) { // 默认不开启
                     val tmp = msgTranslateController.translate(this)
-                    if ((tmp.toString() != "")){
+                    if ((tmp.toString() != "")) {
                         reply(tmp)
                     }
                 }
@@ -128,13 +139,13 @@ object AbelPluginMain : PluginBase() {
 
             // 复读
             always {
-                if (abelPluginController.getStatus("复读", this.group.id)){
-                    if (msgRepeatController.contains(this.group.id)){
+                if (abelPluginController.getStatus("复读", this.group.id)) {
+                    if (msgRepeatController.contains(this.group.id)) {
                         // 更新msgRepeat内容
-                        if (msgRepeatController[this.group.id]!!.update(this)){
+                        if (msgRepeatController[this.group.id]!!.update(this)) {
                             reply(msgRepeatController[this.group.id]!!.textBackRepeat(this.message, this.group))
                         }
-                    }else{
+                    } else {
                         // 为本群创建一个msgRepeat
                         msgRepeatController[this.group.id] = MessagesRepeatFunction(this)
                     }
@@ -143,12 +154,12 @@ object AbelPluginMain : PluginBase() {
 
             // 川普
             atBot {
-                if (abelPluginController.getStatus("川普", this.group.id)){
-                    if (!isHavePicture(message)){
+                if (abelPluginController.getStatus("川普", this.group.id)) {
+                    if (!isHavePicture(message)) {
                         val tmp = message.firstIsInstanceOrNull<PlainText>()
-                        if (tmp != null){
+                        if (tmp != null) {
                             val keyWord = tmp.content.replace(" ", "")
-                            if (keyWord != ""){
+                            if (keyWord != "") {
                                 reply(msgTrumpController.TrumpTextWithoutNPL(keyWord))
                             }
                         }
@@ -158,11 +169,11 @@ object AbelPluginMain : PluginBase() {
 
             // 倒转GIF
             atBot {
-                if (abelPluginController.getStatus("倒转GIF", this.group.id)){
-                    if (isHavePicture(message)){
+                if (abelPluginController.getStatus("倒转GIF", this.group.id)) {
+                    if (isHavePicture(message)) {
                         val newMsg = MessageChainBuilder()
                         val allPic = getAllPicture(message)
-                        allPic.forEach{ picUrl ->
+                        allPic.forEach { picUrl ->
                             newMsg.add(reverseImage(picUrl, group))
                         }
                         reply(newMsg.asMessageChain())
@@ -173,51 +184,55 @@ object AbelPluginMain : PluginBase() {
 
         // Abel指令绑定
         subscribeGroupMessages {
-            for (i in abelPluginController.adminGetAllCommands()){
+            for (i in abelPluginController.adminGetAllCommands()) {
                 case(i) {
-                    reply( abelPluginController.adminTransferCommand(i)(this.group.id))
+                    reply(abelPluginController.adminTransferCommand(i)(this.group.id))
                 }
             }
-            for (i in abelPluginController.getAllCommands()){
+            for (i in abelPluginController.getAllCommands()) {
                 case(i) {
-                    reply( abelPluginController.transferCommand(i)(this.group.id))
+                    reply(abelPluginController.transferCommand(i)(this.group.id))
                 }
             }
         }
         // Abel功能绑定
         subscribeGroupMessages {
             // 用户组
-            for (i in abelPluginController.getAllFunctions()){
+            for (i in abelPluginController.getAllFunctions()) {
                 // 操作
                 case("关闭$i") {
-                    if (!abelPluginController.adminGetStatus(i, this.group.id)){
-                        if (abelPluginController.getStatus(i, this.group.id)){
+                    if (!abelPluginController.adminGetStatus(i, this.group.id)) {
+                        if (abelPluginController.getStatus(i, this.group.id)) {
                             abelPluginController.disableFunc(i, this.group.id)
                             reply("不出意外的话。。咱关掉${i}了")
-                        }else{
-                            reply("这个功能已经被关掉了呢_(:з」∠)_不用再关一次了\n" +
-                                    "推荐使用\"功能名称+打开了嘛\"获取功能运行状态")
+                        } else {
+                            reply(
+                                "这个功能已经被关掉了呢_(:з」∠)_不用再关一次了\n" +
+                                        "推荐使用\"功能名称+打开了嘛\"获取功能运行状态"
+                            )
                         }
                     }
                 }
                 case("开启$i") {
-                    if (!abelPluginController.adminGetStatus(i, this.group.id)){
-                        if (!abelPluginController.getStatus(i,this.group.id)){
+                    if (!abelPluginController.adminGetStatus(i, this.group.id)) {
+                        if (!abelPluginController.getStatus(i, this.group.id)) {
                             abelPluginController.enableFunc(i, this.group.id)
                             reply("不出意外的话。。咱打开${i}了")
-                        }else{
-                            reply("(｡･ω･)ﾉﾞ${i}\n这个已经打开了哦，不用再开一次啦\n" +
-                                    "推荐使用\"功能名称+打开了嘛\"获取功能运行状态")
+                        } else {
+                            reply(
+                                "(｡･ω･)ﾉﾞ${i}\n这个已经打开了哦，不用再开一次啦\n" +
+                                        "推荐使用\"功能名称+打开了嘛\"获取功能运行状态"
+                            )
                         }
                     }
                 }
 
                 case("切换$i") {
-                    if (!abelPluginController.adminGetStatus(i, this.group.id)){
-                        if (!abelPluginController.getStatus(i,this.group.id)){
+                    if (!abelPluginController.adminGetStatus(i, this.group.id)) {
+                        if (!abelPluginController.getStatus(i, this.group.id)) {
                             abelPluginController.enableFunc(i, this.group.id)
                             reply("不出意外的话。。咱打开${i}了")
-                        }else{
+                        } else {
                             abelPluginController.disableFunc(i, this.group.id)
                             reply("不出意外的话。。咱关掉${i}了")
                         }
@@ -226,23 +241,23 @@ object AbelPluginMain : PluginBase() {
 
                 // 查询
                 case("${i}打开了嘛") {
-                    var status = abelPluginController.getStatus(i,this.group.id)
-                    if (i == "翻译"){
+                    var status = abelPluginController.getStatus(i, this.group.id)
+                    if (i == "翻译") {
                         status = !status
                     }
-                    if (status){
+                    if (status) {
                         reply("开啦(′▽`〃)")
-                    }else{
+                    } else {
                         reply("没有ヽ(･ω･｡)ﾉ ")
                     }
                 }
             }
 
             // 管理员
-            for (i in abelPluginController.adminGetAllFunctions()){
+            for (i in abelPluginController.adminGetAllFunctions()) {
                 // 操作
                 case("禁用$i") {
-                    if (abelPluginController.isAdmin(this.sender.id)){
+                    if (abelPluginController.isAdmin(this.sender.id)) {
 
                         abelPluginController.adminDisableFunc(i, this.group.id)
                         abelPluginController.disableFunc(i, this.group.id)
@@ -250,7 +265,7 @@ object AbelPluginMain : PluginBase() {
                     }
                 }
                 case("启用$i") {
-                    if (abelPluginController.isAdmin(this.sender.id)){
+                    if (abelPluginController.isAdmin(this.sender.id)) {
 
                         abelPluginController.adminEnableFunc(i, this.group.id)
                         abelPluginController.enableFunc(i, this.group.id)
@@ -261,14 +276,14 @@ object AbelPluginMain : PluginBase() {
         }
 
         // 临时消息
-        subscribeTempMessages{
+        subscribeTempMessages {
             always {
                 reply("emm抱歉。。暂不支持临时会话，但是可以通过邀请至群使用（加好友自动通过验证），群内/help查看帮助")
             }
         }
 
         // 好友消息
-        subscribeFriendMessages{
+        subscribeFriendMessages {
             always {
                 reply("emm抱歉。。暂不支持私聊，但是可以通过邀请至群使用（加好友自动通过验证），群内/help查看帮助")
             }
@@ -281,32 +296,4 @@ object AbelPluginMain : PluginBase() {
 
     }
 
-    fun isHavePicture(rawMessage: MessageChain): Boolean{
-        var isHaveImg = false
-        rawMessage.forEachContent {
-            if (!isHaveImg){
-                isHaveImg = it.asMessageChain()
-                    .firstIsInstanceOrNull<Image>() != null
-            }
-        }
-        return isHaveImg
-    }
-
-    suspend fun getAllPicture(rawMessage: MessageChain): ArrayList<String>{
-        val result = ArrayList<String>()
-        var tmp = MessageChainBuilder()
-        rawMessage.forEachContent {
-            tmp.add(it)
-            val isImage =
-                tmp.asMessageChain()
-                    .firstIsInstanceOrNull<Image>() != null
-
-            if (isImage){
-                // 添加图片url
-                result.add((it as Image).queryUrl())
-            }
-            tmp = MessageChainBuilder()
-        }
-        return result
-    }
 }
