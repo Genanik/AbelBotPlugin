@@ -12,20 +12,39 @@ class MscWeekily {
         }
     }
 
-    // 根据日期获取符合的MscChat  TODO: days参数
+    // 根据日期获取符合的MscChat
     fun getWithCalendar(msgCalendar: MsgCalendar, days: Int = 1): ArrayList<MscChat>{
         val needYear = msgCalendar.year
         val needMonth = msgCalendar.month
-        val needDay = msgCalendar.day
+        var needDay = msgCalendar.day
+        var needDays = days
         val result = ArrayList<MscChat>()
-        mscChats.forEach { chatMsg ->
-            if ( chatMsg.msgDate.msgCalendar.year == needYear &&
-                 chatMsg.msgDate.msgCalendar.month == needMonth &&
-                 chatMsg.msgDate.msgCalendar.day == needDay
-            ){
-                result.add(chatMsg)
+        if (days > 7){
+            throw Exception("days不能大于7")
+        }
+
+        while (true){
+            if (needDays != 0){
+                mscChats.forEach { chatMsg ->
+                    // 添加一天
+                    if ( chatMsg.msgDate.msgCalendar.year == needYear &&
+                        chatMsg.msgDate.msgCalendar.month == needMonth &&
+                        chatMsg.msgDate.msgCalendar.day == needDay
+                    ){
+                        result.add(chatMsg)
+                    }
+                }
+                // 改变needDay和needDays
+                needDay++
+                needDays--
+            }else{
+                break
             }
         }
         return result
     }
+}
+
+fun main(){
+    MscWeekily().getWithCalendar(MsgCalendar(msgYear=2020, msgMonth=7, msgDay=24))
 }

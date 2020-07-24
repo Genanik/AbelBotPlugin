@@ -33,6 +33,8 @@ dependencies {
     testImplementation("net.mamoe:mirai-core-qqandroid:$miraiCoreVersion")
     testImplementation("net.mamoe:mirai-console:$miraiConsoleVersion")
     testImplementation("com.github.houbb", "opencc4j", "1.5.2")
+    testImplementation("org.ansj", "ansj_seg", "5.1.6")
+
 
 
 }
