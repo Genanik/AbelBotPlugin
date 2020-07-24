@@ -88,8 +88,6 @@ class MessagesRepeatFunction (message: GroupMessageEvent) {
 
 }
 
-
-
 /**
  * 返回翻译的繁体内容
  */
@@ -139,8 +137,16 @@ class TimeFunction {
  */
 class DonaldTrumpFunction {
 
+    val sentence = arrayListOf<String>()
+    val taowa = arrayListOf<String>()
+
+    init {
+        taowa.add("套娃")
+        taowa.add("禁止套娃")
+        taowa.add("禁止")
+    }
+
     private fun textStruct(singleWord:String): String{
-        val sentence = arrayListOf<String>()
         sentence.add("我们有全球最好的${singleWord}专家\n——特朗普")
         sentence.add("对于${singleWord}，没什么需要恐慌的\n——特朗普")
         sentence.add("有些人会说我非常 非常非常有才，特别是${singleWord}方面\n——特朗普")
@@ -156,7 +162,31 @@ class DonaldTrumpFunction {
     }
 
     fun TrumpTextWithoutNPL(input: String): String {
-        return textStruct(input)
+        if (input.length > 6){
+            return "这个关键词太长了_(:з」∠)_"
+        }
+        val result = textStruct(input)
+        if (sentence.check(input)){
+            return "禁止套娃！"
+        }
+        return result
     }
+
+    private fun <String> ArrayList<String>.check(targetString: String): Boolean {
+        var isTaoWa = false
+        for (i in taowa){
+            if (i == targetString){
+                isTaoWa = true
+            }
+        }
+        return isTaoWa
+    }
+
+}
+
+/**
+ * 从http://114.67.100.226:45777/?key=ForMscWeekily 中获取聊天文本并返回词频
+ */
+class MscChatTermFrequency {
 
 }

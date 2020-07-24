@@ -20,6 +20,7 @@ val miraiCoreVersion = "1.0.2"
 val miraiConsoleVersion = "0.5.2"
 
 dependencies {
+    compileOnly("org.ansj", "ansj_seg", "5.1.6")
     compileOnly("com.github.houbb", "opencc4j", "1.5.2")
     compileOnly("net.java.dev.jna", "jna", "5.5.0")
 
