@@ -1,4 +1,4 @@
-package io.genanik.miraiPlugin.Util
+package io.genanik.miraiPlugin.uttil
 
 import com.sun.jna.Library
 import com.sun.jna.Native

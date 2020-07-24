@@ -1,11 +1,11 @@
 package io.genanik.miraiPlugin
 
-import io.genanik.miraiPlugin.Util.mirrorImage
-import io.genanik.miraiPlugin.Util.removeMessageSource
+import io.genanik.miraiPlugin.uttil.mirrorImage
+import io.genanik.miraiPlugin.uttil.removeMessageSource
 import net.mamoe.mirai.contact.Contact
 import net.mamoe.mirai.message.GroupMessageEvent
 import net.mamoe.mirai.message.data.*
-import io.genanik.miraiPlugin.Util.translate.Method
+import io.genanik.miraiPlugin.uttil.translate.Method
 import java.text.SimpleDateFormat
 import java.util.*
 

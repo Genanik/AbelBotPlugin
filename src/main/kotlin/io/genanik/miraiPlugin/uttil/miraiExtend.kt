@@ -1,4 +1,4 @@
-package io.genanik.miraiPlugin.Util
+package io.genanik.miraiPlugin.uttil
 
 import net.mamoe.mirai.message.data.*
 
