@@ -11,12 +11,13 @@ import java.util.*
 
 /**
  * 判断出现两条相同内容后 将内容镜像并返回镜像的MessageChain
- * 构造时需要传入一条GroupMessageEvent
+ * 构造时需要传入GroupMessageEvent
  */
 class MessagesRepeatFunction (message: GroupMessageEvent) {
 
     private var lastMessage: GroupMessageEvent = message // 不保证没有MessageSource块
     private var times = 1
+    private var needTimes = 2
 
     // 更新缓存并返回是否复读
     fun update(newMessage: GroupMessageEvent): Boolean{
@@ -25,11 +26,14 @@ class MessagesRepeatFunction (message: GroupMessageEvent) {
 
         if (removeMessageSource(lastMessage.message).toString() == newMsgWithoutMessageSource.toString()){// 当前消息与上一条消息内容相同
             times++
+        }else{
+            needTimes = 2
         }
-        return if (times == 2){
+        return if (times == needTimes){
             // 确定要复读了
             lastMessage = newMessage
             times = 0
+            needTimes = 5
             true
         } else {
             lastMessage = newMessage
@@ -55,8 +59,8 @@ class MessagesRepeatFunction (message: GroupMessageEvent) {
             } else {
                 //文字消息
                 var tmp = ""
-                val symbolRaw = arrayOf('[', ']', '(', ')', '（', '）', '{', '}', '【', '】', '「', '」', '“', '”', '/', '\\', '‘', '’', '¿', '?', '？', '<', '>', '《', '》', '.', '。',  '!', '！', '¡')
-                val symbolNew = arrayOf(']', '[', ')', '(', '）', '（', '}', '{', '】', '【', '」', '「', '”', '“', '\\', '/', '’', '‘', '?', '¿', '¿', '>', '<', '》', '《', '·', '˚', '¡', '¡', '!')
+                val symbolRaw = arrayOf('[', ']', '(', ')', '（', '）', '{', '}', '【', '】', '「', '」', '“', '”', '/', '\\', '‘', '’', '<', '>', '《', '》')
+                val symbolNew = arrayOf(']', '[', ')', '(', '）', '（', '}', '{', '】', '【', '」', '「', '”', '“', '\\', '/', '’', '‘', '>', '<', '》', '《')
                 messageClip.toString().forEach {
                     // 字符替换
                     val symbolInt = symbolRaw.findOrNull(it)
