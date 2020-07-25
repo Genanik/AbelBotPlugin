@@ -23,23 +23,19 @@ class MscWeekily {
             throw Exception("days不能大于7")
         }
 
-        while (true){
-            if (needDays != 0){
-                mscChats.forEach { chatMsg ->
-                    // 添加一天
-                    if ( chatMsg.msgDate.msgCalendar.year == needYear &&
-                        chatMsg.msgDate.msgCalendar.month == needMonth &&
-                        chatMsg.msgDate.msgCalendar.day == needDay
-                    ){
-                        result.add(chatMsg)
-                    }
+        while (needDays != 0){
+            mscChats.forEach { chatMsg ->
+                // 添加一天
+                if ( chatMsg.msgDate.msgCalendar.year == needYear &&
+                    chatMsg.msgDate.msgCalendar.month == needMonth &&
+                    chatMsg.msgDate.msgCalendar.day == needDay
+                ){
+                    result.add(chatMsg)
                 }
-                // 改变needDay和needDays
-                needDay++
-                needDays--
-            }else{
-                break
             }
+            // 改变needDay和needDays
+            needDay++
+            needDays--
         }
         return result
     }

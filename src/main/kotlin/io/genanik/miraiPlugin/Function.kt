@@ -25,19 +25,18 @@ class MessagesRepeatFunction (message: GroupMessageEvent) {
         val newMsgWithoutMessageSource = removeMessageSource(newMessage.message)
 
         if (removeMessageSource(lastMessage.message).toString() == newMsgWithoutMessageSource.toString()){// 当前消息与上一条消息内容相同
-            times++
+                times++
         }else{
             needTimes = 2
         }
         return if (times == needTimes){
             // 确定要复读了
             lastMessage = newMessage
-            times = 0
-            needTimes = 5
+            times = 1
+            needTimes = 6
             true
         } else {
             lastMessage = newMessage
-            times = 1
             false
         }
     }
