@@ -208,13 +208,13 @@ class TimeFunction {
  */
 class DonaldTrumpFunction {
 
-    val sentence = arrayListOf<String>()
+    var sentence = arrayListOf<String>()
     val taowa = arrayListOf<String>()
 
     init {
         taowa.add("套娃")
-        taowa.add("禁止套娃")
-        taowa.add("禁止")
+//        taowa.add("禁止套娃")
+//        taowa.add("禁止")
     }
 
     private fun textStruct(singleWord: String): String{
@@ -229,24 +229,26 @@ class DonaldTrumpFunction {
         sentence.add("${singleWord}并不可怕\n——特朗普")
         sentence.add("你不握手，怎么能是${singleWord}呢？\n——特朗普")
         sentence.add("把${singleWord}当作流感就好\n——特朗普")
-        return sentence.random()
-    }
-
-    fun TrumpTextWithoutNPL(input: String): String {
-        if (input.length > 6){
-            return "这个关键词太长了_(:з」∠)_"
-        }
-        val result = textStruct(input)
-        if (sentence.check(input)){
-            return "禁止套娃！"
-        }
+        val result = sentence.random()
+        sentence = arrayListOf()
         return result
     }
 
-    private fun <String> ArrayList<String>.check(targetString: String): Boolean {
+    fun TrumpTextWithoutNPL(input: String): String {
+        if (input.length > 5){
+            return "这个关键词太长了_(:з」∠)_"
+        }
+        if (check(input)){
+            return "禁止套娃！"
+        }
+        return textStruct(input)
+
+    }
+
+    private fun check(targetString: String): Boolean {
         var isTaoWa = false
         for (i in taowa){
-            if (i == targetString){
+            if (targetString.indexOf(i) != -1){
                 isTaoWa = true
             }
         }
