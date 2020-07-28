@@ -2,9 +2,9 @@ package io.genanik.miraiPlugin.utils
 
 import net.mamoe.mirai.message.data.*
 
-fun removeMessageSource(message: MessageChain): MessageChain {
+fun MessageChain.removeMessageSource(): MessageChain {
     val tmp = MessageChainBuilder()
-    message.forEachContent {
+    this.forEachContent {
         tmp.add(it)
     }
     return tmp.asMessageChain()
@@ -37,4 +37,25 @@ suspend fun getAllPicture(rawMessage: MessageChain): ArrayList<String>{
         tmp = MessageChainBuilder()
     }
     return result
+}
+
+fun MessageChain.isEqual(msgChain: MessageChain): Boolean{
+    val newMsgChain = this.removeMessageSource()
+    val oldMsgChain = msgChain.removeMessageSource()
+
+    // 首先根据长度判断
+    if (newMsgChain.size != oldMsgChain.size){
+        return false
+    }
+
+    // 根据对比相同索引的内容来判断是否相同
+    var new: SingleMessage
+    for ( (index, old) in oldMsgChain.withIndex()){
+        new = newMsgChain[index]
+        if (old != new){
+            return false
+        }
+    }
+    return true
+
 }
