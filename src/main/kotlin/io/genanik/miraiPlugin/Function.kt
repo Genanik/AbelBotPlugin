@@ -1,11 +1,11 @@
 package io.genanik.miraiPlugin
 
-import io.genanik.miraiPlugin.uttil.mirrorImage
-import io.genanik.miraiPlugin.uttil.removeMessageSource
+import io.genanik.miraiPlugin.utils.mirrorImage
+import io.genanik.miraiPlugin.utils.removeMessageSource
 import net.mamoe.mirai.contact.Contact
 import net.mamoe.mirai.message.GroupMessageEvent
 import net.mamoe.mirai.message.data.*
-import io.genanik.miraiPlugin.uttil.translate.Method
+import io.genanik.miraiPlugin.utils.translate.Method
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -24,19 +24,17 @@ class MessagesRepeatFunction (message: GroupMessageEvent) {
 
         val newMsgWithoutMessageSource = removeMessageSource(newMessage.message)
 
-        if (removeMessageSource(lastMessage.message).toString() == newMsgWithoutMessageSource.toString()){// 当前消息与上一条消息内容相同
-                times++
-        }else{
-            needTimes = 2
+        if (removeMessageSource(lastMessage.message).toString() == newMsgWithoutMessageSource.toString()) {// 当前消息与上一条消息内容相同
+            times++
         }
         return if (times == needTimes){
             // 确定要复读了
             lastMessage = newMessage
             times = 1
-            needTimes = 6
             true
         } else {
             lastMessage = newMessage
+            times = 1
             false
         }
     }

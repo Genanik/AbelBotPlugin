@@ -3,9 +3,9 @@ package io.genanik.miraiPlugin
 import io.genanik.miraiPlugin.Settings.AbelPluginsManager
 import io.genanik.miraiPlugin.Settings.abelBotVersion
 import io.genanik.miraiPlugin.Settings.debug
-import io.genanik.miraiPlugin.uttil.getAllPicture
-import io.genanik.miraiPlugin.uttil.isHavePicture
-import io.genanik.miraiPlugin.uttil.reverseImage
+import io.genanik.miraiPlugin.utils.getAllPicture
+import io.genanik.miraiPlugin.utils.isHavePicture
+import io.genanik.miraiPlugin.utils.reverseImage
 import net.mamoe.mirai.Bot
 import net.mamoe.mirai.console.MiraiConsole
 import net.mamoe.mirai.console.plugins.PluginBase
