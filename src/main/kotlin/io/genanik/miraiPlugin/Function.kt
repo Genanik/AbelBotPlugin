@@ -19,19 +19,32 @@ class MessagesRepeatFunction (message: GroupMessageEvent) {
     private var lastMessage: GroupMessageEvent = message // 不保证没有MessageSource块
     private var times = 1
     private var needTimes = 2
+    private var repeatTimes = 0
     private var hasBeenProcessed = false
-
 
     // 更新缓存并返回是否复读
     fun update(newMessage: GroupMessageEvent): Boolean{
 
-        if (newMessage.message.isEqual(lastMessage.message)) {// 当前消息与上一条消息内容相同
+        val isSame = newMessage.message.isEqual(lastMessage.message)
+
+        if (isSame) { // 当前消息与上一条消息内容相同
             times++
         }
 
         val result = times == needTimes
         lastMessage = newMessage
-        times = 1
+
+        if (result){
+            repeatTimes++
+            needTimes += 3
+            times = 1
+        }
+
+        if (!isSame){
+            repeatTimes = 0
+            needTimes = 2
+            times = 1
+        }
 
         return result
     }
@@ -47,7 +60,7 @@ class MessagesRepeatFunction (message: GroupMessageEvent) {
             val pic: Image? by msgClip.orNull()
             val text: PlainText? by msgClip.orNull()
 
-            // 处理委托
+            // 根据委托处理信息
             newMsgChain.processImg(pic, contact)
             newMsgChain.processText(text)
 
