@@ -29,16 +29,11 @@ class MessagesRepeatFunction (message: GroupMessageEvent) {
             times++
         }
 
-        return if (times == needTimes){
-            lastMessage = newMessage
-            times = 1
-            true
-        }else{
-            lastMessage = newMessage
-            times = 1
-            false
-        }
+        val result = times == needTimes
+        lastMessage = newMessage
+        times = 1
 
+        return result
     }
 
     // MessageChain倒序
