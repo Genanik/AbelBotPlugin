@@ -2,7 +2,7 @@ package io.genanik.miraiPlugin
 
 import io.genanik.miraiPlugin.utils.isEqual
 import io.genanik.miraiPlugin.utils.mirrorImage
-import io.genanik.miraiPlugin.utils.removeMessageSource
+import io.genanik.miraiPlugin.utils.removeMsgSource
 import net.mamoe.mirai.contact.Contact
 import net.mamoe.mirai.message.GroupMessageEvent
 import net.mamoe.mirai.message.data.*
@@ -25,27 +25,17 @@ class MessagesRepeatFunction (message: GroupMessageEvent) {
 
         if (newMessage.message.isEqual(lastMessage.message)) {// 当前消息与上一条消息内容相同
             times++
-            AbelPluginMain.logger.debug("newMessage.message.isEqual(lastMessage.message) -> True")
-        }else{
-            AbelPluginMain.logger.debug("newMessage.message.isEqual(lastMessage.message) -> False")
         }
-
-        return if (times == needTimes){
-            // 确定要复读了
-            lastMessage = newMessage
-            times = 1
-            true
-        } else {
-            lastMessage = newMessage
-            times = 1
-            false
-        }
+        
+        lastMessage = newMessage
+        times = 1
+        return times == needTimes
     }
 
     // MessageChain倒序 祖传配方，懒得重写了
     suspend fun textBackRepeat(oldMsgChain: MessageChain, contact: Contact): MessageChain {
         val newMsgChain = MessageChainBuilder()
-        oldMsgChain.removeMessageSource().reversed().forEach { messageClip ->
+        oldMsgChain.removeMsgSource().reversed().forEach { messageClip ->
             if (messageClip.toString().contains("mirai:")) {
                 // 特殊消息
                 try {
