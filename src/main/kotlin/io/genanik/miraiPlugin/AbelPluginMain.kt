@@ -29,21 +29,6 @@ object AbelPluginMain : PluginBase() {
         super.onLoad()
         abelPluginController = AbelPluginsManager(logger)
 
-        awa = arrayListOf()
-
-        // 添加awa字符
-        awa.add("w(ﾟДﾟ)w")
-        awa.add("ヽ(✿ﾟ▽ﾟ)ノ")
-        awa.add("Σ( ° △ °|||)︴")
-        awa.add("φ(≧ω≦*)♪")
-        awa.add("(°ー°〃)")
-        awa.add("喵喵喵？")
-        awa.add("喵喵！")
-        awa.add("(≧▽≦)喵？")
-        awa.add("\"˚∆˚\"")
-        awa.add("Orz")
-        awa.add("诶嘿，我不叫(≧ω≦)))")
-
         // 注册Mirai指令
         // 暂无
         // 注册Abel管理员指令
@@ -98,11 +83,6 @@ object AbelPluginMain : PluginBase() {
         abelPluginController.regCommand("报时", "发送当前时间") {
             val result = MessageChainBuilder()
             result.add(timeController.getNow())
-            return@regCommand result.asMessageChain()
-        }
-        abelPluginController.regCommand("喵喵喵喵", "awa") {
-            val result = MessageChainBuilder()
-            result.add(awa[(0..awa.size).shuffled().last()])
             return@regCommand result.asMessageChain()
         }
 
