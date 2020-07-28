@@ -19,6 +19,8 @@ class MessagesRepeatFunction (message: GroupMessageEvent) {
     private var lastMessage: GroupMessageEvent = message // 不保证没有MessageSource块
     private var times = 1
     private var needTimes = 2
+    private var hasBeenProcessed = false
+
 
     // 更新缓存并返回是否复读
     fun update(newMessage: GroupMessageEvent): Boolean{
@@ -26,48 +28,73 @@ class MessagesRepeatFunction (message: GroupMessageEvent) {
         if (newMessage.message.isEqual(lastMessage.message)) {// 当前消息与上一条消息内容相同
             times++
         }
-        
-        lastMessage = newMessage
-        times = 1
-        return times == needTimes
+
+        return if (times == needTimes){
+            lastMessage = newMessage
+            times = 1
+            true
+        }else{
+            lastMessage = newMessage
+            times = 1
+            false
+        }
+
     }
 
-    // MessageChain倒序 祖传配方，懒得重写了
+    // MessageChain倒序
     suspend fun textBackRepeat(oldMsgChain: MessageChain, contact: Contact): MessageChain {
-        val newMsgChain = MessageChainBuilder()
-        oldMsgChain.removeMsgSource().reversed().forEach { messageClip ->
-            if (messageClip.toString().contains("mirai:")) {
-                // 特殊消息
-                try {
-                    val pic = messageClip as Image
-                    val newImg = mirrorImage(pic.queryUrl(), contact)
-                    newMsgChain.add(newImg)
-                }catch (e: Exception){
-                    // 不是图片
-                    newMsgChain.add(messageClip)
-                }
-            } else {
-                //文字消息
-                var tmp = ""
-                val symbolRaw = arrayOf('[', ']', '(', ')', '（', '）', '{', '}', '【', '】', '「', '」', '“', '”', '/', '\\', '‘', '’', '<', '>', '《', '》')
-                val symbolNew = arrayOf(']', '[', ')', '(', '）', '（', '}', '{', '】', '【', '」', '「', '”', '“', '\\', '/', '’', '‘', '>', '<', '》', '《')
-                messageClip.toString().forEach {
-                    // 字符替换
-                    val symbolInt = symbolRaw.findOrNull(it)
+        val newMsgChain = MessageChainBuilder() // 发送的MsgChain
 
-                    tmp = when {
-                        symbolInt != null -> {
-                            "" + symbolNew[symbolInt] + tmp
-                        }
-                        else -> {
-                            it + tmp
-                        }
-                    }
-                }
-                newMsgChain.add(tmp)
+        oldMsgChain.removeMsgSource().reversed().forEach {
+            val msgClip = it.asMessageChain()
+
+            // 识别委托
+            val pic: Image? by msgClip.orNull()
+            val text: PlainText? by msgClip.orNull()
+
+            // 处理委托
+            newMsgChain.processImg(pic, contact)
+            newMsgChain.processText(text)
+
+            if (!hasBeenProcessed){
+                // 没有被处理委托
+                newMsgChain.add(it)
             }
+            hasBeenProcessed = false
         }
         return newMsgChain.asMessageChain()
+    }
+
+    private suspend fun MessageChainBuilder.processImg(pic: Image?, contact: Contact) {
+        if (pic == null){
+            return
+        }
+        this.add(mirrorImage(pic.queryUrl(), contact))
+        hasBeenProcessed = true
+    }
+
+    private fun MessageChainBuilder.processText(text: PlainText?) {
+        if (text == null){
+            return
+        }
+        var tmp = ""
+        val symbolRaw = arrayOf('[', ']', '(', ')', '（', '）', '{', '}', '【', '】', '「', '」', '“', '”', '/', '\\', '‘', '’', '<', '>', '《', '》')
+        val symbolNew = arrayOf(']', '[', ')', '(', '）', '（', '}', '{', '】', '【', '」', '「', '”', '“', '\\', '/', '’', '‘', '>', '<', '》', '《')
+        text.toString().forEach {
+            // 字符替换
+            val symbolInt = symbolRaw.findOrNull(it)
+
+            tmp = when {
+                symbolInt != null -> {
+                    "" + symbolNew[symbolInt] + tmp
+                }
+                else -> {
+                    it + tmp
+                }
+            }
+        }
+        this.add(tmp)
+        hasBeenProcessed = true
     }
 
     private fun <Char> Array<Char>.findOrNull(targetChar: Char): Int? {
