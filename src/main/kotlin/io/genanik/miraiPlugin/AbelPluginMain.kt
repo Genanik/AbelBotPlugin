@@ -3,9 +3,7 @@ package io.genanik.miraiPlugin
 import io.genanik.miraiPlugin.Settings.AbelPluginsManager
 import io.genanik.miraiPlugin.Settings.abelBotVersion
 import io.genanik.miraiPlugin.Settings.debug
-import io.genanik.miraiPlugin.utils.getAllPicture
-import io.genanik.miraiPlugin.utils.isHavePicture
-import io.genanik.miraiPlugin.utils.reverseImage
+import io.genanik.miraiPlugin.utils.*
 import net.mamoe.mirai.Bot
 import net.mamoe.mirai.console.MiraiConsole
 import net.mamoe.mirai.console.plugins.PluginBase
@@ -91,12 +89,15 @@ object AbelPluginMain : PluginBase() {
         abelPluginController.adminRegFunction("复读")
         abelPluginController.adminRegFunction("川普")
         abelPluginController.adminRegFunction("倒转GIF")
+        abelPluginController.adminRegFunction("图片缩放")
 
         // 注册Abel功能
         abelPluginController.regFunction("翻译", "自动翻译包含繁体的消息")
         abelPluginController.regFunction("复读", "同一条消息出现两次后，Abel机器人自动跟读")
         abelPluginController.regFunction("川普", "@Abel机器人并加上一个关键词，自动发送\"名人名言\"")
         abelPluginController.regFunction("倒转GIF", "@Abel机器人并加上一个或多个GIF，可以倒叙一个或多个GIF")
+        abelPluginController.regFunction("图片缩放", "@Abel机器人并加上\"放大\"或\"缩小\"一个或多个静态图，可以缩放静态图")
+
     }
 
     override fun onEnable() {
@@ -155,6 +156,26 @@ object AbelPluginMain : PluginBase() {
                         val allPic = getAllPicture(message)
                         allPic.forEach { picUrl ->
                             newMsg.add(reverseImage(picUrl, group))
+                        }
+                        reply(newMsg.asMessageChain())
+                    }
+                }
+            }
+
+            // 图片缩放
+            atBot {
+                if (abelPluginController.getStatus("图片缩放", this.group.id)) {
+                    if (isHavePicture(message)) {
+                        val newMsg = MessageChainBuilder()
+                        val allPic = getAllPicture(message)
+                        allPic.forEach { picUrl ->
+                            if (message.contains("放大" as SingleMessage)) {
+//                                logger.debug("放大了")
+                                newMsg.add(resizeImgToBig(picUrl, group))
+                            } else if (message.contains("缩小" as SingleMessage)) {
+//                                logger.debug("缩小了")
+                                newMsg.add(resizeImgToSmall(picUrl, group))
+                            }
                         }
                         reply(newMsg.asMessageChain())
                     }

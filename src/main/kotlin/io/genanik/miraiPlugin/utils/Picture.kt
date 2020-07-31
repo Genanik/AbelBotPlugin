@@ -25,8 +25,30 @@ suspend fun reverseImage(url: String, contact: Contact): net.mamoe.mirai.message
     return contact.uploadImage(File("dstImg").toExternalImage())
 }
 
+suspend fun resizeImgToBig(url: String, contact: Contact): net.mamoe.mirai.message.data.Image {
+    val raw = File("srcImg")
+    raw.writeBytes(URL(url).readBytes())
+    if (libImage.INSTANCE.ResizeImgToBig() != 0){
+        throw Exception("图片错了。。")
+    }
+    return contact.uploadImage(File("dstImg").toExternalImage())
+}
+
+suspend fun resizeImgToSmall(url: String, contact: Contact): net.mamoe.mirai.message.data.Image {
+    val raw = File("srcImg")
+    raw.writeBytes(URL(url).readBytes())
+    if (libImage.INSTANCE.ResizeImgToSmall() != 0){
+        throw Exception("图片错了。。")
+    }
+    return contact.uploadImage(File("dstImg").toExternalImage())
+}
+
 // 引用外部动态库 https://github.com/Genanik/Vertical-flip-of-Repeat-picture
 interface libImage : Library {
+
+    fun ResizeImgToBig(): Int
+
+    fun ResizeImgToSmall(): Int
 
     fun ReverseGif(): Int
 
