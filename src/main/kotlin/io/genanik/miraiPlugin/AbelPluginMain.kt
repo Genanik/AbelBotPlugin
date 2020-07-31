@@ -65,11 +65,11 @@ object AbelPluginMain : PluginBase() {
         logger.info("开始注册Abel指令")
         abelPluginController.regCommand("/help", "展示帮助信息") {
             val result = MessageChainBuilder()
-            result.add("嘤嘤嘤嘤嘤嘤嘤嘤嘤\n\n")
+            result.add("你好你好\n\n")
             for (i in abelPluginController.getAllCommands()) {
                 result.add("* $i  ${abelPluginController.getCommandDescription()[i]}\n")
             }
-            result.add("\n咱介绍完指令了，嘤嘤嘤，该介绍功能了\n\n")
+            result.add("\n咱介绍完指令了，然后。。然后。。。。\n该介绍功能了\n\n")
             for (i in abelPluginController.getAllFunctions()) {
                 result.add("* $i  ${abelPluginController.getFunctionDescription()[i]}\n")
             }
