@@ -169,11 +169,11 @@ object AbelPluginMain : PluginBase() {
                         val newMsg = MessageChainBuilder()
                         val allPic = getAllPicture(message)
                         allPic.forEach { picUrl ->
-                            if (message.contains("放大" as SingleMessage)) {
-//                                logger.debug("放大了")
+                            val maybeText = message.firstOrNull(PlainText) ?: return@atBot
+                            val isToBig = maybeText.content == "放大"
+                            if (isToBig) {
                                 newMsg.add(resizeImgToBig(picUrl, group))
-                            } else if (message.contains("缩小" as SingleMessage)) {
-//                                logger.debug("缩小了")
+                            } else {
                                 newMsg.add(resizeImgToSmall(picUrl, group))
                             }
                         }
