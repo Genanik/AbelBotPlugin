@@ -1,7 +1,7 @@
 object Versions {
 
     object Abel {
-        const val version = "2.7.0"
+        const val version = "2.7.1"
     }
 
 }
