@@ -174,7 +174,7 @@ object AbelPluginMain : PluginBase() {
                             if (isToBig) {
                                 newMsg.add(resizeImgToBig(picUrl, group))
                             } else {
-                                newMsg.add(resizeImgToSmall(picUrl, group))
+//                                newMsg.add(resizeImgToSmall(picUrl, group))
                             }
                         }
                         reply(newMsg.asMessageChain())
