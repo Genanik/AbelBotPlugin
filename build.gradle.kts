@@ -16,7 +16,7 @@ repositories {
 group = "io.genanik"
 version = "2.7.2"
 
-val miraiCoreVersion = "1.1.3"
+val miraiCoreVersion = "1.0.4"
 val miraiConsoleVersion = "0.5.2"
 
 dependencies {
@@ -25,7 +25,7 @@ dependencies {
     compileOnly("net.java.dev.jna", "jna", "5.5.0")
 
     compileOnly(kotlin("stdlib-jdk8"))
-    compileOnly("net.mamoe:mirai-core-qqandroid:$miraiCoreVersion")
+    compileOnly("net.mamoe:mirai-core:$miraiCoreVersion")
     compileOnly("net.mamoe:mirai-console:$miraiConsoleVersion")
 
     testImplementation(kotlin("stdlib-jdk8"))
