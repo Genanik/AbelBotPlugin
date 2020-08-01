@@ -154,9 +154,11 @@ object AbelPluginMain : PluginBase() {
             // 倒转GIF
             atBot {
                 if (abelPluginController.getStatus("倒转GIF", this.group.id)) {
-                    if (isHavePicture(message)) {
+                    val firstImg: Image = message.firstIsInstanceOrNull() ?: return@atBot
+                    if (isGIF( firstImg.queryUrl() )) {
                         val newMsg = MessageChainBuilder()
                         val allPic = getAllPicture(message)
+
                         allPic.forEach { picUrl ->
                             newMsg.add(reverseImage(picUrl, group))
                         }
@@ -168,7 +170,8 @@ object AbelPluginMain : PluginBase() {
             // 图片缩放
             atBot {
                 if (abelPluginController.getStatus("图片缩放", this.group.id)) {
-                    if (isHavePicture(message)) {
+                    val firstImg: Image = message.firstIsInstanceOrNull() ?: return@atBot
+                    if (!isGIF( firstImg.queryUrl())) {
                         val newMsg = MessageChainBuilder()
                         val allPic = getAllPicture(message)
                         allPic.forEach { picUrl ->
