@@ -54,7 +54,7 @@ class ResizePic(url: String) {
     }
 
     private suspend fun uploadResizeImg(contact: Contact): Image {
-        return contact.uploadImage(File("resizeImgDst").toExternalImage())
+        return contact.uploadImage(File("AbelPic/resizeImgDst").toExternalImage())
     }
 }
 
