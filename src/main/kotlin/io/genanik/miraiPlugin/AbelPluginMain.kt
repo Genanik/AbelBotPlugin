@@ -25,6 +25,9 @@ object AbelPluginMain : PluginBase() {
 
     override fun onLoad() {
         super.onLoad()
+        // 创建AbelPic文件夹
+        createAbelPicFolder()
+
         abelPluginController = AbelPluginsManager(logger)
 
         // 注册Mirai指令
@@ -172,9 +175,9 @@ object AbelPluginMain : PluginBase() {
                             val maybeText = message.firstOrNull(PlainText) ?: return@atBot
                             val isToBig = maybeText.content == "放大"
                             if (isToBig) {
-                                newMsg.add(resizeImgToBig(picUrl, group))
+                                newMsg.add(ResizePic(picUrl).ToBigger(group))
                             } else {
-//                                newMsg.add(resizeImgToSmall(picUrl, group))
+                                newMsg.add(ResizePic(picUrl).ToSmaller(group))
                             }
                         }
                         reply(newMsg.asMessageChain())
