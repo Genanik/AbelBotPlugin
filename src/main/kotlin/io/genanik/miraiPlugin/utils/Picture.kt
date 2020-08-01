@@ -21,7 +21,7 @@ suspend fun mirrorImage(url: String, contact: Contact): Image {
     if (libImage.INSTANCE.HorizontalFilpPic() != 0){
         throw Exception("图片错了。。")
     }
-    return contact.uploadImage(File("mirrorImgDst").toExternalImage())
+    return contact.uploadImage(File("AbelPic/mirrorImgDst").toExternalImage())
 }
 
 suspend fun reverseImage(url: String, contact: Contact): Image {
@@ -30,7 +30,7 @@ suspend fun reverseImage(url: String, contact: Contact): Image {
     if (libImage.INSTANCE.ReverseGif() != 0){
         throw Exception("图片错了。。")
     }
-    return contact.uploadImage(File("reverseImgDst").toExternalImage())
+    return contact.uploadImage(File("AbelPic/reverseImgDst").toExternalImage())
 }
 
 class ResizePic(url: String) {
