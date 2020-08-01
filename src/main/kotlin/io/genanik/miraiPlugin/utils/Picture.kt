@@ -60,14 +60,12 @@ class ResizePic(url: String) {
 
 fun isGIF(url: String): Boolean {
     val raw = File("AbelPic/isGIF")
-    var gif = false
     raw.writeBytes(URL(url).readBytes())
-    gif = when (libImage.INSTANCE.ResizeImgToBig()){
+    return when (libImage.INSTANCE.ResizeImgToBig()){
         0 -> true
         1 -> false
         else -> throw Exception("在判断是否为GIF时出现了未知的错误")
     }
-    return gif
 }
 
 // 引用外部动态库 https://github.com/Genanik/Vertical-flip-of-Repeat-picture
