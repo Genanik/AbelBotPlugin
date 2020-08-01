@@ -176,7 +176,7 @@ object AbelPluginMain : PluginBase() {
                         val allPic = getAllPicture(message)
                         allPic.forEach { picUrl ->
                             val maybeText = message.firstOrNull(PlainText) ?: return@atBot
-                            val isToBig = maybeText.content == "放大"
+                            val isToBig = maybeText.content.indexOf("放大") != -1
                             if (isToBig) {
                                 newMsg.add(ResizePic(picUrl).ToBigger(group))
                             } else {

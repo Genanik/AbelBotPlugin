@@ -34,6 +34,7 @@ dependencies {
     testImplementation("net.mamoe:mirai-console:$miraiConsoleVersion")
     testImplementation("com.github.houbb", "opencc4j", "1.5.2")
     testImplementation("org.ansj", "ansj_seg", "5.1.6")
+    testImplementation("net.java.dev.jna", "jna", "5.5.0")
 
 
 
