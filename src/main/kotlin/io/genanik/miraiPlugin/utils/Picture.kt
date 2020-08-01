@@ -61,7 +61,7 @@ class ResizePic(url: String) {
 fun isGIF(url: String): Boolean {
     val raw = File("AbelPic/isGIF")
     raw.writeBytes(URL(url).readBytes())
-    return when (libImage.INSTANCE.ResizeImgToBig()){
+    return when (libImage.INSTANCE.IsGIF()){
         0 -> true
         1 -> false
         else -> throw Exception("在判断是否为GIF时出现了未知的错误")
