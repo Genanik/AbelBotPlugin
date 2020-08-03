@@ -1,6 +1,6 @@
 package io.genanik.miraiPlugin.plugins
 
-import io.genanik.miraiPlugin.settings.AbelPluginsManager
+import io.genanik.miraiPlugin.settings.AbelPlugins
 import io.genanik.miraiPlugin.utils.ResizePic
 import io.genanik.miraiPlugin.utils.getAllPicture
 import io.genanik.miraiPlugin.utils.isGIF
@@ -9,7 +9,7 @@ import net.mamoe.mirai.message.data.*
 
 class ImageResize {
 
-    fun trigger(abelPM: AbelPluginsManager, controller: GroupMessageSubscribersBuilder){
+    fun trigger(abelPM: AbelPlugins, controller: GroupMessageSubscribersBuilder){
         controller.atBot {
             // 图片缩放是否开启
             if (!abelPM.getStatus("图片缩放", this.group.id)) {

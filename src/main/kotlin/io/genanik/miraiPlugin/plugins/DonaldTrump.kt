@@ -1,6 +1,6 @@
 package io.genanik.miraiPlugin.plugins
 
-import io.genanik.miraiPlugin.settings.AbelPluginsManager
+import io.genanik.miraiPlugin.settings.AbelPlugins
 import io.genanik.miraiPlugin.utils.isHavePicture
 import net.mamoe.mirai.event.GroupMessageSubscribersBuilder
 import net.mamoe.mirai.message.data.PlainText
@@ -20,7 +20,7 @@ class DonaldTrump {
 //        taowa.add("禁止")
     }
 
-    fun trigger(abelPM: AbelPluginsManager, controller: GroupMessageSubscribersBuilder){
+    fun trigger(abelPM: AbelPlugins, controller: GroupMessageSubscribersBuilder){
         controller.atBot {
             // 是否开启
             if (!abelPM.getStatus("川普", this.group.id)) {

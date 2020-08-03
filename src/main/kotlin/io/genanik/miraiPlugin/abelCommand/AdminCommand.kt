@@ -1,14 +1,12 @@
 package io.genanik.miraiPlugin.abelCommand
 
-import io.genanik.miraiPlugin.settings.AbelPluginsManager
-import io.genanik.miraiPlugin.settings.abelBotVersion
-import io.genanik.miraiPlugin.settings.debug
+import io.genanik.miraiPlugin.settings.AbelPlugins
 import net.mamoe.mirai.Bot
 import net.mamoe.mirai.console.MiraiConsole
 import net.mamoe.mirai.message.data.MessageChainBuilder
 import java.io.File
 
-fun AbelPluginsManager.regDumpvars(){
+fun AbelPlugins.regDumpvars(){
     this.regAdminCommand("dumpvars") {
         val result = MessageChainBuilder()
         result.add("保留指令")
@@ -17,7 +15,7 @@ fun AbelPluginsManager.regDumpvars(){
 }
 
 
-fun AbelPluginsManager.regAdminHelp(){
+fun AbelPlugins.regAdminHelp(){
     this.regAdminCommand("/adminHelp") {
         val result = MessageChainBuilder()
         result.add("启用{功能}\n")
@@ -30,8 +28,7 @@ fun AbelPluginsManager.regAdminHelp(){
                     "${this.getAllCommands()}\n" +
                     "${this.getAllFunctions()}\n"
         )
-        result.add("Debug: $debug\n")
-        result.add("AbelVersion: $abelBotVersion\n")
+        result.add("AbelVersion: ${Versions.Abel.version}\n")
         result.add("JavaVersion: ${System.getProperty("java.version")}\n")
         result.add(
             "MiraiCoreVersion: ${File(Bot.javaClass.protectionDomain.codeSource.location.file).name.replace(
@@ -44,7 +41,7 @@ fun AbelPluginsManager.regAdminHelp(){
     }
 }
 
-fun AbelPluginsManager.regAdminFunctions(){
+fun AbelPlugins.regAdminFunctions(){
     this.adminRegFunction("翻译")
     this.adminRegFunction("复读")
     this.adminRegFunction("川普")

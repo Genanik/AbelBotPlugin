@@ -1,10 +1,10 @@
 package io.genanik.miraiPlugin.abelCommand
 
 import io.genanik.miraiPlugin.plugins.Time
-import io.genanik.miraiPlugin.settings.AbelPluginsManager
+import io.genanik.miraiPlugin.settings.AbelPlugins
 import net.mamoe.mirai.message.data.MessageChainBuilder
 
-fun AbelPluginsManager.regHelp(){
+fun AbelPlugins.regHelp(){
     this.regCommand("/help", "展示帮助信息") {
         val result = MessageChainBuilder()
         result.add("你好你好\n\n")
@@ -24,7 +24,7 @@ fun AbelPluginsManager.regHelp(){
     }
 }
 
-fun AbelPluginsManager.regGetTime(timeController: Time){
+fun AbelPlugins.regGetTime(timeController: Time){
     this.regCommand("报时", "发送当前时间") {
         val result = MessageChainBuilder()
         result.add(timeController.getNow())
@@ -32,7 +32,7 @@ fun AbelPluginsManager.regGetTime(timeController: Time){
     }
 }
 
-fun AbelPluginsManager.regFunctions(){
+fun AbelPlugins.regFunctions(){
     this.regFunction("翻译", "自动翻译包含繁体的消息")
     this.regFunction("复读", "同一条消息出现两次后，Abel机器人自动跟读")
     this.regFunction("川普", "@Abel机器人并加上一个关键词，自动发送\"名人名言\"")

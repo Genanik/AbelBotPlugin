@@ -3,14 +3,14 @@ package io.genanik.miraiPlugin.settings
 import net.mamoe.mirai.message.data.MessageChain
 import net.mamoe.mirai.utils.MiraiLogger
 
-class AbelPluginsManager(newLogger: MiraiLogger) {
+class AbelPlugins(newLogger: MiraiLogger) {
 
     /**
      * AbelPluginsManager有两个控制器
      * 一个是Command控制器 一个是Function控制器
      * Command  由特定字符串触发
      * Function 需要自己写一个subscribeGroupMessages
-     * - Function一个是Function控制器现阶段仅可保存开关状态与功能描述 TODO 未来考虑构建DSL
+     * - Function一个是Function控制器现阶段仅可保存开关状态与功能描述
      */
 
     private var logger: MiraiLogger = newLogger

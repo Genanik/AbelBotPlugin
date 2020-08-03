@@ -1,6 +1,6 @@
 package io.genanik.miraiPlugin.plugins
 
-import io.genanik.miraiPlugin.settings.AbelPluginsManager
+import io.genanik.miraiPlugin.settings.AbelPlugins
 import io.genanik.miraiPlugin.utils.translate.Method
 import net.mamoe.mirai.event.GroupMessageSubscribersBuilder
 import net.mamoe.mirai.message.GroupMessageEvent
@@ -14,7 +14,7 @@ import net.mamoe.mirai.message.data.forEachContent
  */
 class MessagesTranslate {
 
-    fun trigger(abelPM: AbelPluginsManager, controller: GroupMessageSubscribersBuilder){
+    fun trigger(abelPM: AbelPlugins, controller: GroupMessageSubscribersBuilder){
         controller.always {
             if (abelPM.getStatus("翻译", this.group.id)) { // 默认不开启
                 return@always

@@ -1,6 +1,6 @@
 package io.genanik.miraiPlugin
 
-import io.genanik.miraiPlugin.settings.AbelPluginsManager
+import io.genanik.miraiPlugin.settings.AbelPlugins
 import io.genanik.miraiPlugin.abelCommand.*
 import io.genanik.miraiPlugin.plugins.*
 import io.genanik.miraiPlugin.utils.*
@@ -18,7 +18,7 @@ object AbelPluginMain : PluginBase() {
     private val msgImageResize = ImageResize()
     private val timeController = Time()
 
-    private var abelPluginController = AbelPluginsManager(logger)
+    private var abelPluginController = AbelPlugins(logger)
 
     override fun onLoad() {
         super.onLoad()

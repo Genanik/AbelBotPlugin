@@ -1,6 +1,6 @@
 package io.genanik.miraiPlugin.plugins
 
-import io.genanik.miraiPlugin.settings.AbelPluginsManager
+import io.genanik.miraiPlugin.settings.AbelPlugins
 import io.genanik.miraiPlugin.utils.getAllPicture
 import io.genanik.miraiPlugin.utils.isGIF
 import io.genanik.miraiPlugin.utils.reverseImage
@@ -12,7 +12,7 @@ import net.mamoe.mirai.message.data.*
  */
 class ReverseGIF {
 
-    fun trigger(abelPM: AbelPluginsManager, controller: GroupMessageSubscribersBuilder){
+    fun trigger(abelPM: AbelPlugins, controller: GroupMessageSubscribersBuilder){
         controller.atBot {
             // 倒转GIF是否开启
             if (!abelPM.getStatus("倒转GIF", this.group.id)) {
