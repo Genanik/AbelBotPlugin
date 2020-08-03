@@ -14,7 +14,7 @@ repositories {
 }
 
 group = "io.genanik"
-version = "2.7.5-Beta1"
+version = "3.0.0-Beta1"
 
 val miraiCoreVersion = "1.0.4"
 val miraiConsoleVersion = "0.5.2"
@@ -35,9 +35,6 @@ dependencies {
     testImplementation("com.github.houbb", "opencc4j", "1.5.2")
     testImplementation("org.ansj", "ansj_seg", "5.1.6")
     testImplementation("net.java.dev.jna", "jna", "5.5.0")
-
-
-
 }
 
 java {
