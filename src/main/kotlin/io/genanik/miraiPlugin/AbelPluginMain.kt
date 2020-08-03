@@ -11,6 +11,7 @@ import net.mamoe.mirai.message.data.*
 
 object AbelPluginMain : PluginBase() {
 
+    // 为每个Abel插件创建对象
     private val msgRepeatController = mutableMapOf<Long, MessagesRepeat>()
     private val msgTranslateController = MessagesTranslate()
     private val msgTrumpController = DonaldTrump()
@@ -36,9 +37,11 @@ object AbelPluginMain : PluginBase() {
         abelPluginController.regGetTime(timeController)
 
         // 注册Abel管理员功能
+        logger.info("注册Abel管理员功能")
         abelPluginController.regAdminFunctions()
 
         // 注册Abel功能
+        logger.info("注册Abel功能")
         abelPluginController.regFunctions()
 
     }
@@ -48,7 +51,7 @@ object AbelPluginMain : PluginBase() {
         logger.info("Plugin loaded!")
 
         /**
-         * 订阅Abel功能实现
+         * 实现功能Abel订阅
          */
         subscribeGroupMessages {
             // 翻译
