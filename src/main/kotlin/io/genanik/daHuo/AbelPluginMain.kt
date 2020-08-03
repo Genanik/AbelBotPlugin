@@ -1,10 +1,10 @@
-package io.genanik.miraiPlugin
+package io.genanik.daHuo
 
-import io.genanik.miraiPlugin.abel.AbelPlugins
-import io.genanik.miraiPlugin.abel.regAbelDefault
-import io.genanik.miraiPlugin.abelCommand.*
-import io.genanik.miraiPlugin.plugins.*
-import io.genanik.miraiPlugin.utils.*
+import io.genanik.daHuo.abel.AbelPlugins
+import io.genanik.daHuo.abel.regAbelDefault
+import io.genanik.daHuo.abelCommand.*
+import io.genanik.daHuo.plugins.*
+import io.genanik.daHuo.utils.*
 import net.mamoe.mirai.console.plugins.PluginBase
 import net.mamoe.mirai.event.*
 

@@ -1,9 +1,9 @@
-package io.genanik.miraiPlugin.plugins
+package io.genanik.daHuo.plugins
 
-import io.genanik.miraiPlugin.abel.AbelPlugins
-import io.genanik.miraiPlugin.utils.ResizePic
-import io.genanik.miraiPlugin.utils.getAllPicture
-import io.genanik.miraiPlugin.utils.isGIF
+import io.genanik.daHuo.abel.AbelPlugins
+import io.genanik.daHuo.utils.ResizePic
+import io.genanik.daHuo.utils.getAllPicture
+import io.genanik.daHuo.utils.isGIF
 import net.mamoe.mirai.event.GroupMessageSubscribersBuilder
 import net.mamoe.mirai.message.data.*
 

@@ -1,6 +1,6 @@
-package io.genanik.miraiPlugin.abelCommand
+package io.genanik.daHuo.abelCommand
 
-import io.genanik.miraiPlugin.abel.AbelPlugins
+import io.genanik.daHuo.abel.AbelPlugins
 import net.mamoe.mirai.Bot
 import net.mamoe.mirai.console.MiraiConsole
 import net.mamoe.mirai.message.data.MessageChainBuilder

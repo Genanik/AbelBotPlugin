@@ -1,6 +1,6 @@
-package io.genanik.miraiPlugin.abel
+package io.genanik.daHuo.abel
 
-import io.genanik.miraiPlugin.AbelPluginMain
+import io.genanik.daHuo.AbelPluginMain
 import net.mamoe.mirai.event.events.NewFriendRequestEvent
 import net.mamoe.mirai.event.subscribeAlways
 import net.mamoe.mirai.event.subscribeFriendMessages

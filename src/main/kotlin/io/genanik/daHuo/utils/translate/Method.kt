@@ -1,4 +1,4 @@
-package io.genanik.miraiPlugin.utils.translate
+package io.genanik.daHuo.utils.translate
 
 import com.github.houbb.opencc4j.util.ZhConverterUtil
 

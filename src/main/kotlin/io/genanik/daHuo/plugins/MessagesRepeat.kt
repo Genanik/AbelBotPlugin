@@ -1,9 +1,9 @@
-package io.genanik.miraiPlugin.plugins
+package io.genanik.daHuo.plugins
 
-import io.genanik.miraiPlugin.abel.AbelPlugins
-import io.genanik.miraiPlugin.utils.isEqualWithRemoveMsgSource
-import io.genanik.miraiPlugin.utils.mirrorImage
-import io.genanik.miraiPlugin.utils.removeMsgSource
+import io.genanik.daHuo.abel.AbelPlugins
+import io.genanik.daHuo.utils.isEqualWithRemoveMsgSource
+import io.genanik.daHuo.utils.mirrorImage
+import io.genanik.daHuo.utils.removeMsgSource
 import net.mamoe.mirai.contact.Contact
 import net.mamoe.mirai.event.GroupMessageSubscribersBuilder
 import net.mamoe.mirai.message.data.*

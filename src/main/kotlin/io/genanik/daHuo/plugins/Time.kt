@@ -1,4 +1,4 @@
-package io.genanik.miraiPlugin.plugins
+package io.genanik.daHuo.plugins
 
 import java.text.SimpleDateFormat
 import java.util.*

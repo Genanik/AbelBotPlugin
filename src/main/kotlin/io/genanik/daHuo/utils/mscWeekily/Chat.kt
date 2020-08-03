@@ -1,4 +1,4 @@
-package io.genanik.miraiPlugin.utils.mscWeekily
+package io.genanik.daHuo.utils.mscWeekily
 
 // line: [2020-07-23 21:15:45]ZaneLiao:ooooooooooooooooooooooooooooh
 

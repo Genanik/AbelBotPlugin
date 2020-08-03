@@ -1,7 +1,7 @@
-package io.genanik.miraiPlugin.plugins
+package io.genanik.daHuo.plugins
 
-import io.genanik.miraiPlugin.abel.AbelPlugins
-import io.genanik.miraiPlugin.utils.translate.Method
+import io.genanik.daHuo.abel.AbelPlugins
+import io.genanik.daHuo.utils.translate.Method
 import net.mamoe.mirai.event.GroupMessageSubscribersBuilder
 import net.mamoe.mirai.message.GroupMessageEvent
 import net.mamoe.mirai.message.data.EmptyMessageChain
