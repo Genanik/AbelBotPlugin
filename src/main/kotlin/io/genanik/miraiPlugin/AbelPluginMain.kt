@@ -1,24 +1,23 @@
 package io.genanik.miraiPlugin
 
 import io.genanik.miraiPlugin.Settings.AbelPluginsManager
-import io.genanik.miraiPlugin.Settings.abelBotVersion
-import io.genanik.miraiPlugin.Settings.debug
 import io.genanik.miraiPlugin.abelCommand.*
+import io.genanik.miraiPlugin.plugins.DonaldTrump
+import io.genanik.miraiPlugin.plugins.MessagesRepeat
+import io.genanik.miraiPlugin.plugins.MessagesTranslate
+import io.genanik.miraiPlugin.plugins.Time
 import io.genanik.miraiPlugin.utils.*
-import net.mamoe.mirai.Bot
-import net.mamoe.mirai.console.MiraiConsole
 import net.mamoe.mirai.console.plugins.PluginBase
 import net.mamoe.mirai.event.*
 import net.mamoe.mirai.event.events.NewFriendRequestEvent
 import net.mamoe.mirai.message.data.*
-import java.io.File
 
 object AbelPluginMain : PluginBase() {
 
-    private val msgRepeatController = mutableMapOf<Long, MessagesRepeatFunction>()
-    private val msgTranslateController = MessagesTranslateFunction()
-    private val msgTrumpController = DonaldTrumpFunction()
-    private val timeController = TimeFunction()
+    private val msgRepeatController = mutableMapOf<Long, MessagesRepeat>()
+    private val msgTranslateController = MessagesTranslate()
+    private val msgTrumpController = DonaldTrump()
+    private val timeController = Time()
 
     private var abelPluginController = AbelPluginsManager(logger)
 
@@ -76,7 +75,7 @@ object AbelPluginMain : PluginBase() {
                     }
                 } else {
                     // 为本群创建一个msgRepeat
-                    msgRepeatController[this.group.id] = MessagesRepeatFunction(this)
+                    msgRepeatController[this.group.id] = MessagesRepeat(this)
                 }
             }
 

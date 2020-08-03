@@ -1,22 +1,17 @@
-package io.genanik.miraiPlugin
+package io.genanik.miraiPlugin.plugins
 
 import io.genanik.miraiPlugin.utils.isEqual
 import io.genanik.miraiPlugin.utils.mirrorImage
 import io.genanik.miraiPlugin.utils.removeMsgSource
-import io.genanik.miraiPlugin.utils.translate.Method
 import net.mamoe.mirai.contact.Contact
 import net.mamoe.mirai.message.GroupMessageEvent
 import net.mamoe.mirai.message.data.*
-import java.text.SimpleDateFormat
-import java.util.*
-
 
 /**
  * 判断出现两条相同内容后 将内容镜像并返回镜像的MessageChain
  * 构造时需要传入GroupMessageEvent
  */
-class MessagesRepeatFunction(message: GroupMessageEvent) {
-
+class MessagesRepeat(message: GroupMessageEvent) {
     private var lastMessage: GroupMessageEvent = message // 不保证没有MessageSource块
     private var times = 1
     private var needTimes = 2
@@ -126,10 +121,10 @@ class MessagesRepeatFunction(message: GroupMessageEvent) {
             index += if (Character.isSupplementaryCodePoint(codepoint)) 2 else 1
         }
         this.add(result)
-        
+
         hasBeenProcessed = true
     }
-    
+
     private fun isEmojiCharacter(codePoint: Int): Boolean {
         return (codePoint in 0x2600..0x27BF // 杂项符号与符号字体
                 || codePoint == 0x303D || codePoint == 0x2049 || codePoint == 0x203C || codePoint in 0x2000..0x200F //
@@ -147,7 +142,7 @@ class MessagesRepeatFunction(message: GroupMessageEvent) {
                 || codePoint in 0xFE00..0xFE0F // 变异选择器
                 || codePoint >= 0x10000) // Plane在第二平面以上的，char都不可以存，全部都转
     }
-    
+
     private fun <Char> Array<Char>.findOrNull(targetChar: Char): Int? {
         for ((index, i) in this.withIndex()){
             if (i == targetChar){
@@ -157,109 +152,4 @@ class MessagesRepeatFunction(message: GroupMessageEvent) {
         }
         return null
     }
-}
-
-/**
- * 返回翻译的繁体内容
- */
-class MessagesTranslateFunction {
-
-    fun translate(rawMessage: GroupMessageEvent): MessageChain{
-        // 构造 MessageChain
-        val replyMsg = MessageChainBuilder()
-        var arMsg: String
-        var isNeedSend = false
-        // 写入数据
-        rawMessage.message.forEachContent {
-            if ((it.toString().indexOf("mirai:") != -1 ) or (it.toString().indexOf("@") != -1)) {
-                // 不启动翻译
-                replyMsg.add(it)
-            }else{ // 启动翻译
-                val text = it.toString()
-
-                arMsg = Method().localTranslate(text) // 离线翻译
-                if (text != arMsg){
-                    replyMsg += arMsg
-                    isNeedSend = true
-                }
-            }
-            // if完了
-        }
-        return if (isNeedSend and !replyMsg.equals(EmptyMessageChain)){
-            replyMsg.asMessageChain() // 返回被翻译过的MsgChain
-        }else{
-            EmptyMessageChain// 没有翻译过 返回空MsgChain
-        }
-    }
-
-}
-
-/**
- * 返回当前时间
- */
-class TimeFunction {
-    fun getNow(): String {
-        return SimpleDateFormat("HH:mm").format(Date())
-    }
-}
-
-/**
- * 输入关键字，返回一条名人名言（伪
- */
-class DonaldTrumpFunction {
-
-    var sentence = arrayListOf<String>()
-    val taowa = arrayListOf<String>()
-
-    init {
-        taowa.add("套娃")
-//        taowa.add("禁止套娃")
-//        taowa.add("禁止")
-    }
-
-    private fun textStruct(singleWord: String): String{
-        sentence.add("我们有全球最好的${singleWord}专家\n——特朗普")
-        sentence.add("对于${singleWord}，没什么需要恐慌的\n——特朗普")
-        sentence.add("有些人会说我非常 非常非常有才，特别是${singleWord}方面\n——特朗普")
-        sentence.add("没有人比我特朗普更懂${singleWord}")
-        sentence.add("人们并没有真的从无到有创造出什么，而是重新组合创造出更多东西，例如${singleWord}\n——特朗普")
-        sentence.add("特朗普式${singleWord}，欲盖而弥彰！")
-        sentence.add("总统越是否认${singleWord}，民众就越应该关心${singleWord}")
-        sentence.add("我认为${singleWord}是不可避免的\n——特朗普")
-        sentence.add("${singleWord}并不可怕\n——特朗普")
-        sentence.add("你不握手，怎么能是${singleWord}呢？\n——特朗普")
-        sentence.add("把${singleWord}当作流感就好\n——特朗普")
-        val result = sentence.random()
-        sentence = arrayListOf()
-        return result
-    }
-
-    fun TrumpTextWithoutNPL(input: String): String {
-        if (input.length > 5){
-            return "这个关键词太长了_(:з」∠)_"
-        }
-        if (check(input)){
-            return "禁止套娃！"
-        }
-        return textStruct(input)
-
-    }
-
-    private fun check(targetString: String): Boolean {
-        var isTaoWa = false
-        for (i in taowa){
-            if (targetString.indexOf(i) != -1){
-                isTaoWa = true
-            }
-        }
-        return isTaoWa
-    }
-
-}
-
-/**
- * 从http://114.67.100.226:45777/?key=ForMscWeekily 中获取聊天文本并返回词频
- */
-class MscChatTermFrequency {
-
 }

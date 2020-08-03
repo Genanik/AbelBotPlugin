@@ -1,6 +1,5 @@
 package io.genanik.miraiPlugin.abelCommand
 
-import io.genanik.miraiPlugin.AbelPluginMain
 import io.genanik.miraiPlugin.Settings.AbelPluginsManager
 import io.genanik.miraiPlugin.TimeFunction
 import net.mamoe.mirai.message.data.MessageChainBuilder
