@@ -2,10 +2,7 @@ package io.genanik.miraiPlugin
 
 import io.genanik.miraiPlugin.Settings.AbelPluginsManager
 import io.genanik.miraiPlugin.abelCommand.*
-import io.genanik.miraiPlugin.plugins.DonaldTrump
-import io.genanik.miraiPlugin.plugins.MessagesRepeat
-import io.genanik.miraiPlugin.plugins.MessagesTranslate
-import io.genanik.miraiPlugin.plugins.Time
+import io.genanik.miraiPlugin.plugins.*
 import io.genanik.miraiPlugin.utils.*
 import net.mamoe.mirai.console.plugins.PluginBase
 import net.mamoe.mirai.event.*
@@ -17,6 +14,8 @@ object AbelPluginMain : PluginBase() {
     private val msgRepeatController = mutableMapOf<Long, MessagesRepeat>()
     private val msgTranslateController = MessagesTranslate()
     private val msgTrumpController = DonaldTrump()
+    private val msgReverseGIF = ReverseGIF()
+    private val msgImageResize = ImageResize()
     private val timeController = Time()
 
     private var abelPluginController = AbelPluginsManager(logger)
@@ -49,19 +48,14 @@ object AbelPluginMain : PluginBase() {
         logger.info("Plugin loaded!")
 
         /**
-         * 订阅Abel功能实现 未来改用DSL内置到Abel插件框架
+         * 订阅Abel功能实现
          */
         subscribeGroupMessages {
             // 翻译
-            always {
-                if (abelPluginController.getStatus("翻译", this.group.id)) { // 默认不开启
-                    return@always
-                }
-                val tmp = msgTranslateController.translate(this)
-                if ((tmp.toString() != "")) {
-                    reply(tmp)
-                }
-            }
+            msgTranslateController.trigger(abelPluginController, this)
+
+            // 川普
+            msgTrumpController.trigger(abelPluginController, this)
 
             // 复读
             always {
@@ -79,71 +73,11 @@ object AbelPluginMain : PluginBase() {
                 }
             }
 
-            // 川普
-            atBot {
-                // 是否开启
-                if (!abelPluginController.getStatus("川普", this.group.id)) {
-                    return@atBot
-                }
-                if (isHavePicture(message)) {
-                    return@atBot
-                }
-                // 川普
-                val tmp = message.firstIsInstanceOrNull<PlainText>()
-                if (tmp != null) {
-                    val keyWord = tmp.content.replace(" ", "")
-                    if (keyWord != "") {
-                        reply(msgTrumpController.TrumpTextWithoutNPL(keyWord))
-                    }
-                }
-            }
-
             // 倒转GIF
-            atBot {
-                // 倒转GIF是否开启
-                if (!abelPluginController.getStatus("倒转GIF", this.group.id)) {
-                    return@atBot
-                }
-                // 是否为GIF
-                val firstImg: Image = message.firstIsInstanceOrNull() ?: return@atBot
-                if (!isGIF( firstImg.queryUrl() )) {
-                    return@atBot
-                }
-                // 倒转GIF
-                val newMsg = MessageChainBuilder()
-                val allPic = getAllPicture(message)
-
-                allPic.forEach { picUrl ->
-                    newMsg.add(reverseImage(picUrl, group))
-                }
-                reply(newMsg.asMessageChain())
-            }
+            msgReverseGIF.trigger(abelPluginController, this)
 
             // 图片缩放
-            atBot {
-                // 图片缩放是否开启
-                if (!abelPluginController.getStatus("图片缩放", this.group.id)) {
-                    return@atBot
-                }
-                // 是否不是GIF
-                val firstImg: Image = message.firstIsInstanceOrNull() ?: return@atBot
-                if (isGIF( firstImg.queryUrl())) {
-                    return@atBot
-                }
-                // 图片缩放
-                val newMsg = MessageChainBuilder()
-                val allPic = getAllPicture(message)
-                allPic.forEach { picUrl ->
-                    val maybeText = message.firstOrNull(PlainText) ?: return@atBot
-                    val isToBig = maybeText.content.indexOf("放大") != -1
-                    if (isToBig) {
-                        newMsg.add(ResizePic(picUrl).ToBigger(group))
-                    } else {
-                        newMsg.add(ResizePic(picUrl).ToSmaller(group))
-                    }
-                }
-                reply(newMsg.asMessageChain())
-            }
+            msgImageResize.trigger(abelPluginController, this)
         }
 
         // Abel指令绑定

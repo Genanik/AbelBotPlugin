@@ -1,5 +1,11 @@
 package io.genanik.miraiPlugin.plugins
 
+import io.genanik.miraiPlugin.Settings.AbelPluginsManager
+import io.genanik.miraiPlugin.utils.isHavePicture
+import net.mamoe.mirai.event.GroupMessageSubscribersBuilder
+import net.mamoe.mirai.message.data.PlainText
+import net.mamoe.mirai.message.data.firstIsInstanceOrNull
+
 /**
  * 输入关键字，返回一条名人名言（伪
  */
@@ -13,6 +19,27 @@ class DonaldTrump {
 //        taowa.add("禁止套娃")
 //        taowa.add("禁止")
     }
+
+    fun trigger(abelPM: AbelPluginsManager, controller: GroupMessageSubscribersBuilder){
+        controller.atBot {
+            // 是否开启
+            if (!abelPM.getStatus("川普", this.group.id)) {
+                return@atBot
+            }
+            if (isHavePicture(message)) {
+                return@atBot
+            }
+            // 川普
+            val tmp = message.firstIsInstanceOrNull<PlainText>()
+            if (tmp != null) {
+                val keyWord = tmp.content.replace(" ", "")
+                if (keyWord != "") {
+                    reply(TrumpTextWithoutNPL(keyWord))
+                }
+            }
+        }
+    }
+
 
     private fun textStruct(singleWord: String): String{
         sentence.add("我们有全球最好的${singleWord}专家\n——特朗普")
@@ -31,7 +58,7 @@ class DonaldTrump {
         return result
     }
 
-    fun TrumpTextWithoutNPL(input: String): String {
+    private fun TrumpTextWithoutNPL(input: String): String {
         if (input.length > 5){
             return "这个关键词太长了_(:з」∠)_"
         }

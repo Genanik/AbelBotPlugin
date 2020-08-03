@@ -1,6 +1,9 @@
 package io.genanik.miraiPlugin.plugins
 
+import io.genanik.miraiPlugin.AbelPluginMain
+import io.genanik.miraiPlugin.Settings.AbelPluginsManager
 import io.genanik.miraiPlugin.utils.translate.Method
+import net.mamoe.mirai.event.GroupMessageSubscribersBuilder
 import net.mamoe.mirai.message.GroupMessageEvent
 import net.mamoe.mirai.message.data.EmptyMessageChain
 import net.mamoe.mirai.message.data.MessageChain
@@ -11,6 +14,19 @@ import net.mamoe.mirai.message.data.forEachContent
  * 返回翻译的繁体内容
  */
 class MessagesTranslate {
+
+    fun trigger(abelPM: AbelPluginsManager, controller: GroupMessageSubscribersBuilder){
+        controller.always {
+            if (abelPM.getStatus("翻译", this.group.id)) { // 默认不开启
+                return@always
+            }
+            val tmp = translate(this)
+            if ((tmp.toString() != "")) {
+                reply(tmp)
+            }
+        }
+    }
+
     fun translate(rawMessage: GroupMessageEvent): MessageChain {
         // 构造 MessageChain
         val replyMsg = MessageChainBuilder()
@@ -38,4 +54,5 @@ class MessagesTranslate {
             EmptyMessageChain// 没有翻译过 返回空MsgChain
         }
     }
+
 }
