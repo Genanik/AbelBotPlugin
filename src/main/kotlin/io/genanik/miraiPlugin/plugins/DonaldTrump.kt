@@ -1,6 +1,6 @@
 package io.genanik.miraiPlugin.plugins
 
-import io.genanik.miraiPlugin.Settings.AbelPluginsManager
+import io.genanik.miraiPlugin.settings.AbelPluginsManager
 import io.genanik.miraiPlugin.utils.isHavePicture
 import net.mamoe.mirai.event.GroupMessageSubscribersBuilder
 import net.mamoe.mirai.message.data.PlainText

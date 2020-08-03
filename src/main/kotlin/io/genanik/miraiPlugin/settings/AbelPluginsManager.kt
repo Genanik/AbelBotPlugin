@@ -1,7 +1,5 @@
-package io.genanik.miraiPlugin.Settings
+package io.genanik.miraiPlugin.settings
 
-import net.mamoe.mirai.console.plugins.Config
-import net.mamoe.mirai.console.plugins.ConfigSection
 import net.mamoe.mirai.message.data.MessageChain
 import net.mamoe.mirai.utils.MiraiLogger
 

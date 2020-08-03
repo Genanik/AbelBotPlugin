@@ -1,4 +1,4 @@
-package io.genanik.miraiPlugin.Settings
+package io.genanik.miraiPlugin.settings
 
 var debug = false
 

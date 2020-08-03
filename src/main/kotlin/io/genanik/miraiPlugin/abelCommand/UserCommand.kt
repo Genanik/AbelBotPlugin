@@ -1,7 +1,7 @@
 package io.genanik.miraiPlugin.abelCommand
 
-import io.genanik.miraiPlugin.Settings.AbelPluginsManager
-import io.genanik.miraiPlugin.TimeFunction
+import io.genanik.miraiPlugin.plugins.Time
+import io.genanik.miraiPlugin.settings.AbelPluginsManager
 import net.mamoe.mirai.message.data.MessageChainBuilder
 
 fun AbelPluginsManager.regHelp(){
@@ -24,7 +24,7 @@ fun AbelPluginsManager.regHelp(){
     }
 }
 
-fun AbelPluginsManager.regGetTime(timeController: TimeFunction){
+fun AbelPluginsManager.regGetTime(timeController: Time){
     this.regCommand("报时", "发送当前时间") {
         val result = MessageChainBuilder()
         result.add(timeController.getNow())

@@ -1,8 +1,8 @@
 package io.genanik.miraiPlugin.abelCommand
 
-import io.genanik.miraiPlugin.Settings.AbelPluginsManager
-import io.genanik.miraiPlugin.Settings.abelBotVersion
-import io.genanik.miraiPlugin.Settings.debug
+import io.genanik.miraiPlugin.settings.AbelPluginsManager
+import io.genanik.miraiPlugin.settings.abelBotVersion
+import io.genanik.miraiPlugin.settings.debug
 import net.mamoe.mirai.Bot
 import net.mamoe.mirai.console.MiraiConsole
 import net.mamoe.mirai.message.data.MessageChainBuilder

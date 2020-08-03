@@ -1,7 +1,6 @@
 package io.genanik.miraiPlugin.plugins
 
-import io.genanik.miraiPlugin.AbelPluginMain
-import io.genanik.miraiPlugin.Settings.AbelPluginsManager
+import io.genanik.miraiPlugin.settings.AbelPluginsManager
 import io.genanik.miraiPlugin.utils.ResizePic
 import io.genanik.miraiPlugin.utils.getAllPicture
 import io.genanik.miraiPlugin.utils.isGIF
