@@ -3,6 +3,7 @@ package io.genanik.miraiPlugin
 import io.genanik.miraiPlugin.Settings.AbelPluginsManager
 import io.genanik.miraiPlugin.Settings.abelBotVersion
 import io.genanik.miraiPlugin.Settings.debug
+import io.genanik.miraiPlugin.abelCommand.*
 import io.genanik.miraiPlugin.utils.*
 import net.mamoe.mirai.Bot
 import net.mamoe.mirai.console.MiraiConsole
@@ -14,12 +15,10 @@ import java.io.File
 
 object AbelPluginMain : PluginBase() {
 
-    val msgRepeatController = mutableMapOf<Long, MessagesRepeatFunction>()
-    val msgTranslateController = MessagesTranslateFunction()
-    val msgTrumpController = DonaldTrumpFunction()
-    val timeController = TimeFunction()
-
-    lateinit var awa: ArrayList<String>
+    private val msgRepeatController = mutableMapOf<Long, MessagesRepeatFunction>()
+    private val msgTranslateController = MessagesTranslateFunction()
+    private val msgTrumpController = DonaldTrumpFunction()
+    private val timeController = TimeFunction()
 
     lateinit var abelPluginController: AbelPluginsManager
 
@@ -30,62 +29,15 @@ object AbelPluginMain : PluginBase() {
 
         abelPluginController = AbelPluginsManager(logger)
 
-        // 注册Mirai指令
-        // 暂无
         // 注册Abel管理员指令
-        abelPluginController.regAdminCommand("dumpvars") {
-            val result = MessageChainBuilder()
-            result.add("保留指令")
-            return@regAdminCommand result.asMessageChain()
-        }
-        abelPluginController.regAdminCommand("/adminHelp") {
-            val result = MessageChainBuilder()
-            result.add("启用{功能}\n")
-            result.add("禁用{功能}\n")
-            result.add("切换{功能}\n")
-            result.add(abelPluginController.adminGetAllCommands().toString() + "\n")
-            result.add(abelPluginController.adminGetAllFunctions().toString() + "\n")
-            result.add(
-                "AbelPluginController: " +
-                        "${abelPluginController.getAllCommands()}\n" +
-                        "${abelPluginController.getAllFunctions()}\n"
-            )
-            result.add("Debug: $debug\n")
-            result.add("AbelVersion: $abelBotVersion\n")
-            result.add("JavaVersion: ${System.getProperty("java.version")}\n")
-            result.add(
-                "MiraiCoreVersion: ${File(Bot.javaClass.protectionDomain.codeSource.location.file).name.replace(
-                    ".jar",
-                    ""
-                )}\n"
-            )
-            result.add("MiraiConsleVersion: ${MiraiConsole.version} - ${MiraiConsole.build}")
-            return@regAdminCommand result.asMessageChain()
-        }
+        logger.info("注册Abel管理员指令")
+        abelPluginController.regDumpvars()
+        abelPluginController.regAdminHelp()
+
         // 注册Abel指令
-        logger.info("开始注册Abel指令")
-        abelPluginController.regCommand("/help", "展示帮助信息") {
-            val result = MessageChainBuilder()
-            result.add("你好你好\n\n")
-            for (i in abelPluginController.getAllCommands()) {
-                result.add("* $i  ${abelPluginController.getCommandDescription()[i]}\n")
-            }
-            result.add("\n咱介绍完指令了，然后。。然后。。。。\n该介绍功能了\n\n")
-            for (i in abelPluginController.getAllFunctions()) {
-                result.add("* $i  ${abelPluginController.getFunctionDescription()[i]}\n")
-            }
-            result.add(
-                "\n其他功能：\n" +
-                        "* \"功能名称+打开了嘛\" 获取功能运行状态\n"
-            )
-            result.add("* /adminHelp 获取管理员帮助信息")
-            return@regCommand result.asMessageChain()
-        }
-        abelPluginController.regCommand("报时", "发送当前时间") {
-            val result = MessageChainBuilder()
-            result.add(timeController.getNow())
-            return@regCommand result.asMessageChain()
-        }
+        logger.info("注册Abel指令")
+        abelPluginController.regHelp()
+        abelPluginController.regGetTime(timeController)
 
         // 注册Abel管理员功能
         abelPluginController.adminRegFunction("翻译")
@@ -113,79 +65,95 @@ object AbelPluginMain : PluginBase() {
         subscribeGroupMessages {
             // 翻译
             always {
-                if (!abelPluginController.getStatus("翻译", this.group.id)) { // 默认不开启
-                    val tmp = msgTranslateController.translate(this)
-                    if ((tmp.toString() != "")) {
-                        reply(tmp)
-                    }
+                if (abelPluginController.getStatus("翻译", this.group.id)) { // 默认不开启
+                    return@always
+                }
+                val tmp = msgTranslateController.translate(this)
+                if ((tmp.toString() != "")) {
+                    reply(tmp)
                 }
             }
 
             // 复读
             always {
-                if (abelPluginController.getStatus("复读", this.group.id)) {
-                    if (msgRepeatController.contains(this.group.id)) {
-                        // 更新msgRepeat内容
-                        if (msgRepeatController[this.group.id]!!.update(this)) {
-                            reply(msgRepeatController[this.group.id]!!.textBackRepeat(this.message, this.group))
-                        }
-                    } else {
-                        // 为本群创建一个msgRepeat
-                        msgRepeatController[this.group.id] = MessagesRepeatFunction(this)
+                if (!abelPluginController.getStatus("复读", this.group.id)) {
+                    return@always
+                }
+                if (msgRepeatController.contains(this.group.id)) {
+                    // 更新msgRepeat内容
+                    if (msgRepeatController[this.group.id]!!.update(this)) {
+                        reply(msgRepeatController[this.group.id]!!.textBackRepeat(this.message, this.group))
                     }
+                } else {
+                    // 为本群创建一个msgRepeat
+                    msgRepeatController[this.group.id] = MessagesRepeatFunction(this)
                 }
             }
 
             // 川普
             atBot {
-                if (abelPluginController.getStatus("川普", this.group.id)) {
-                    if (!isHavePicture(message)) {
-                        val tmp = message.firstIsInstanceOrNull<PlainText>()
-                        if (tmp != null) {
-                            val keyWord = tmp.content.replace(" ", "")
-                            if (keyWord != "") {
-                                reply(msgTrumpController.TrumpTextWithoutNPL(keyWord))
-                            }
-                        }
+                // 是否开启
+                if (!abelPluginController.getStatus("川普", this.group.id)) {
+                    return@atBot
+                }
+                if (isHavePicture(message)) {
+                    return@atBot
+                }
+                // 川普
+                val tmp = message.firstIsInstanceOrNull<PlainText>()
+                if (tmp != null) {
+                    val keyWord = tmp.content.replace(" ", "")
+                    if (keyWord != "") {
+                        reply(msgTrumpController.TrumpTextWithoutNPL(keyWord))
                     }
                 }
             }
 
             // 倒转GIF
             atBot {
-                if (abelPluginController.getStatus("倒转GIF", this.group.id)) {
-                    val firstImg: Image = message.firstIsInstanceOrNull() ?: return@atBot
-                    if (isGIF( firstImg.queryUrl() )) {
-                        val newMsg = MessageChainBuilder()
-                        val allPic = getAllPicture(message)
-
-                        allPic.forEach { picUrl ->
-                            newMsg.add(reverseImage(picUrl, group))
-                        }
-                        reply(newMsg.asMessageChain())
-                    }
+                // 倒转GIF是否开启
+                if (!abelPluginController.getStatus("倒转GIF", this.group.id)) {
+                    return@atBot
                 }
+                // 是否为GIF
+                val firstImg: Image = message.firstIsInstanceOrNull() ?: return@atBot
+                if (!isGIF( firstImg.queryUrl() )) {
+                    return@atBot
+                }
+                // 倒转GIF
+                val newMsg = MessageChainBuilder()
+                val allPic = getAllPicture(message)
+
+                allPic.forEach { picUrl ->
+                    newMsg.add(reverseImage(picUrl, group))
+                }
+                reply(newMsg.asMessageChain())
             }
 
             // 图片缩放
             atBot {
-                if (abelPluginController.getStatus("图片缩放", this.group.id)) {
-                    val firstImg: Image = message.firstIsInstanceOrNull() ?: return@atBot
-                    if (!isGIF( firstImg.queryUrl())) {
-                        val newMsg = MessageChainBuilder()
-                        val allPic = getAllPicture(message)
-                        allPic.forEach { picUrl ->
-                            val maybeText = message.firstOrNull(PlainText) ?: return@atBot
-                            val isToBig = maybeText.content.indexOf("放大") != -1
-                            if (isToBig) {
-                                newMsg.add(ResizePic(picUrl).ToBigger(group))
-                            } else {
-                                newMsg.add(ResizePic(picUrl).ToSmaller(group))
-                            }
-                        }
-                        reply(newMsg.asMessageChain())
+                // 图片缩放是否开启
+                if (!abelPluginController.getStatus("图片缩放", this.group.id)) {
+                    return@atBot
+                }
+                // 是否不是GIF
+                val firstImg: Image = message.firstIsInstanceOrNull() ?: return@atBot
+                if (isGIF( firstImg.queryUrl())) {
+                    return@atBot
+                }
+                // 图片缩放
+                val newMsg = MessageChainBuilder()
+                val allPic = getAllPicture(message)
+                allPic.forEach { picUrl ->
+                    val maybeText = message.firstOrNull(PlainText) ?: return@atBot
+                    val isToBig = maybeText.content.indexOf("放大") != -1
+                    if (isToBig) {
+                        newMsg.add(ResizePic(picUrl).ToBigger(group))
+                    } else {
+                        newMsg.add(ResizePic(picUrl).ToSmaller(group))
                     }
                 }
+                reply(newMsg.asMessageChain())
             }
         }
 
@@ -235,14 +203,16 @@ object AbelPluginMain : PluginBase() {
                 }
 
                 case("切换$i") {
+                    // 有没有被管理员禁用
                     if (!abelPluginController.adminGetStatus(i, this.group.id)) {
-                        if (!abelPluginController.getStatus(i, this.group.id)) {
+                        return@case
+                    }
+                    if (!abelPluginController.getStatus(i, this.group.id)) {
                             abelPluginController.enableFunc(i, this.group.id)
                             reply("不出意外的话。。咱打开${i}了")
-                        } else {
-                            abelPluginController.disableFunc(i, this.group.id)
-                            reply("不出意外的话。。咱关掉${i}了")
-                        }
+                    } else {
+                        abelPluginController.disableFunc(i, this.group.id)
+                        reply("不出意外的话。。咱关掉${i}了")
                     }
                 }
 
