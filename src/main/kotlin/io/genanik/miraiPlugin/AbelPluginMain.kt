@@ -10,7 +10,7 @@ import net.mamoe.mirai.event.*
 object AbelPluginMain : PluginBase() {
 
     // 为每个Abel插件创建对象
-    private val msgRepeatController = mutableMapOf<Long, MessagesRepeat>()
+    private val msgRepeaterController = MessageRepeater()
     private val msgTranslateController = MessagesTranslate()
     private val msgTrumpController = DonaldTrump()
     private val msgReverseGIF = ReverseGIF()
@@ -59,20 +59,7 @@ object AbelPluginMain : PluginBase() {
             msgTrumpController.trigger(abelPluginController, this)
 
             // 复读
-            always {
-                if (!abelPluginController.getStatus("复读", this.group.id)) {
-                    return@always
-                }
-                if (msgRepeatController.contains(this.group.id)) {
-                    // 更新msgRepeat内容
-                    if (msgRepeatController[this.group.id]!!.update(this)) {
-                        reply(msgRepeatController[this.group.id]!!.textBackRepeat(this.message, this.group))
-                    }
-                } else {
-                    // 为本群创建一个msgRepeat
-                    msgRepeatController[this.group.id] = MessagesRepeat(this)
-                }
-            }
+            msgRepeaterController.trigger(abelPluginController, this)
 
             // 倒转GIF
             msgReverseGIF.trigger(abelPluginController, this)

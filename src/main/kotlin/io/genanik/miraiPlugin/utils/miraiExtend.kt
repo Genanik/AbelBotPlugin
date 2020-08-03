@@ -39,7 +39,7 @@ suspend fun getAllPicture(rawMessage: MessageChain): ArrayList<String>{
     return result
 }
 
-fun MessageChain.isEqual(msgChain: MessageChain): Boolean{
+fun MessageChain.isEqualWithRemoveMsgSource(msgChain: MessageChain): Boolean{
     val newMsgChain = this.removeMsgSource()
     val oldMsgChain = msgChain.removeMsgSource()
 
@@ -57,5 +57,21 @@ fun MessageChain.isEqual(msgChain: MessageChain): Boolean{
         }
     }
     return true
+}
 
+fun MessageChain.isEqual(msgChain: MessageChain): Boolean{
+    // 首先根据长度判断
+    if (this.size != msgChain.size){
+        return false
+    }
+
+    // 根据对比相同索引的内容来判断是否相同
+    var new: SingleMessage
+    for ( (index, old) in msgChain.withIndex()){
+        new = this[index]
+        if (old != new){
+            return false
+        }
+    }
+    return true
 }

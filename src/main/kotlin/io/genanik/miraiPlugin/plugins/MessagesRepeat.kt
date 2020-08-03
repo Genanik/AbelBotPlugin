@@ -1,34 +1,58 @@
 package io.genanik.miraiPlugin.plugins
 
-import io.genanik.miraiPlugin.utils.isEqual
+import io.genanik.miraiPlugin.AbelPluginMain
+import io.genanik.miraiPlugin.settings.AbelPlugins
+import io.genanik.miraiPlugin.utils.isEqualWithRemoveMsgSource
 import io.genanik.miraiPlugin.utils.mirrorImage
 import io.genanik.miraiPlugin.utils.removeMsgSource
 import net.mamoe.mirai.contact.Contact
-import net.mamoe.mirai.message.GroupMessageEvent
+import net.mamoe.mirai.event.GroupMessageSubscribersBuilder
 import net.mamoe.mirai.message.data.*
+
+class MessageRepeater{
+    private val msgRepeatController = mutableMapOf<Long, MessagesRepeat>()
+
+    fun trigger(abelPM: AbelPlugins, controller: GroupMessageSubscribersBuilder){
+        controller.always {
+            if (!abelPM.getStatus("复读", this.group.id)) {
+                return@always
+            }
+            if (msgRepeatController.contains(this.group.id)) {
+                // 更新msgRepeat内容
+                if (msgRepeatController[this.group.id]!!.update(this.message)) {
+                    reply(msgRepeatController[this.group.id]!!.textBackRepeat(this.message, this.group))
+                }
+            } else {
+                // 为本群创建一个msgRepeat
+                msgRepeatController[this.group.id] = MessagesRepeat(this.message)
+            }
+        }
+    }
+}
+
 
 /**
  * 判断出现两条相同内容后 将内容镜像并返回镜像的MessageChain
  * 构造时需要传入GroupMessageEvent
  */
-class MessagesRepeat(message: GroupMessageEvent) {
-    private var lastMessage: GroupMessageEvent = message // 不保证没有MessageSource块
+class MessagesRepeat(message: MessageChain) {
+    private var lastMessage = message.removeMsgSource() // 保证没有MsgSource
     private var times = 1
     private var needTimes = 2
     private var repeatTimes = 0
     private var hasBeenProcessed = false
 
     // 更新缓存并返回是否复读
-    fun update(newMessage: GroupMessageEvent): Boolean{
+    fun update(newMessage: MessageChain): Boolean{
 
-        val isSame = newMessage.message.isEqual(lastMessage.message)
+        val isSame = newMessage.isEqualWithRemoveMsgSource(lastMessage)
 
         if (isSame) { // 当前消息与上一条消息内容相同
             times++
         }
 
         val result = times == needTimes
-        lastMessage = newMessage
+        lastMessage = newMessage.removeMsgSource() // 保证没有MsgSource
 
         if (result){
             repeatTimes++
@@ -148,7 +172,6 @@ class MessagesRepeat(message: GroupMessageEvent) {
             if (i == targetChar){
                 return index
             }
-
         }
         return null
     }
