@@ -20,14 +20,12 @@ object AbelPluginMain : PluginBase() {
     private val msgTrumpController = DonaldTrumpFunction()
     private val timeController = TimeFunction()
 
-    lateinit var abelPluginController: AbelPluginsManager
+    private var abelPluginController = AbelPluginsManager(logger)
 
     override fun onLoad() {
         super.onLoad()
         // 创建AbelPic文件夹
         createAbelPicFolder()
-
-        abelPluginController = AbelPluginsManager(logger)
 
         // 注册Abel管理员指令
         logger.info("注册Abel管理员指令")
@@ -40,18 +38,10 @@ object AbelPluginMain : PluginBase() {
         abelPluginController.regGetTime(timeController)
 
         // 注册Abel管理员功能
-        abelPluginController.adminRegFunction("翻译")
-        abelPluginController.adminRegFunction("复读")
-        abelPluginController.adminRegFunction("川普")
-        abelPluginController.adminRegFunction("倒转GIF")
-        abelPluginController.adminRegFunction("图片缩放")
+        abelPluginController.regAdminFunctions()
 
         // 注册Abel功能
-        abelPluginController.regFunction("翻译", "自动翻译包含繁体的消息")
-        abelPluginController.regFunction("复读", "同一条消息出现两次后，Abel机器人自动跟读")
-        abelPluginController.regFunction("川普", "@Abel机器人并加上一个关键词，自动发送\"名人名言\"")
-        abelPluginController.regFunction("倒转GIF", "@Abel机器人并加上一个或多个GIF，可以倒叙一个或多个GIF")
-        abelPluginController.regFunction("图片缩放", "@Abel机器人并加上\"放大\"或\"缩小\"一个或多个静态图，可以缩放静态图")
+        abelPluginController.regFunctions()
 
     }
 
@@ -267,7 +257,6 @@ object AbelPluginMain : PluginBase() {
         }
 
         subscribeAlways<NewFriendRequestEvent> {
-            logger.info("成功添加新好友, eventID:$eventId message:$message")
             accept()
         }
 

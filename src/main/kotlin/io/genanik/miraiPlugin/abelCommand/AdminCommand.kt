@@ -1,5 +1,6 @@
 package io.genanik.miraiPlugin.abelCommand
 
+import io.genanik.miraiPlugin.AbelPluginMain
 import io.genanik.miraiPlugin.Settings.AbelPluginsManager
 import io.genanik.miraiPlugin.Settings.abelBotVersion
 import io.genanik.miraiPlugin.Settings.debug
@@ -42,4 +43,12 @@ fun AbelPluginsManager.regAdminHelp(){
         result.add("MiraiConsleVersion: ${MiraiConsole.version} - ${MiraiConsole.build}")
         return@regAdminCommand result.asMessageChain()
     }
+}
+
+fun AbelPluginsManager.regAdminFunctions(){
+    this.adminRegFunction("翻译")
+    this.adminRegFunction("复读")
+    this.adminRegFunction("川普")
+    this.adminRegFunction("倒转GIF")
+    this.adminRegFunction("图片缩放")
 }
