@@ -32,7 +32,7 @@ class AbelPlugins(newLogger: MiraiLogger) {
      * - function <- MessageChain: 触发指令后机器人的回复内容
      */
     fun regAdminCommand(argStr: String, function:(Long) -> MessageChain){
-        logger.info("开始注册管理员指令: $argStr")
+        logger.info("注册管理员指令: $argStr")
         adminArgsMap[argStr] = function
     }
 
@@ -65,7 +65,7 @@ class AbelPlugins(newLogger: MiraiLogger) {
      */
     fun adminRegFunction(name: String){
         // newFuncSwitchList 储存已关闭该功能的群号
-        logger.info("开始注册管理员功能: $name")
+        logger.info("注册管理员功能: $name")
         val newFuncSwitchList = mutableListOf<Long>()
         adminFunctionMap[name] = newFuncSwitchList
     }
@@ -138,7 +138,7 @@ class AbelPlugins(newLogger: MiraiLogger) {
      * - function <- MessageChain: 触发指令后机器人的回复内容
      */
     fun regCommand(argStr: String, description: String, function:(Long) -> MessageChain){
-        logger.info("开始注册指令: $argStr")
+        logger.info("注册指令: $argStr")
         argsMap[argStr] = function
         commandHelpInf[argStr] = description
     }
@@ -185,7 +185,7 @@ class AbelPlugins(newLogger: MiraiLogger) {
      */
     fun regFunction(name: String, description: String){
         // newFuncSwitchList 储存已关闭该功能的群号
-        logger.info("开始注册功能: $name")
+        logger.info("注册功能: $name")
         val newFuncSwitchList = mutableListOf<Long>()
         functionMap[name] = newFuncSwitchList
         functionHelpInf[name] = description
