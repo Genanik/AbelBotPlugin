@@ -1,7 +1,7 @@
 package io.genanik.miraiPlugin.abelCommand
 
 import io.genanik.miraiPlugin.plugins.Time
-import io.genanik.miraiPlugin.settings.AbelPlugins
+import io.genanik.miraiPlugin.abel.AbelPlugins
 import net.mamoe.mirai.message.data.MessageChainBuilder
 
 fun AbelPlugins.regHelp(){

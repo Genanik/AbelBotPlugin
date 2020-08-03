@@ -1,4 +1,4 @@
-package io.genanik.miraiPlugin.settings
+package io.genanik.miraiPlugin.abel
 
 import net.mamoe.mirai.message.data.MessageChain
 import net.mamoe.mirai.utils.MiraiLogger

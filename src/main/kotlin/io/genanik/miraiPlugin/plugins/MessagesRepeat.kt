@@ -1,7 +1,6 @@
 package io.genanik.miraiPlugin.plugins
 
-import io.genanik.miraiPlugin.AbelPluginMain
-import io.genanik.miraiPlugin.settings.AbelPlugins
+import io.genanik.miraiPlugin.abel.AbelPlugins
 import io.genanik.miraiPlugin.utils.isEqualWithRemoveMsgSource
 import io.genanik.miraiPlugin.utils.mirrorImage
 import io.genanik.miraiPlugin.utils.removeMsgSource

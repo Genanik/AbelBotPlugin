@@ -1,6 +1,7 @@
 package io.genanik.miraiPlugin
 
-import io.genanik.miraiPlugin.settings.AbelPlugins
+import io.genanik.miraiPlugin.abel.AbelPlugins
+import io.genanik.miraiPlugin.abel.regAbelDefault
 import io.genanik.miraiPlugin.abelCommand.*
 import io.genanik.miraiPlugin.plugins.*
 import io.genanik.miraiPlugin.utils.*

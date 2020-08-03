@@ -1,6 +1,6 @@
 package io.genanik.miraiPlugin.plugins
 
-import io.genanik.miraiPlugin.settings.AbelPlugins
+import io.genanik.miraiPlugin.abel.AbelPlugins
 import io.genanik.miraiPlugin.utils.getAllPicture
 import io.genanik.miraiPlugin.utils.isGIF
 import io.genanik.miraiPlugin.utils.reverseImage
