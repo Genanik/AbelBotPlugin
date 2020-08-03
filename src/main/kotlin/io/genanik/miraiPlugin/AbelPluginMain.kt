@@ -6,7 +6,6 @@ import io.genanik.miraiPlugin.plugins.*
 import io.genanik.miraiPlugin.utils.*
 import net.mamoe.mirai.console.plugins.PluginBase
 import net.mamoe.mirai.event.*
-import net.mamoe.mirai.event.events.NewFriendRequestEvent
 
 object AbelPluginMain : PluginBase() {
 

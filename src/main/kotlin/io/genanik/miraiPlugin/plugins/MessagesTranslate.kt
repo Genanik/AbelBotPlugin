@@ -26,7 +26,7 @@ class MessagesTranslate {
         }
     }
 
-    fun translate(rawMessage: GroupMessageEvent): MessageChain {
+    private fun translate(rawMessage: GroupMessageEvent): MessageChain {
         // 构造 MessageChain
         val replyMsg = MessageChainBuilder()
         var arMsg: String

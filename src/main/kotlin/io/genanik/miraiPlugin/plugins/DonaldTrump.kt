@@ -34,7 +34,7 @@ class DonaldTrump {
             if (tmp != null) {
                 val keyWord = tmp.content.replace(" ", "")
                 if (keyWord != "") {
-                    reply(TrumpTextWithoutNPL(keyWord))
+                    reply(trumpTextWithoutNPL(keyWord))
                 }
             }
         }
@@ -58,7 +58,7 @@ class DonaldTrump {
         return result
     }
 
-    private fun TrumpTextWithoutNPL(input: String): String {
+    private fun trumpTextWithoutNPL(input: String): String {
         if (input.length > 5){
             return "这个关键词太长了_(:з」∠)_"
         }
