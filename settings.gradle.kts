@@ -15,5 +15,5 @@ pluginManagement {
     }
 }
 
-rootProject.name = "miraiPlugin"
+rootProject.name = "daHuoPlugin"
 
