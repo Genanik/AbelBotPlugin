@@ -107,7 +107,7 @@ class BilibiliMsg {
 
     }
 
-    private fun getAvBvFromNormalLink(link: String): String{
+    fun getAvBvFromNormalLink(link: String): String{
         val rules = Regex("""bilibili\.com\/video\/(?:[Aa][Vv]([0-9]+)|([Bb][Vv][0-9a-zA-Z]+))""")
         val search = rules.find(link) ?: throw Exception("[Bilibili] 获取视频ID错误")
         return if (search.groupValues[1] == ""){
@@ -117,7 +117,7 @@ class BilibiliMsg {
         }
     }
 
-    private fun shortToLongLink(shortLink: String): String {
+    fun shortToLongLink(shortLink: String): String {
         var conn: HttpURLConnection? = null
         try {
             conn = URL(shortLink).openConnection() as HttpURLConnection
@@ -130,7 +130,6 @@ class BilibiliMsg {
         conn.disconnect()
         return url
     }
-
 
     private fun getAvBvFromMsg(msg: MessageChain): String? {
         val plainText: PlainText = msg.firstIsInstanceOrNull() ?: return null
@@ -149,45 +148,64 @@ class BilibiliMsg {
             return getAvBvFromNormalLink(maybeLink)
         }
 
-        return null
+        // app
+        val app = getApp(msg) ?: return null
+        return BiliLightApp(app).getId()
     }
-/*
 
-async function antiBiliMiniApp(context, replyFunc) {
-    const msg = context.message;
-    let title = null;
-    if (msg.startsWith('[CQ:rich,') && msg.indexOf('QQ小程序') !== -1 && msg.indexOf('哔哩哔哩') !== -1) {
-        if (setting.despise) {
-            replyFunc(context, CQ.img('https://i.loli.net/2020/04/27/HegAkGhcr6lbPXv.png'));
-        }
-        const search = /"desc":"(.+?)"(?:,|})/.exec(CQ.unescape(msg));
-    if (search) title = search[1].replace(/\\"/g, '"');
-}
-if (setting.getVideoInfo) {
-    const param = await getAvBvFromMsg(msg);
-    if (param) {
-        const { aid, bvid } = param;
-        if (cache.has(aid) || cache.has(bvid)) return;
-        if (aid) cache.set(aid, true);
-        if (bvid) cache.set(bvid, true);
-        const reply = await getVideoInfo(param);
-        if (reply) {
-            replyFunc(context, reply);
-            return;
-        }
+    private fun getApp(msg: MessageChain): LightApp? {
+        return msg.firstIsInstanceOrNull() ?: return null
     }
-    const isBangumi = /bilibili\.com\/bangumi|(b23|acg)\.tv\/(ep|ss)/.test(msg);
-    if (title && !isBangumi) {
-        const reply = await getSearchVideoInfo(title);
-        if (reply) {
-            replyFunc(context, reply);
-            return;
-        }
-    }
-}
-}
 
-export default antiBiliMiniApp;
-}
-     */
+    class BiliLightApp(app: LightApp){
+
+        private val content = app.content
+        private var isBiliLightApp = false
+        private lateinit var biliJsonBean: BiliLightApp
+
+        init {
+            val prompt = Gson().fromJson(content, UniversalLightApp::class.javaObjectType).prompt
+            if (prompt.contains("哔哩哔哩")){
+                isBiliLightApp = true
+                biliJsonBean = Gson().fromJson(content, BiliLightApp::class.javaObjectType)
+            }
+        }
+
+        data class UniversalLightApp (
+            val prompt: String
+        )
+
+        data class BiliLightApp (
+            val meta: BiliMeta,
+            val prompt: String
+        )
+
+        data class BiliMeta (
+            val detail_1: BiliDetail
+        )
+
+        data class BiliDetail (
+            val desc: String, // 标题
+            val qqdocurl: String? // 可能存在的短链接
+        )
+
+        private fun getUrlOfNull(): String? {
+            if (!isBiliLightApp){
+                return null
+            }
+            return biliJsonBean.meta.detail_1.qqdocurl
+        }
+
+        fun getId(): String {
+            var url = getUrlOfNull()
+            return if (url != null){
+                url = BilibiliMsg().shortToLongLink(url)
+                return BilibiliMsg().getAvBvFromNormalLink(url)
+            }else{
+                // 搜索
+                "aid=av" + SearchVideo(biliJsonBean.meta.detail_1.desc).getAid()
+            }
+        }
+    }
+
 }
