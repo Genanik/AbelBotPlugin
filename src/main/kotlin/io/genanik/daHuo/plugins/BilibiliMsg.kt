@@ -134,7 +134,7 @@ class BilibiliMsg {
 
     private fun getAvBvFromMsg(msg: MessageChain): String? {
         val plainText: PlainText = msg.firstIsInstanceOrNull() ?: return null
-        var maybeLink = shortToLongLink(plainText.content)
+        var maybeLink = plainText.content
 
         // normalLink
         var rule = Regex("""bilibili\.com\/video\/(?:[Aa][Vv]([0-9]+)|([Bb][Vv][0-9a-zA-Z]+))""")
