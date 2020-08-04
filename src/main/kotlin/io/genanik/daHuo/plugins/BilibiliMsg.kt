@@ -11,7 +11,7 @@ import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
 
-class Bilibili {
+class BilibiliMsg {
 
     fun trigger(abelPM: AbelPlugins, controller: GroupMessageSubscribersBuilder){
         controller.always {

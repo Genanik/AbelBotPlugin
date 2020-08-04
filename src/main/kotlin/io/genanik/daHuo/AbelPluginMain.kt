@@ -17,7 +17,7 @@ object AbelPluginMain : PluginBase() {
     private val msgReverseGIF = ReverseGIF()
     private val msgImageResize = ImageResize()
     private val timeController = Time()
-    private val bilibiliPlugin = Bilibili()
+    private val bilibiliPlugin = BilibiliMsg()
 
     private var abelPluginController = AbelPlugins(logger)
 
