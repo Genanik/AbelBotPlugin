@@ -17,6 +17,7 @@ object AbelPluginMain : PluginBase() {
     private val msgReverseGIF = ReverseGIF()
     private val msgImageResize = ImageResize()
     private val timeController = Time()
+    private val bilibiliPlugin = Bilibili()
 
     private var abelPluginController = AbelPlugins(logger)
 
@@ -67,6 +68,9 @@ object AbelPluginMain : PluginBase() {
 
             // 图片缩放
             msgImageResize.trigger(abelPluginController, this)
+
+            // bilibili
+            bilibiliPlugin.trigger(abelPluginController, this)
         }
 
         // 注册Abel内容
