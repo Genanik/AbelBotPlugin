@@ -14,7 +14,7 @@ repositories {
 }
 
 group = "io.genanik"
-version = "3.0.0-Beta1"
+version = "3.0.0-Beta2"
 
 val miraiCoreVersion = "1.0.4"
 val miraiConsoleVersion = "0.5.2"

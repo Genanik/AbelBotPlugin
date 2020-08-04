@@ -1,6 +1,6 @@
 name: "Abel"
 author: "Genanik"
-version: "3.0.0-Beta1"
+version: "3.0.0-Beta2"
 main: "io.genanik.daHuo.AbelPluginMain"
 info: "Abel机器人插件"
 depends: []
