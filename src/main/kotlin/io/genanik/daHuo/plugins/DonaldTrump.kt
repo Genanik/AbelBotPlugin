@@ -36,6 +36,10 @@ class DonaldTrump {
         sentence.add("有一次/singleWord构建了一个所有集合构成的集合")
         sentence.add("谷歌曾经被迫从一个数据中心搬走，因为/singleWord不小心把索引压缩的太厉害导致产生了黑洞。")
         sentence.add("/singleWord的键盘没有按键，因为/singleWord可以掌控一切")
+        sentence.add("我了解/singleWord, 我从这里赚了不少钱\n——特朗普")
+        sentence.add("我会对/singleWord很好的\n——特朗普")
+        sentence.add("我可能是第一个通过竞选总统来尝试/singleWord的\n——特朗普")
+        sentence.add("兼顾幽默和生意，可以成就好/singleWord\n——特朗普")
 
         taowa.add("套娃")
 //        taowa.add("禁止套娃")
