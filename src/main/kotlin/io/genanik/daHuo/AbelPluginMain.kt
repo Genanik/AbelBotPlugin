@@ -5,6 +5,7 @@ import io.genanik.daHuo.abel.regAbelDefault
 import io.genanik.daHuo.abelCommand.*
 import io.genanik.daHuo.adminPlugins.BastardBlocker
 import io.genanik.daHuo.plugins.*
+import io.genanik.daHuo.plugins.bilibili.BilibiliMsg
 import io.genanik.daHuo.utils.*
 import net.mamoe.mirai.console.plugins.PluginBase
 import net.mamoe.mirai.event.*

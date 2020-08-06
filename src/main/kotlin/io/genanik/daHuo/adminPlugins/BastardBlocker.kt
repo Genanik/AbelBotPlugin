@@ -78,7 +78,6 @@ class BastardBlocker() {
         }
     }
 
-
     private fun 有这个傻逼了吗(这个傻逼: Long): Boolean {
         return 傻逼们.contains(这个傻逼)
     }
