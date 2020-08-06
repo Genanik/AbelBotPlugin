@@ -16,7 +16,7 @@ class VideoInf(id: String) {
     private var data: BiliInfData
 
     init {
-        val requestBody = get("https://api.bilibili.com/x/web-interface/view?$param")
+        val requestBody = get(ViewAPI + param)
         data = Gson().fromJson(requestBody, BiliInfResponse::class.javaObjectType).data
     }
 

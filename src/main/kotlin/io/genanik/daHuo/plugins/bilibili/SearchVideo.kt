@@ -10,7 +10,7 @@ class SearchVideo(keyword: String) {
 
     fun getAid(): Int {
         // 返回第一个内容的aid
-        val requestBody = get("https://api.bilibili.com/x/web-interface/search/all/v2?$param")
+        val requestBody = get( SearchAPI + param )
         val bean = Gson().fromJson(requestBody, BiliSearchRequest::class.javaObjectType)
         return bean.data.result[0].data[0].id
     }
