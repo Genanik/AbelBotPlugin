@@ -18,6 +18,7 @@ object AbelPluginMain : PluginBase() {
     private val msgImageResize = ImageResize()
     private val timeController = Time()
     private val bilibiliPlugin = BilibiliMsg()
+    private val theGrandTour = TheGrandTour()
 
     private var abelPluginController = AbelPlugins(logger)
 
@@ -71,6 +72,9 @@ object AbelPluginMain : PluginBase() {
 
             // bilibili
             bilibiliPlugin.trigger(abelPluginController, this)
+
+            // theGrandTour
+            theGrandTour.trigger(abelPluginController, this)
         }
 
         // 注册Abel内容
