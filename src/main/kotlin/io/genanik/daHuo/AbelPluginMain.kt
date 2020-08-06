@@ -3,6 +3,7 @@ package io.genanik.daHuo
 import io.genanik.daHuo.abel.AbelPlugins
 import io.genanik.daHuo.abel.regAbelDefault
 import io.genanik.daHuo.abelCommand.*
+import io.genanik.daHuo.adminPlugins.BastardBlocker
 import io.genanik.daHuo.plugins.*
 import io.genanik.daHuo.utils.*
 import net.mamoe.mirai.console.plugins.PluginBase
@@ -11,6 +12,7 @@ import net.mamoe.mirai.event.*
 object AbelPluginMain : PluginBase() {
 
     // 为每个Abel插件创建对象
+    private val fuckBB = BastardBlocker()
     private val msgRepeaterController = MessageRepeater()
     private val msgTranslateController = MessagesTranslate()
     private val msgTrumpController = DonaldTrump()
@@ -40,6 +42,7 @@ object AbelPluginMain : PluginBase() {
         // 注册Abel管理员功能
         logger.info("注册Abel管理员功能")
         abelPluginController.regAdminFunctions()
+        fuckBB.onLoadWithBlocker()
 
         // 注册Abel功能
         logger.info("注册Abel功能")
@@ -76,6 +79,9 @@ object AbelPluginMain : PluginBase() {
             // 三贱客
             theGrandTour.trigger(abelPluginController, this)
         }
+
+        // 枪毙
+        fuckBB.trigger(abelPluginController, this)
 
         // 注册Abel内容
         regAbelDefault(this, abelPluginController)
