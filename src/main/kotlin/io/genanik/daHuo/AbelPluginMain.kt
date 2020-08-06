@@ -73,7 +73,7 @@ object AbelPluginMain : PluginBase() {
             // bilibili
             bilibiliPlugin.trigger(abelPluginController, this)
 
-            // theGrandTour
+            // 三贱客
             theGrandTour.trigger(abelPluginController, this)
         }
 

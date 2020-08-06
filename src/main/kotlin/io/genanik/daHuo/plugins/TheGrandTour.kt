@@ -36,14 +36,15 @@ class TheGrandTour {
         sentence.add("I'm the driving GOD!")
     }
 
+    // 三贱客
     fun trigger(abelPM: AbelPlugins, controller: GroupMessageSubscribersBuilder){
         keyWords.forEach {
             controller.case(it) {
                 // 是否开启
-                if (!abelPM.getStatus("TGT", this.group.id)) {
+                if (!abelPM.getStatus("三贱客", this.group.id)) {
                     return@case
                 }
-                // TGT
+                // 三贱客
                 reply(sentence.random())
             }
         }
