@@ -55,8 +55,8 @@ data class dURL (
 )
 
 data class dashInfo (
-    val quality: Int,
-    val accept_description: List<String>,
+    val quality: List<Int>,
+    val accept_description: List<String>?,
     val accept_quality: List<Int>,
     val dash: dashStreams,
     val durl: List<dURL>
