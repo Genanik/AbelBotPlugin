@@ -20,15 +20,20 @@ class ImageResize {
             if (isGIF( firstImg.queryUrl())) {
                 return@atBot
             }
+            // 有没有文字
+            val firstText: PlainText = message.firstIsInstanceOrNull() ?: return@atBot
             // 图片缩放
             val newMsg = MessageChainBuilder()
             val allPic = getAllPicture(message)
             allPic.forEach { picUrl ->
-                val maybeText = message.firstOrNull(PlainText) ?: return@atBot
-                val isToBig = maybeText.content.indexOf("放大") != -1
-                if (isToBig) {
+                // toBig
+                var tmp = firstText.content.indexOf("放大") != -1
+                if (tmp) {
                     newMsg.add(ResizePic(picUrl).ToBigger(group))
-                } else {
+                }
+                // toSmall
+                tmp = firstText.content.indexOf("缩小") != -1
+                if (tmp) {
                     newMsg.add(ResizePic(picUrl).ToSmaller(group))
                 }
             }
