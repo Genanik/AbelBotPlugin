@@ -8,7 +8,6 @@ import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
 
-
 fun getAvBvFromNormalLink(link: String): String{
     val rules = Regex("""bilibili\.com\/video\/(?:[Aa][Vv]([0-9]+)|([Bb][Vv][0-9a-zA-Z]+))""")
     val search = rules.find(link) ?: throw Exception("[Bilibili] 获取视频ID错误")

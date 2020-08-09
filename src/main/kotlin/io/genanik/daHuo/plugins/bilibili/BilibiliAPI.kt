@@ -10,8 +10,6 @@ val bilibiliTokenAPI = "https://api.bilibili.com/x/player/playurl/token?"
 val SearchAPI = "https://api.bilibili.com/x/web-interface/search/all/v2?"
 val ViewAPI = "https://api.bilibili.com/x/web-interface/view?"
 
-
-
 class Downloads(token: String){
     var utoken: String = token
 

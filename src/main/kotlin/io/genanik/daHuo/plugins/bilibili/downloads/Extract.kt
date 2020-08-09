@@ -116,5 +116,4 @@ class Extract(url: String, biliCookie: String) {
         return TypesData("url", "哔哩哔哩 bilibili.com", "title" , "video", streams, TypesPart(
             "https://comment.bilibili.com/options.cid.xml", 0L,"xml"), null)
     }
-
 }
