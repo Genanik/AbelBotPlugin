@@ -82,7 +82,7 @@ data class bilibiliOptions (
     val aid: Int,
     val cid: Int,
     val page: Int,
-    val subtitle: String
+    var subtitle: String
 )
 
 fun GetNameAndExt(uri: String): String {
@@ -105,61 +105,12 @@ data class TypesData (
     val title: String,
     val type: String,
     // each stream has it's own Parts and Quality
-    val streams: Stream,
+    val streams: Map<String, Stream>,
     // danmaku, subtitles, etc
-    val caption: Part,
+    val caption: TypesPart,
     // Err is used to record whether an error occurred when extracting the list data
     val err: Error?
 )
-
-fun extractBangumi(url: String, html: String, extractOption: TypesOptions): TypesData {
-    val dataString = MatchOneOf(html, listOf("""window.__INITIAL_STATE__=(.+?);\(function`)"""))[1]
-    var data: bangumiData
-    data = Gson().fromJson(dataString, bangumiData::class.java)
-    if (!extractOption.Playlist) {
-        var aid = data.epInfo.aid
-        var cid = data.epInfo.cid
-        if (aid <= 0 || cid <= 0) {
-            aid = data.epList[0].aid
-            cid = data.epList[0].cid
-        }
-        val options = bilibiliOptions(url, html, true, aid, cid, 0, "")
-        val biliOpt = bilibiliDownload(options, extractOption) ?: throw Exception("No data")
-//         []*types.Data{}, nil
-
-        return TypesData(biliOpt.url, biliOpt.site, biliOpt.title, biliOpt.type, biliOpt.streams, biliOpt.caption, null)
-    }
-
-    // handle bangumi playlist
-    needDownloadItems := utils.NeedDownloadList(extractOption.Items, extractOption.ItemStart, extractOption.ItemEnd, len(data.EpList))
-    extractedData := make([]*types.Data, len(needDownloadItems))
-    wgp := utils.NewWaitGroupPool(extractOption.ThreadNumber)
-    dataIndex := 0
-    for index, u := range data.EpList {
-        if !utils.ItemInSlice(index+1, needDownloadItems) {
-            continue
-        }
-        wgp.Add()
-        id := u.EpID
-        if id == 0 {
-            id = u.ID
-        }
-        // html content can't be reused here
-        options := bilibiliOptions{
-        url:     fmt.Sprintf("https://www.bilibili.com/bangumi/play/ep%d", id),
-        bangumi: true,
-        aid:     u.Aid,
-        cid:     u.Cid,
-    }
-        go func(index int, options bilibiliOptions, extractedData []*types.Data) {
-        defer wgp.Done()
-        extractedData[index] = bilibiliDownload(options, extractOption)
-    }(dataIndex, options, extractedData)
-        dataIndex++
-    }
-    wgp.Wait()
-    return extractedData, nil
-}
 
 fun MatchOneOf(text: String, patterns: List<String>): List<String> {
     var re: Regex
@@ -174,105 +125,69 @@ fun MatchOneOf(text: String, patterns: List<String>): List<String> {
     return emptyList()
 }
 
-func getMultiPageData(html string) (*multiPage, error) {
-    var data multiPage
-    multiPageDataString := utils.MatchOneOf(
-    html, `window.__INITIAL_STATE__=(.+?);\(function`,
-    )
-    if multiPageDataString == nil {
-        return &data, errors.New("this page has no playlist")
-    }
-    err := json.Unmarshal([]byte(multiPageDataString[1]), &data)
-    if err != nil {
-        return nil, err
-    }
-    return &data, nil
+fun getMultiPageData(html: String): multiPage? {
+    var multiPageDataString: List<String> = MatchOneOf(html, listOf("""window.__INITIAL_STATE__=(.+?);\(function"""))
+    return Gson().fromJson(multiPageDataString[1], multiPage::class.java)
 }
 
-func extractNormalVideo(url, html string, extractOption types.Options) ([]*types.Data, error) {
-    pageData, err := getMultiPageData(html)
-    if err != nil {
-        return nil, err
+fun extractNormalVideo(url: String, html: String, extractOption: TypesOptions): List<TypesData>? {
+    val pageData = getMultiPageData(html) ?: return null
+    if (err != null) {
+        return null
     }
-    if !extractOption.Playlist {
+    if (!extractOption.Playlist) {
         // handle URL that has a playlist, mainly for unified titles
         // <h1> tag does not include subtitles
         // bangumi doesn't need this
-        pageString := utils.MatchOneOf(url, `\?p=(\d+)`)
-        var p int
-        if pageString == nil {
+        val pageString = MatchOneOf(url, listOf("""\?p=(\d+)"""))
+        var p = if (pageString == null) {
             // https://www.bilibili.com/video/av20827366/
-            p = 1
+            1
         } else {
             // https://www.bilibili.com/video/av20827366/?p=2
-            p, _ = strconv.Atoi(pageString[1])
+            pageString[1].toInt()
         }
 
-        if len(pageData.VideoData.Pages) < p || p < 1 {
-            return nil, types.ErrURLParseFailed
+        if (pageData.videoData.pages.size < p || p < 1) {
+            return throw Exception("ErrURLParseFailed")
         }
 
-        page := pageData.VideoData.Pages[p-1]
-        options := bilibiliOptions{
-            url:  url,
-            html: html,
-            aid:  pageData.Aid,
-            cid:  page.Cid,
-            page: p,
-    }
+        val page = pageData.videoData.pages[p - 1]
+        val options = bilibiliOptions(url, html, false, pageData.aid, page.cid, p, "")
         // "part":"" or "part":"Untitled"
-        if page.Part == "Untitled" || len(pageData.VideoData.Pages) == 1 {
+        if (page.part == "Untitled" || pageData.videoData.pages.size == 1) {
             options.subtitle = ""
         } else {
-            options.subtitle = page.Part
+            options.subtitle = page.part
         }
-        return []*types.Data{bilibiliDownload(options, extractOption)}, nil
+        return listOf(bilibiliDownload(options, extractOption) ?: return null)
     }
 
     // handle normal video playlist
     // https://www.bilibili.com/video/av20827366/?p=1
-    needDownloadItems := utils.NeedDownloadList(extractOption.Items, extractOption.ItemStart, extractOption.ItemEnd, len(pageData.VideoData.Pages))
-    extractedData := make([]*types.Data, len(needDownloadItems))
-    wgp := utils.NewWaitGroupPool(extractOption.ThreadNumber)
-    dataIndex := 0
-    for index, u := range pageData.VideoData.Pages {
-        if !utils.ItemInSlice(index+1, needDownloadItems) {
+    val needDownloadItems = NeedDownloadList(
+        extractOption.Items,
+        extractOption.ItemStart,
+        extractOption.ItemEnd,
+        pageData.videoData.pages.size
+    )
+    val extractedData = mutableListOf<TypesData>()
+    val wgp = extractOption.ThreadNumber
+    val dataIndex = 0
+    for ((index, u) in pageData.videoData.pages.withIndex()) {
+        if (ItemInSlice(index + 1, needDownloadItems)) {
             continue
         }
-        wgp.Add()
-        options := bilibiliOptions{
-            url:      url,
-            html:     html,
-            aid:      pageData.Aid,
-            cid:      u.Cid,
-            subtitle: u.Part,
-            page:     u.Page,
+        val options = bilibiliOptions(url, html, false, pageData.aid, u.cid, u.page, u.part)
+        extractedData[index] = bilibiliDownload(options, extractOption) ?: return null
+        return extractedData
     }
-        go func(index int, options bilibiliOptions, extractedData []*types.Data) {
-        defer wgp.Done()
-        extractedData[index] = bilibiliDownload(options, extractOption)
-    }(dataIndex, options, extractedData)
-        dataIndex++
-    }
-    wgp.Wait()
-    return extractedData, nil
-}
-
-func New() types.Extractor {
-    return &extractor{}
+    return null
 }
 
 // Extract is the main function to extract the data.
-func (e *extractor) Extract(url string, option types.Options) ([]*types.Data, error) {
-    var err error
-    html, err := request.Get(url, referer, nil)
-    if err != nil {
-        return nil, err
-    }
-    if strings.Contains(url, "bangumi") {
-        // handle bangumi
-        return extractBangumi(url, html, option)
-    }
+fun Extract(url: String, option: TypesOptions): List<TypesData>? {
+    val html = get(url)
     // handle normal video
     return extractNormalVideo(url, html, option)
 }
@@ -383,17 +298,9 @@ fun bilibiliDownload(options: bilibiliOptions, extractOption: TypesOptions): Typ
         streams["$q"] = Stream(q.toString(), qualityString[q]!!,parts, size, "",false)
     }
 
-    return Data(
-        Site:    "哔哩哔哩 bilibili.com",
-        Title:   title,
-        Type:    types.DataTypeVideo,
-        Streams: streams,
-        Caption: &types.Part{
-        URL: fmt.Sprintf("https://comment.bilibili.com/%d.xml", options.cid),
-        Ext: "xml",
-        ),
-        URL: options.url,
-    }
+    // TODO site title
+    return TypesData("url", "哔哩哔哩 bilibili.com", "title" , "video", streams, TypesPart(
+        "https://comment.bilibili.com/options.cid.xml", 0L,"xml"), null)
 }
 
 // NeedDownloadList return the indices of playlist that need download
@@ -438,3 +345,18 @@ fun NeedDownloadList(items: String, itemStart: Int, itemEnd: Int, length: Int): 
     }
     return range
 }
+
+fun ItemInSlice(item: Int, list: List<Int>): Boolean {
+    for (i in 0..list.size) {
+        if (item == list[i]) {
+            return true
+        }
+    }
+    return false
+}
+
+data class TypesPart (
+    val url: String,
+    val size: Long,
+    val ext: String
+)
