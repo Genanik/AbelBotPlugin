@@ -55,18 +55,18 @@ data class dURL (
 )
 
 data class dashInfo (
-    val quality: List<Int>,
+    val quality: Int,
     val accept_description: List<String>?,
     val accept_quality: List<Int>,
-    val dash: dashStreams,
-    val durl: List<dURL>
+    val dash: dashStreams
+//    val durl: List<dURL>
 )
 
 data class dash (
     val code: Int,
     val message: String,
-    val data: dashInfo,
-    val result: dashInfo
+    val ttl: Int,
+    val data: dashInfo
 )
 
 var qualityString = mapOf(

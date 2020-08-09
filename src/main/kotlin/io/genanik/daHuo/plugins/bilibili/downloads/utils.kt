@@ -15,10 +15,10 @@ fun Size(url: String): Long {
     return con.contentLength.toLong()
 }
 
-fun MatchOf(text: String, pattern: String): List<String> {
-    var value: List<String>
-    var re: Regex = pattern.toRegex()
-    value = (re.find(text) ?: return emptyList()).groupValues
+fun MatchOf(text: String, pattern: Regex): List<String> {
+    var value: List<String> = (pattern.find(text) ?: return emptyList()).groupValues
+    println(pattern.find(text))
+    println(pattern.find(text)!!.groupValues)
     if (value.isNotEmpty()) {
         return value
     }

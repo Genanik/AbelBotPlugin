@@ -4,21 +4,17 @@ import com.google.gson.Gson
 import io.genanik.daHuo.plugins.bilibili.data.dashInfo
 import io.genanik.daHuo.plugins.bilibili.data.multiPage
 
-fun genParts(dashData: dashInfo, quality: Int, referer: String): List<TypesPart>? {
+fun genParts(dashData: dashInfo, quality: Int): List<TypesPart>? {
     val parts = mutableListOf<TypesPart>()
     if (dashData.dash.audio == null ){
-        val url = dashData.durl[0].url
-        val ext = GetExt(url)
-
-        parts[0] = TypesPart(url, dashData.durl[0].size, ext)
+        throw Exception("audio是空的")
     } else {
-
         var checked = false
         for (stream in dashData.dash.video){
             if (stream.id == quality) {
-                val s = Size(stream.baseUrl, referer)
+                val s = Size(stream.baseUrl)
 
-                parts[0] = TypesPart(stream.baseUrl, s, "mp4")
+                parts.add(TypesPart(stream.baseUrl, s, "mp4"))
                 checked = true
                 break
             }
@@ -32,7 +28,8 @@ fun genParts(dashData: dashInfo, quality: Int, referer: String): List<TypesPart>
 }
 
 fun getMultiPageData(html: String): multiPage? {
-    var multiPageDataString: List<String> = MatchOf(html, """window.__INITIAL_STATE__=(.+?);\(function""")
+//    var multiPageDataString: List<String> = MatchOf(html, """window.__INITIAL_STATE__=(.+?);\(function""".toRegex())
+    var multiPageDataString: List<String> = MatchOf(html, """window\.__INITIAL_STATE__=(.+?);\(function""".toRegex())
     return Gson().fromJson(multiPageDataString[1], multiPage::class.java)
 }
 

@@ -6,72 +6,49 @@ import io.genanik.daHuo.plugins.bilibili.data.dash
 import io.genanik.daHuo.plugins.bilibili.data.dashInfo
 import io.genanik.daHuo.plugins.bilibili.data.qualityString
 import io.genanik.daHuo.utils.get
+import io.genanik.daHuo.utils.getHttp
 
-class Extract {
-
-    // Extract is the main function to extract the data.
-    fun Extract(url: String, option: TypesOptions): List<TypesData>? {
-        val html = get(url)
-        return extractNormalVideo(url, html, option)
+class Extract(url: String, biliCookie: String) {
+    private var dataList :List<TypesData>
+    init {
+        val html = getHttp(url)
+        dataList = extractNormalVideo(url, html, biliCookie) ?: throw Exception("无法解析视频")
     }
 
-    private fun extractNormalVideo(url: String, html: String, extractOption: TypesOptions): List<TypesData>? {
+    fun getStreams(): List<List<String>> {
+        val fullList = mutableListOf<List<String>>()
+        // [0]  指视频质量
+        // [>0] 指视频链接
+        var singleList = mutableListOf<String>()
+
+        dataList.forEach { data ->
+            for( key in data.streams.keys){
+                // 单个stream
+                val stream = data.streams[key] ?: continue
+                singleList.add(stream.quality)
+                for ((index,part) in stream.parts.withIndex()){
+                    singleList.add(part.url)
+                }
+                fullList.add(singleList)
+                singleList = mutableListOf()
+            }
+        }
+        return fullList
+    }
+
+    private fun extractNormalVideo(url: String, html: String, biliCookie: String): List<TypesData>? {
         val pageData = getMultiPageData(html) ?: return null
-        if (System.err != null) {
-            return null
-        }
-        if (!extractOption.Playlist) {
-            // handle URL that has a playlist, mainly for unified titles
-            // <h1> tag does not include subtitles
-            // bangumi doesn't need this
-            val pageString = MatchOf(url, """\?p=(\d+)""")
-            var p = if (pageString == null) {
-                // https://www.bilibili.com/video/av20827366/
-                1
-            } else {
-                // https://www.bilibili.com/video/av20827366/?p=2
-                pageString[1].toInt()
-            }
-
-            if (pageData.videoData.pages.size < p || p < 1) {
-                return throw Exception("ErrURLParseFailed")
-            }
-
-            val page = pageData.videoData.pages[p - 1]
-            val options = bilibiliOptions(url, html, false, pageData.aid, page.cid, p, "")
-            // "part":"" or "part":"Untitled"
-            if (page.part == "Untitled" || pageData.videoData.pages.size == 1) {
-                options.subtitle = ""
-            } else {
-                options.subtitle = page.part
-            }
-            return listOf(bilibiliDownload(options, extractOption) ?: return null)
-        }
-
-        // handle normal video playlist
-        // https://www.bilibili.com/video/av20827366/?p=1
-        val needDownloadItems = NeedDownloadList(
-            extractOption.Items,
-            extractOption.ItemStart,
-            extractOption.ItemEnd,
-            pageData.videoData.pages.size
-        )
         val extractedData = mutableListOf<TypesData>()
-        val wgp = extractOption.ThreadNumber
-        val dataIndex = 0
         for ((index, u) in pageData.videoData.pages.withIndex()) {
-            if (needDownloadItems.contains(index + 1)) {
-                continue
-            }
             val options = bilibiliOptions(url, html, false, pageData.aid, u.cid, u.page, u.part)
-            extractedData[index] = bilibiliDownload(options, extractOption) ?: return null
+            extractedData.add(bilibiliDownload(options, biliCookie) ?: return null)
             return extractedData
         }
         return null
     }
 
 
-    fun bilibiliDownload(options: bilibiliOptions, extractOption: TypesOptions): TypesData? {
+    private fun bilibiliDownload(options: bilibiliOptions, biliCookie: String): TypesData? {
         var html = ""
         html = if (options.html != "") {
             // reuse html string, but this can't be reused in case of playlist
@@ -79,21 +56,22 @@ class Extract {
         } else {
             get(options.url)
         }
+        var biliAPI = Downloads("")
+
 
         // Get "accept_quality" and "accept_description"
         // "accept_description":["高清 1080P","高清 720P","清晰 480P","流畅 360P"],
         // "accept_quality":[120,112,80,48,32,16],
-        val api = genAPI(options.aid, options.cid, 120, options.bangumi, extractOption.Cookie) ?: return null
-        var jsonString = get(api)
+        val api = biliAPI.genAPI(options.aid, options.cid, 120, options.bangumi, biliCookie) ?: return null
+        var jsonString = getHttp(api)
 
         var data = Gson().fromJson(jsonString, dash::class.java)
         var dashData: dashInfo
-        if (data.data.accept_description == null) {
-            dashData = data.result
+        dashData = if (data.data.accept_description == null) {
+            return null
         } else {
-            dashData = data.data
+            data.data
         }
-
         var audioPart = TypesPart("",0L, "")
         if (dashData.dash.audio != null) {
             // Get audio part
@@ -112,35 +90,29 @@ class Extract {
         }
 
         val streams = mutableMapOf<String, Stream>()
-        for ( q in dashData.quality) {
-            // Avoid duplicate streams
-            val ok = streams[q]
-            if (ok != null) {
-                continue
-            }
-            val api = genAPI(options.aid, options.cid, q, options.bangumi, extractOption.Cookie) ?: return null
+        val q = dashData.quality
+        // Avoid duplicate streams
+        val newApi = biliAPI.genAPI(options.aid, options.cid, q, options.bangumi, biliCookie) ?: return null
 
-            jsonString = get(api)
+        jsonString = getHttp(newApi)
 
-            data = Gson().fromJson(jsonString, dash::class.java)
-            dashData = if (data.data.accept_description == null) {
-                data.result
-            } else {
-                data.data
-            }
-            val parts = (genParts(dashData, q, options.url) ?: continue).toMutableList()
-
-            var size: Long = 0L
-            for (part in parts) {
-                size += part.size
-            }
-            if (audioPart != null) {
-                parts[parts.size] = audioPart
-            }
-            streams["$q"] = Stream(q.toString(), qualityString[q]!!,parts, size, "",false)
+        data = Gson().fromJson(jsonString, dash::class.java)
+        dashData = if (data.data.accept_description == null) {
+            return null
+        } else {
+            data.data
         }
+        val parts = genParts(dashData, q)!!.toMutableList()
 
-        // TODO site title
+        var size = 0L
+        for (part in parts) {
+            size += part.size
+        }
+        if (audioPart != null) {
+            parts.add(audioPart)
+        }
+        streams["$q"] = Stream(q.toString(), qualityString[q]?: return null, parts, size, "",false)
+
         return TypesData("url", "哔哩哔哩 bilibili.com", "title" , "video", streams, TypesPart(
             "https://comment.bilibili.com/options.cid.xml", 0L,"xml"), null)
     }

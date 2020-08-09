@@ -14,10 +14,12 @@ class VideoInf(id: String) {
 
     private var param: String = id
     private var data: BiliInfData
+    var avLink: String
 
     init {
         val requestBody = get(ViewAPI + param)
         data = Gson().fromJson(requestBody, BiliInfResponse::class.javaObjectType).data
+        avLink = "https://www.bilibili.com/video/av${data.aid}"
     }
 
     suspend fun beautyMsg(contact: Contact): MessageChain {

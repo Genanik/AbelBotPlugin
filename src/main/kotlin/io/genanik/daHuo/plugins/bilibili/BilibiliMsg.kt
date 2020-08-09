@@ -1,13 +1,9 @@
 package io.genanik.daHuo.plugins.bilibili
 
-import com.google.gson.Gson
 import io.genanik.daHuo.abel.AbelPlugins
-import io.genanik.daHuo.utils.get
+import io.genanik.daHuo.plugins.bilibili.downloads.Extract
 import net.mamoe.mirai.event.GroupMessageSubscribersBuilder
 import net.mamoe.mirai.message.data.*
-import java.io.IOException
-import java.net.HttpURLConnection
-import java.net.URL
 
 class BilibiliMsg {
 
@@ -19,8 +15,28 @@ class BilibiliMsg {
             }
             // bilibili
             val id = getAvBvFromMsg(message) ?: return@always
-            reply(VideoInf(id).beautyMsg(group))
+            val biliVideo = VideoInf(id)
+
+            // info
+            reply(biliVideo.beautyMsg(group))
+
+            // link
+//            reply(formatDL(biliVideo.avLink))
         }
+    }
+
+    private fun formatDL(biliUrl: String): MessageChain {
+        val streams = Extract(biliUrl, "").getStreams()
+        val result = MessageChainBuilder()
+
+        streams.forEach {
+            result.add("${it[0]}: ") // 画质
+            for (i in 1 until it.size){
+                result.add("${it[i]} ") // 链接
+            }
+            result.add("\n")
+        }
+        return result.asMessageChain()
     }
 
 }
