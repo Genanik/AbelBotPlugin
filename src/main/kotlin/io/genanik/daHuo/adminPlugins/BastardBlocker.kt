@@ -13,7 +13,6 @@ import net.mamoe.mirai.message.data.firstIsInstanceOrNull
 import java.io.File
 import java.util.*
 
-
 /**
  * 傻逼屏蔽器
  * 从最高级拒绝向下广播任何傻逼发的消息内容
