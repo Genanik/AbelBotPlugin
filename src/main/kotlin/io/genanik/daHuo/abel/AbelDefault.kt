@@ -1,13 +1,12 @@
 package io.genanik.daHuo.abel
 
 import io.genanik.daHuo.AbelPluginMain
+import net.mamoe.mirai.event.*
+import net.mamoe.mirai.event.events.BotInvitedJoinGroupRequestEvent
 import net.mamoe.mirai.event.events.NewFriendRequestEvent
-import net.mamoe.mirai.event.subscribeAlways
-import net.mamoe.mirai.event.subscribeFriendMessages
-import net.mamoe.mirai.event.subscribeGroupMessages
-import net.mamoe.mirai.event.subscribeTempMessages
 
 fun regAbelDefault(controller: AbelPluginMain, aPM: AbelPlugins){
+
     // Abel指令绑定
     controller.subscribeGroupMessages {
         for (i in aPM.adminGetAllCommands()) {
@@ -21,6 +20,7 @@ fun regAbelDefault(controller: AbelPluginMain, aPM: AbelPlugins){
             }
         }
     }
+
     // Abel功能绑定
     controller.subscribeGroupMessages {
         // 用户组
@@ -117,7 +117,13 @@ fun regAbelDefault(controller: AbelPluginMain, aPM: AbelPlugins){
         }
     }
 
+    // 好友申请
     controller.subscribeAlways<NewFriendRequestEvent> {
+        accept()
+    }
+
+    // 邀请至群申请
+    controller.subscribeAlways<BotInvitedJoinGroupRequestEvent> {
         accept()
     }
 }
