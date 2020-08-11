@@ -1,13 +1,16 @@
 package io.genanik.daHuo.plugins.bilibili
 
+import io.genanik.daHuo.abel.AbelPluginBase
 import io.genanik.daHuo.abel.AbelPlugins
 import io.genanik.daHuo.plugins.bilibili.downloads.Extract
 import net.mamoe.mirai.event.GroupMessageSubscribersBuilder
 import net.mamoe.mirai.message.data.*
 
-class BilibiliMsg {
+class BilibiliMsg(aPlugins: AbelPlugins) : AbelPluginBase(aPlugins) {
 
-    fun trigger(abelPM: AbelPlugins, controller: GroupMessageSubscribersBuilder){
+    private val abelPM = aPlugins
+
+    override fun trigger(controller: GroupMessageSubscribersBuilder) {
         controller.always {
             // 是否开启
             if (!abelPM.getStatus("bilibili", this.group.id)) {

@@ -1,13 +1,16 @@
 package io.genanik.daHuo.plugins
 
+import io.genanik.daHuo.abel.AbelPluginBase
 import io.genanik.daHuo.abel.AbelPlugins
 import io.genanik.daHuo.utils.repeater.MessagesRepeat
 import net.mamoe.mirai.event.GroupMessageSubscribersBuilder
 
-class MessageRepeater{
-    private val msgRepeatController = mutableMapOf<Long, MessagesRepeat>()
+class MessageRepeater(aPlugins: AbelPlugins) : AbelPluginBase(aPlugins) {
 
-    fun trigger(abelPM: AbelPlugins, controller: GroupMessageSubscribersBuilder){
+    private val msgRepeatController = mutableMapOf<Long, MessagesRepeat>()
+    private val abelPM = aPlugins
+
+    override fun trigger(controller: GroupMessageSubscribersBuilder) {
         controller.always {
             if (!abelPM.getStatus("复读", this.group.id)) {
                 return@always

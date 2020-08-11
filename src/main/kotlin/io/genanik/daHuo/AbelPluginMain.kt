@@ -12,18 +12,11 @@ import net.mamoe.mirai.event.*
 
 object AbelPluginMain : PluginBase() {
 
+    private var abelPluginController = AbelPlugins(logger)
+
     // 为每个Abel插件创建对象
     private val fuckBB = BastardBlocker()
-    private val msgRepeaterController = MessageRepeater()
-    private val msgTranslateController = MessagesTranslate()
-    private val msgTrumpController = DonaldTrump()
-    private val msgReverseGIF = ReverseGIF()
-    private val msgImageResize = ImageResize()
     private val timeController = Time()
-    private val bilibiliPlugin = BilibiliMsg()
-    private val theGrandTour = TheGrandTour()
-
-    private var abelPluginController = AbelPlugins(logger)
 
     override fun onLoad() {
         super.onLoad()
@@ -59,26 +52,8 @@ object AbelPluginMain : PluginBase() {
          * 实现功能Abel订阅
          */
         subscribeGroupMessages {
-            // 翻译
-            msgTranslateController.trigger(abelPluginController, this)
-
-            // 川普
-            msgTrumpController.trigger(abelPluginController, this)
-
-            // 复读
-            msgRepeaterController.trigger(abelPluginController, this)
-
-            // 倒转GIF
-            msgReverseGIF.trigger(abelPluginController, this)
-
-            // 图片缩放
-            msgImageResize.trigger(abelPluginController, this)
-
-            // bilibili
-            bilibiliPlugin.trigger(abelPluginController, this)
-
-            // 三贱客
-            theGrandTour.trigger(abelPluginController, this)
+            // 注册所有功能
+            abelPluginController.regAllPlugins(this)
         }
 
         // 枪毙

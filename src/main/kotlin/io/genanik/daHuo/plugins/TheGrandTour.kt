@@ -1,5 +1,6 @@
 package io.genanik.daHuo.plugins
 
+import io.genanik.daHuo.abel.AbelPluginBase
 import io.genanik.daHuo.abel.AbelPlugins
 import net.mamoe.mirai.event.GroupMessageSubscribersBuilder
 import net.mamoe.mirai.message.data.PlainText
@@ -8,9 +9,11 @@ import net.mamoe.mirai.message.data.firstIsInstanceOrNull
 /**
  * 三贱客名言
  */
-class TheGrandTour {
+class TheGrandTour(aPlugins: AbelPlugins) : AbelPluginBase(aPlugins) {
+
     private val sentence = arrayListOf<String>()
     private val keyWords = arrayListOf<String>()
+    private val abelPM = aPlugins
 
     init {
         keyWords.add("来点TGT笑话")
@@ -37,7 +40,7 @@ class TheGrandTour {
     }
 
     // 三贱客
-    fun trigger(abelPM: AbelPlugins, controller: GroupMessageSubscribersBuilder){
+    override fun trigger(controller: GroupMessageSubscribersBuilder) {
         keyWords.forEach {
             controller.case(it) {
                 // 是否开启

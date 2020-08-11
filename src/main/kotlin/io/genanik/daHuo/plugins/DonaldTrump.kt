@@ -1,5 +1,6 @@
 package io.genanik.daHuo.plugins
 
+import io.genanik.daHuo.abel.AbelPluginBase
 import io.genanik.daHuo.abel.AbelPlugins
 import io.genanik.daHuo.utils.isHavePicture
 import net.mamoe.mirai.event.GroupMessageSubscribersBuilder
@@ -9,10 +10,11 @@ import net.mamoe.mirai.message.data.firstIsInstanceOrNull
 /**
  * 输入关键字，返回一条名人名言（伪
  */
-class DonaldTrump {
+class DonaldTrump(aPlugins: AbelPlugins) : AbelPluginBase(aPlugins) {
 
     private val sentence = arrayListOf<String>()
     private val taowa = arrayListOf<String>()
+    private val abelPM = aPlugins
 
     init {
         sentence.add("我们有全球最好的/singleWord专家\n——特朗普")
@@ -46,7 +48,7 @@ class DonaldTrump {
 //        taowa.add("禁止")
     }
 
-    fun trigger(abelPM: AbelPlugins, controller: GroupMessageSubscribersBuilder){
+    override fun trigger(controller: GroupMessageSubscribersBuilder){
         controller.atBot {
             // 是否开启
             if (!abelPM.getStatus("川普", this.group.id)) {

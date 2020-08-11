@@ -6,10 +6,13 @@ import io.genanik.daHuo.utils.getAllPicture
 import io.genanik.daHuo.utils.isGIF
 import net.mamoe.mirai.event.GroupMessageSubscribersBuilder
 import net.mamoe.mirai.message.data.*
+import io.genanik.daHuo.abel.AbelPluginBase as AbelPluginBase
 
-class ImageResize {
+class ImageResize(aPlugins: AbelPlugins) : AbelPluginBase(aPlugins) {
 
-    fun trigger(abelPM: AbelPlugins, controller: GroupMessageSubscribersBuilder){
+    private val abelPM = aPlugins
+
+    override fun trigger(controller: GroupMessageSubscribersBuilder) {
         controller.atBot {
             // 图片缩放是否开启
             if (!abelPM.getStatus("图片缩放", this.group.id)) {

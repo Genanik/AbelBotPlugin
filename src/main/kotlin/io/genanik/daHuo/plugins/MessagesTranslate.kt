@@ -1,5 +1,6 @@
 package io.genanik.daHuo.plugins
 
+import io.genanik.daHuo.abel.AbelPluginBase
 import io.genanik.daHuo.abel.AbelPlugins
 import io.genanik.daHuo.utils.translate.Method
 import net.mamoe.mirai.event.GroupMessageSubscribersBuilder
@@ -12,9 +13,11 @@ import net.mamoe.mirai.message.data.forEachContent
 /**
  * 返回翻译的繁体内容
  */
-class MessagesTranslate {
+class MessagesTranslate(aPlugins: AbelPlugins) : AbelPluginBase(aPlugins) {
 
-    fun trigger(abelPM: AbelPlugins, controller: GroupMessageSubscribersBuilder){
+    private val abelPM = aPlugins
+
+    override fun trigger(controller: GroupMessageSubscribersBuilder) {
         controller.always {
             if (abelPM.getStatus("翻译", this.group.id)) { // 默认不开启
                 return@always
