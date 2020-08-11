@@ -28,7 +28,8 @@ fun AbelPlugins.regAdminHelp(){
                     "${this.getAllCommands()}\n" +
                     "${this.getAllFunctions()}\n"
         )
-        result.add("AbelVersion: ${Versions.Abel.version}\n")
+        result.add("AbelVersion: ${Versions.DaHuo.version}\n")
+        result.add("ABelFrameworkVersion: ${Versions.AbelFramework.version}\n")
         result.add("JavaVersion: ${System.getProperty("java.version")}\n")
         result.add(
             "MiraiCoreVersion: ${File(Bot.javaClass.protectionDomain.codeSource.location.file).name.replace(

@@ -1,5 +1,6 @@
 package io.genanik.daHuo.abel
 
+import net.mamoe.mirai.event.GroupMessageSubscribersBuilder
 import net.mamoe.mirai.message.data.MessageChain
 import net.mamoe.mirai.utils.MiraiLogger
 
@@ -230,4 +231,20 @@ class AbelPlugins(newLogger: MiraiLogger) {
         return functionHelpInf
     }
 
+
+    /**
+     * 记录插件
+     */
+    private val plugins = mutableListOf<AbelPluginBase>()
+
+    fun markPlugin(newPlugin: Class<*>) {
+        val plugin = newPlugin.asSubclass(AbelPluginBase::class.java)
+        plugins.add(plugin.kotlin.objectInstance ?: throw Exception("不知道咋回事错了"))
+    }
+
+    fun regAllPlugins(regTarget: GroupMessageSubscribersBuilder){
+        plugins.forEach {
+            it.trigger(regTarget)
+        }
+    }
 }
