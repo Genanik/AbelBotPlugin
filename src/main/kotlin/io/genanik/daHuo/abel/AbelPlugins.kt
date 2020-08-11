@@ -237,9 +237,10 @@ class AbelPlugins(newLogger: MiraiLogger) {
      */
     private val plugins = mutableListOf<AbelPluginBase>()
 
-    fun markPlugin(newPlugin: Class<*>) {
-        val plugin = newPlugin.asSubclass(AbelPluginBase::class.java)
-        plugins.add(plugin.kotlin.objectInstance ?: throw Exception("不知道咋回事错了"))
+    fun markPlugin(newPlugin: AbelPluginBase) {
+//        val plugin = newPlugin.asSubclass(AbelPluginBase::class.java)
+//        plugins.add(plugin.kotlin.objectInstance ?: throw Exception("不知道咋回事错了"))
+        plugins.add(newPlugin)
     }
 
     fun regAllPlugins(regTarget: GroupMessageSubscribersBuilder){

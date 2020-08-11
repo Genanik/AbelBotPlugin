@@ -9,11 +9,12 @@ open class AbelPluginBase(aPlugins: AbelPlugins) {
 
     private val abelPlugins = aPlugins
 
+    open val name = ""
     open val description = ""
     open val version = ""
 
     init {
-
+        abelPlugins.markPlugin(this)
     }
 
     open fun trigger(controller: GroupMessageSubscribersBuilder) {
