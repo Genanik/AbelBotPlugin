@@ -3,6 +3,11 @@ package io.genanik.daHuo.abel
 import net.mamoe.mirai.event.GroupMessageSubscribersBuilder
 import net.mamoe.mirai.message.data.MessageChain
 import net.mamoe.mirai.utils.MiraiLogger
+import java.io.File
+import java.io.IOException
+import java.util.*
+import java.util.jar.JarFile
+
 
 class AbelPlugins(newLogger: MiraiLogger) {
 
@@ -32,7 +37,7 @@ class AbelPlugins(newLogger: MiraiLogger) {
      * - function -> Long:  触发指令的群号
      * - function <- MessageChain: 触发指令后机器人的回复内容
      */
-    fun regAdminCommand(argStr: String, function:(Long) -> MessageChain){
+    fun regAdminCommand(argStr: String, function: (Long) -> MessageChain){
         logger.info("注册管理员指令: $argStr")
         adminArgsMap[argStr] = function
     }
@@ -40,7 +45,7 @@ class AbelPlugins(newLogger: MiraiLogger) {
     /**
      * 文本消息翻译为指令
      */
-    fun adminTransferCommand(argStr:String): ((Long) -> MessageChain) {
+    fun adminTransferCommand(argStr: String): ((Long) -> MessageChain) {
         return adminArgsMap[argStr]!!
     }
 
@@ -138,7 +143,7 @@ class AbelPlugins(newLogger: MiraiLogger) {
      * - function -> Long:  触发指令的群号
      * - function <- MessageChain: 触发指令后机器人的回复内容
      */
-    fun regCommand(argStr: String, description: String, function:(Long) -> MessageChain){
+    fun regCommand(argStr: String, description: String, function: (Long) -> MessageChain){
         logger.info("注册指令: $argStr")
         argsMap[argStr] = function
         commandHelpInf[argStr] = description
@@ -147,7 +152,7 @@ class AbelPlugins(newLogger: MiraiLogger) {
     /**
      * 文本消息翻译为指令
      */
-    fun transferCommand(argStr:String): ((Long) -> MessageChain) {
+    fun transferCommand(argStr: String): ((Long) -> MessageChain) {
         return argsMap[argStr]!!
     }
 
@@ -244,8 +249,13 @@ class AbelPlugins(newLogger: MiraiLogger) {
     }
 
     fun regAllPlugins(regTarget: GroupMessageSubscribersBuilder){
+        println(plugins.size)
+        println(plugins)
         plugins.forEach {
             it.trigger(regTarget)
+            regFunction(it.name, it.description)
+            adminRegFunction(it.name)
         }
     }
+
 }

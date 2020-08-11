@@ -10,7 +10,6 @@ import io.genanik.daHuo.abel.AbelPluginBase as AbelPluginBase
 
 class ImageResize(aPlugins: AbelPlugins) : AbelPluginBase(aPlugins) {
 
-    private val abelPM = aPlugins
     override val name = "图片缩放"
     override val description = "@Abel机器人并加上\"放大\"或\"缩小\"一个或多个静态图，可以缩放静态图"
     override val version = "0.1.0"

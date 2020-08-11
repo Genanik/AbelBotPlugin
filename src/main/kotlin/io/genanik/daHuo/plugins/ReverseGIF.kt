@@ -13,7 +13,6 @@ import net.mamoe.mirai.message.data.*
  */
 class ReverseGIF(aPlugins: AbelPlugins) : AbelPluginBase(aPlugins) {
 
-    private val abelPM = aPlugins
     override val name = "倒转GIF"
     override val description = "@Abel机器人并加上一个或多个GIF，可以倒叙一个或多个GIF"
     override val version = "0.1.0"

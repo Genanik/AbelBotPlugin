@@ -3,15 +3,12 @@ package io.genanik.daHuo.plugins
 import io.genanik.daHuo.abel.AbelPluginBase
 import io.genanik.daHuo.abel.AbelPlugins
 import net.mamoe.mirai.event.GroupMessageSubscribersBuilder
-import net.mamoe.mirai.message.data.PlainText
-import net.mamoe.mirai.message.data.firstIsInstanceOrNull
 
 /**
  * 三贱客名言
  */
 class TheGrandTour(aPlugins: AbelPlugins) : AbelPluginBase(aPlugins) {
 
-    private val abelPM = aPlugins
     override val name = "三贱客"
     override val description = "来点三贱客/TGT笑话"
     override val version = "0.1.0"

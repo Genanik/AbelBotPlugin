@@ -8,7 +8,6 @@ import net.mamoe.mirai.message.data.*
 
 class BilibiliMsg(aPlugins: AbelPlugins) : AbelPluginBase(aPlugins) {
 
-    private val abelPM = aPlugins
     override val name = "bilibili"
     override val description = "发现b站视频链接自动生成预览信息"
     override val version = "0.1.0"

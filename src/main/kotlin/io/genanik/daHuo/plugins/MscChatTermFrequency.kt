@@ -8,7 +8,6 @@ import io.genanik.daHuo.abel.AbelPlugins
  */
 class MscChatTermFrequency(aPlugins: AbelPlugins) : AbelPluginBase(aPlugins) {
 
-    private val abelPM = aPlugins
     override val name = ""
     override val description = ""
     override val version = ""
