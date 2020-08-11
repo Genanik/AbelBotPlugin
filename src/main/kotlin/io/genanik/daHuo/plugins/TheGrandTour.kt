@@ -11,9 +11,13 @@ import net.mamoe.mirai.message.data.firstIsInstanceOrNull
  */
 class TheGrandTour(aPlugins: AbelPlugins) : AbelPluginBase(aPlugins) {
 
+    private val abelPM = aPlugins
+    override val name = "三贱客"
+    override val description = "来点三贱客/TGT笑话"
+    override val version = "0.1.0"
+
     private val sentence = arrayListOf<String>()
     private val keyWords = arrayListOf<String>()
-    private val abelPM = aPlugins
 
     init {
         keyWords.add("来点TGT笑话")

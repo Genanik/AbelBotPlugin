@@ -12,9 +12,13 @@ import net.mamoe.mirai.message.data.firstIsInstanceOrNull
  */
 class DonaldTrump(aPlugins: AbelPlugins) : AbelPluginBase(aPlugins) {
 
+    private val abelPM = aPlugins
+    override val name = "川普"
+    override val description = "@Abel机器人并加上一个关键词，自动发送\"名人名言\""
+    override val version = "0.1.0"
+
     private val sentence = arrayListOf<String>()
     private val taowa = arrayListOf<String>()
-    private val abelPM = aPlugins
 
     init {
         sentence.add("我们有全球最好的/singleWord专家\n——特朗普")

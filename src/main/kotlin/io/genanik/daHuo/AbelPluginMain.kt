@@ -38,10 +38,6 @@ object AbelPluginMain : PluginBase() {
         abelPluginController.regAdminFunctions()
         fuckBB.onLoadWithBlocker()
 
-        // 注册Abel功能
-        logger.info("注册Abel功能")
-        abelPluginController.regFunctions()
-
     }
 
     override fun onEnable() {

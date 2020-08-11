@@ -15,6 +15,8 @@ open class AbelPluginBase(aPlugins: AbelPlugins) {
 
     init {
         abelPlugins.markPlugin(this)
+        abelPlugins.regFunction(name, description)
+        abelPlugins.adminRegFunction(name)
     }
 
     open fun trigger(controller: GroupMessageSubscribersBuilder) {

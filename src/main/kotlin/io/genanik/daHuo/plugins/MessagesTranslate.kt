@@ -16,6 +16,9 @@ import net.mamoe.mirai.message.data.forEachContent
 class MessagesTranslate(aPlugins: AbelPlugins) : AbelPluginBase(aPlugins) {
 
     private val abelPM = aPlugins
+    override val name = "翻译"
+    override val description = "自动翻译包含繁体的消息"
+    override val version = "0.1.0"
 
     override fun trigger(controller: GroupMessageSubscribersBuilder) {
         controller.always {
