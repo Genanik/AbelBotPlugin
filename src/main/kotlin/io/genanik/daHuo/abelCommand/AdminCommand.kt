@@ -41,13 +41,3 @@ fun AbelPlugins.regAdminHelp(){
         return@regAdminCommand result.asMessageChain()
     }
 }
-
-fun AbelPlugins.regAdminFunctions(){
-    this.adminRegFunction("翻译")
-    this.adminRegFunction("复读")
-    this.adminRegFunction("川普")
-    this.adminRegFunction("倒转GIF")
-    this.adminRegFunction("图片缩放")
-    this.adminRegFunction("bilibili")
-    this.adminRegFunction("三贱客")
-}

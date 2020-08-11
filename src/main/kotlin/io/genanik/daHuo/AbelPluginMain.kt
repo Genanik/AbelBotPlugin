@@ -35,7 +35,6 @@ object AbelPluginMain : PluginBase() {
 
         // 注册Abel管理员功能
         logger.info("注册Abel管理员功能")
-        abelPluginController.regAdminFunctions()
         fuckBB.onLoadWithBlocker()
 
     }
