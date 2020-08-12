@@ -69,8 +69,6 @@ class BastardBlocker() {
         val raw = Gson().toJson(File("AbelBlockList.list").readText())
         val list = raw.split("\\n")
 
-        println(list)
-
         list.forEach {
             val 傻逼 = it.replace("\"", "")
                 傻逼们.add(傻逼.toLong())
