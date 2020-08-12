@@ -52,11 +52,11 @@ class MessagesRepeat(message: MessageChain) {
 
             // 识别委托
             val pic: Image? by msgClip.orNull()
-            val text: PlainText? by msgClip.orNull()
+//            val text: PlainText? by msgClip.orNull()
 
             // 根据委托处理信息
             newMsgChain.processImg(pic, contact)
-            newMsgChain.processText(text)
+//            newMsgChain.processText(text)
 
             if (!hasBeenProcessed){
                 // 没有被处理委托
