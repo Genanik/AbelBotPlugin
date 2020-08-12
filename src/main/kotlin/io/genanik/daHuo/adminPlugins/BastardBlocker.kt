@@ -71,7 +71,9 @@ class BastardBlocker() {
 
         list.forEach {
             val 傻逼 = it.replace("\"", "")
+            try{
                 傻逼们.add(傻逼.toLong())
+            }catch (_: NumberFormatException){ }
         }
     }
 
