@@ -67,13 +67,13 @@ class BastardBlocker() {
 
     private fun 读取傻逼们(){
         val raw = Gson().toJson(File("AbelBlockList.list").readText())
-        val list = raw.split("\n")
+        val list = raw.split("\\n")
 
-        val rule = """[0-9]+""".toRegex()
+        println(list)
 
         list.forEach {
-            val 傻逼 = rule.find(it)!!.groupValues[0]
-            傻逼们.add(傻逼.toLong())
+            val 傻逼 = it.replace("\"", "")
+                傻逼们.add(傻逼.toLong())
         }
     }
 
