@@ -1,4 +1,4 @@
-package io.genanik.daHuo.plugins
+package io.genanik.daHuo.plugins.mscWeekily
 
 import io.genanik.daHuo.abel.AbelPluginBase
 import io.genanik.daHuo.abel.AbelPlugins

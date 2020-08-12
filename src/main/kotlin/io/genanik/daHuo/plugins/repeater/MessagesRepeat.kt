@@ -1,4 +1,4 @@
-package io.genanik.daHuo.utils.repeater
+package io.genanik.daHuo.plugins.repeater
 
 import io.genanik.daHuo.utils.isEqualWithRemoveMsgSource
 import io.genanik.daHuo.utils.removeMsgSource

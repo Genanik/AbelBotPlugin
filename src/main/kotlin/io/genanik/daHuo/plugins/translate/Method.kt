@@ -1,4 +1,4 @@
-package io.genanik.daHuo.utils.translate
+package io.genanik.daHuo.plugins.translate
 
 import com.github.houbb.opencc4j.util.ZhConverterUtil
 

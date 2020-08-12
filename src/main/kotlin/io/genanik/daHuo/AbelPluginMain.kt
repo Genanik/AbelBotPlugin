@@ -6,6 +6,7 @@ import io.genanik.daHuo.abelCommand.*
 import io.genanik.daHuo.adminPlugins.BastardBlocker
 import io.genanik.daHuo.plugins.*
 import io.genanik.daHuo.plugins.bilibili.BilibiliMsg
+import io.genanik.daHuo.plugins.repeater.MessageRepeater
 import io.genanik.daHuo.utils.*
 import net.mamoe.mirai.console.plugins.PluginBase
 import net.mamoe.mirai.event.*
@@ -13,6 +14,14 @@ import net.mamoe.mirai.event.*
 object AbelPluginMain : PluginBase() {
 
     private var abelPluginController = AbelPlugins(logger)
+
+    // TODO 临时不使用插件式编程
+    val donaldTrump = DonaldTrump(abelPluginController)
+    val imageResize = ImageResize(abelPluginController)
+    val reverseGIF = ReverseGIF(abelPluginController)
+    val tgt = TheGrandTour(abelPluginController)
+    val messageRepeater = MessageRepeater(abelPluginController)
+    val bilibiliMsg = BilibiliMsg(abelPluginController)
 
     // 为每个Abel插件创建对象
     private val fuckBB = BastardBlocker()

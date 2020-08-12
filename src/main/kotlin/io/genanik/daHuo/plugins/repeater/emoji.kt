@@ -1,4 +1,4 @@
-package io.genanik.daHuo.utils.repeater
+package io.genanik.daHuo.plugins.repeater
 
 fun isEmojiCharacter(codePoint: Int): Boolean {
     return (codePoint in 0x2600..0x27BF // 杂项符号与符号字体

@@ -1,8 +1,7 @@
-package io.genanik.daHuo.plugins
+package io.genanik.daHuo.plugins.repeater
 
 import io.genanik.daHuo.abel.AbelPluginBase
 import io.genanik.daHuo.abel.AbelPlugins
-import io.genanik.daHuo.utils.repeater.MessagesRepeat
 import net.mamoe.mirai.event.GroupMessageSubscribersBuilder
 
 class MessageRepeater(aPlugins: AbelPlugins) : AbelPluginBase(aPlugins) {

@@ -1,4 +1,4 @@
-package io.genanik.daHuo.utils.mscWeekily
+package io.genanik.daHuo.plugins.mscWeekily
 
 import java.net.URL
 
