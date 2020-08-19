@@ -40,14 +40,16 @@ class MessagesRepeat(message: MessageChain) {
             times = 1
         }
 
-        val tmp = newMessage.toString()
+        var tmp = newMessage.removeMsgSource().toString()
         // 过滤mirai不支持的消息类型
         if (tmp.indexOf("暂不支持查看")!=-1) {
             return false
         }
         // 屏蔽QQ商城表情
         if (tmp[0] =='[' && tmp[tmp.length-1] == ']'){
-            return false
+            if (tmp.indexOf("[mirai:") == -1){
+                return false
+            }
         }
 
         return result
