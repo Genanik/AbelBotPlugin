@@ -8,7 +8,7 @@ class MessageRepeater(aPlugins: AbelPlugins) : AbelPluginBase(aPlugins) {
 
     override val name = "复读"
     override val description = "同一条消息出现两次后，Abel机器人自动跟读"
-    override val version = "0.2.2"
+    override val version = "0.2.3"
 
     private val msgRepeatController = mutableMapOf<Long, MessagesRepeat>()
 

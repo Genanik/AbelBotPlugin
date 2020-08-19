@@ -46,7 +46,7 @@ class MessagesRepeat(message: MessageChain) {
             return false
         }
         // 屏蔽QQ商城表情
-        if (tmp[0] =='[' && tmp[tmp.length] == ']'){
+        if (tmp[0] =='[' && tmp[tmp.length-1] == ']'){
             return false
         }
 
