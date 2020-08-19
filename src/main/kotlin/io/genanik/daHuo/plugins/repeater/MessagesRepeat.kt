@@ -47,7 +47,8 @@ class MessagesRepeat(message: MessageChain) {
     suspend fun textBackRepeat(oldMsgChain: MessageChain, contact: Contact): MessageChain {
         val newMsgChain = MessageChainBuilder() // 发送的MsgChain
 
-        oldMsgChain.removeMsgSource().reversed().forEach {
+//        oldMsgChain.removeMsgSource().reversed().forEach {
+        oldMsgChain.removeMsgSource().forEach {
             val msgClip = it.asMessageChain()
 
             // 识别委托
