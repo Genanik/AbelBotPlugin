@@ -13,7 +13,6 @@ abstract class AbelPluginBase(aPlugins: AbelPlugins) {
     abstract val description: String
     abstract val version: String
 
-    // TODO 临时不使用插件式编程
     init {
         abelPM.markPlugin(this)
     }
