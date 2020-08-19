@@ -1,6 +1,6 @@
 name: "Abel"
 author: "Genanik"
-version: "3.0.0-RC2"
+version: "3.0.0-RC3"
 main: "io.genanik.daHuo.AbelPluginMain"
 info: "基于Abel的QQ大火插件"
 depends: []

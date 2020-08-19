@@ -1,7 +1,7 @@
 object Versions {
 
     object DaHuo {
-        const val version = "3.0.0-RC2"
+        const val version = "3.0.0-RC3"
     }
 
     object AbelFramework {
