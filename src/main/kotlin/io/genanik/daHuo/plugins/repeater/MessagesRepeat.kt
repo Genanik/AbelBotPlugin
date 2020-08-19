@@ -40,6 +40,11 @@ class MessagesRepeat(message: MessageChain) {
             times = 1
         }
 
+        // 过滤mirai不支持的消息类型
+        if (newMessage.toString().indexOf("暂不支持查看")!=-1) {
+            return false
+        }
+
         return result
     }
 
