@@ -70,9 +70,6 @@ fun regAbelDefault(controller: AbelPluginMain, aPM: AbelPlugins){
             // 查询
             case("${i}打开了嘛") {
                 var status = aPM.getStatus(i, this.group.id)
-                if (i == "翻译") {
-                    status = !status
-                }
                 if (status) {
                     reply("开啦(′▽`〃)")
                 } else {
