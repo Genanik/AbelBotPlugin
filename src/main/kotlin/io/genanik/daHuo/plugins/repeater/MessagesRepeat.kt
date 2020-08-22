@@ -42,6 +42,9 @@ class MessagesRepeat(message: MessageChain) {
 
         var tmp = newMessage.removeMsgSource().toString()
         // 过滤mirai不支持的消息类型
+        if (tmp.indexOf("你需要升级到最新版QQ才能接收")!=-1) {
+            return false
+        }
         if (tmp.indexOf("暂不支持查看")!=-1) {
             return false
         }
