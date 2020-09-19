@@ -3,6 +3,7 @@ package io.genanik.daHuo.abel
 import io.genanik.daHuo.AbelPluginMain
 import net.mamoe.mirai.event.*
 import net.mamoe.mirai.event.events.BotInvitedJoinGroupRequestEvent
+import net.mamoe.mirai.event.events.MemberMuteEvent
 import net.mamoe.mirai.event.events.NewFriendRequestEvent
 
 fun regAbelDefault(controller: AbelPluginMain, aPM: AbelPlugins){
@@ -122,5 +123,10 @@ fun regAbelDefault(controller: AbelPluginMain, aPM: AbelPlugins){
     // 邀请至群申请
     controller.subscribeAlways<BotInvitedJoinGroupRequestEvent> {
         accept()
+    }
+
+    // 红茶提醒
+    controller.subscribeAlways<MemberMuteEvent> {
+        group.sendMessage(member.nameCard + "喝下了来路不明的红茶，睡去了")
     }
 }
