@@ -127,6 +127,6 @@ fun regAbelDefault(controller: AbelPluginMain, aPM: AbelPlugins){
 
     // 红茶提醒
     controller.subscribeAlways<MemberMuteEvent> {
-        group.sendMessage(member.nameCard + "喝下了来路不明的红茶，睡去了")
+        group.sendMessage(member.nameCard + "喝下了来路不明的红茶，睡着了")
     }
 }
