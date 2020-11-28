@@ -2,6 +2,7 @@
 基于Abel框架的机器人  
 此项目处于活动状态，欢迎在issue里提出建议或反馈bug！
   
+  由于版本号过于混乱，下个版本直接跳过3.x.x，改用4.x.x  
 准备将大火升级至 [Mirai-Console](https://github.com/mamoe/mirai-console) 1.0
 
 **一切开发旨在学习，请勿用于非法用途**  
